@@ -15,7 +15,7 @@
     }
     body {
       background-color: #f3efe9;
-      color: #1f2421;
+      color: #1E293B;
       overscroll-behavior-y: none;
     }
     /* 모바일 앱 프레임 스크롤바 커스텀 */
@@ -45,24 +45,28 @@
 <body class="min-h-screen flex justify-center bg-[#ebe5dc]">
 
   <!-- 모바일 앱 컨테이너 (데스크톱에서는 중앙 정렬 모바일 프레임, 모바일에서는 100% 너비) -->
-  <div id="app" class="w-full max-w-[480px] min-h-screen bg-[#faf8f5] shadow-2xl flex flex-col relative overflow-x-hidden border-x border-stone-200/80">
+  <div id="app" class="w-full max-w-[480px] min-h-screen bg-[#FDFBF7] shadow-2xl flex flex-col relative overflow-x-hidden border-x border-stone-200/80">
     
     <!-- 상단 앱 헤더 -->
-    <header class="sticky top-0 z-30 bg-[#faf8f5]/95 backdrop-blur-md border-b border-stone-200/80 px-4 py-3 flex items-center justify-between">
+    <header class="sticky top-0 z-30 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-stone-200/80 px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-sm text-lg">
-          👨‍🍳
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-sm">
+          <!-- 브랜드 쉐프 모자 커스텀 SVG -->
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/>
+            <line x1="6" y1="17" x2="18" y2="17"/>
+          </svg>
         </div>
         <div>
           <div class="flex items-center gap-1.5">
-            <h1 class="text-base font-extrabold tracking-tight text-stone-900">쉐프 노트</h1>
-            <span id="header-badge" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">📝 제품 등록</span>
+            <h1 class="text-base font-extrabold tracking-tight text-slate-900">쉐프 노트</h1>
+            <span id="header-badge" class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">제품 등록</span>
           </div>
-          <p class="text-[11px] text-stone-500 leading-tight">문피아 베스트 미식 &amp; 레시피 아카이브</p>
+          <p class="text-[11px] text-slate-500 leading-tight">문피아 베스트 미식 &amp; 레시피 아카이브</p>
         </div>
       </div>
       <div class="flex items-center gap-1.5">
-        <button onclick="openSearchModal()" class="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 active:scale-95 transition text-stone-700" title="전체 작품 검색">
+        <button onclick="openSearchModal()" class="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 active:scale-95 transition text-slate-700" title="전체 작품 검색">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8"></circle>
             <path d="m21 21-4.3-4.3"></path>
@@ -628,13 +632,87 @@ const RECIPE_TAXONOMY = [
  */
 const STORAGE_KEY = 'chef_note_v1_data';
 
+/**
+ * 6대 카테고리 전용 커스텀 SVG 픽토그램 헬퍼
+ */
+function getCategorySVG(id, sizeClass = 'w-5 h-5') {
+  switch (id) {
+    case 'register':
+      // 1. 제품 등록: 신선한 식재료 장바구니 + 플러스 배지
+      return `
+        <svg class="${sizeClass}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 10h14l-1.5 9h-11L5 10Z"/>
+          <path d="M9 10V6a3 3 0 0 1 6 0v4"/>
+          <path d="M12 13v4"/>
+          <path d="M10 15h4"/>
+        </svg>
+      `;
+    case 'kitchen':
+      // 2. 조리실: 김이 모락모락 나는 요리 냄비
+      return `
+        <svg class="${sizeClass}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 11h16v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-5Z"/>
+          <path d="M2 11h20"/>
+          <path d="M8 6c0-1 .8-1.5.8-2.5"/>
+          <path d="M12 6c0-1 .8-1.5.8-2.5"/>
+          <path d="M16 6c0-1 .8-1.5.8-2.5"/>
+        </svg>
+      `;
+    case 'michelin':
+      // 3. 미슐랭: 별 각인 미슐랭 메달 리본
+      return `
+        <svg class="${sizeClass}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="9" r="6"/>
+          <path d="m12 6.5.8 1.6 1.7.3-1.2 1.2.3 1.7-1.6-.8-1.6.8.3-1.7-1.2-1.2 1.7-.3.8-1.6Z"/>
+          <path d="M8.5 14.2 7 21l5-2.5L17 21l-1.5-6.8"/>
+        </svg>
+      `;
+    case 'pantry':
+      // 4. 팬트리: 저장병과 선반 아카이브
+      return `
+        <svg class="${sizeClass}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="3" width="16" height="18" rx="2"/>
+          <line x1="4" y1="12" x2="20" y2="12"/>
+          <rect x="7" y="6" width="4" height="6" rx="1"/>
+          <rect x="13" y="7" width="4" height="5" rx="1"/>
+          <rect x="7" y="15" width="5" height="6" rx="1"/>
+          <circle cx="15.5" cy="18" r="1.5"/>
+        </svg>
+      `;
+    case 'recipe':
+      // 5. 레시피분석: 펼쳐진 레시피 노트와 돋보기
+      return `
+        <svg class="${sizeClass}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2V4Z"/>
+          <path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8V4Z"/>
+          <circle cx="16.5" cy="10.5" r="2.5"/>
+          <path d="m18.5 12.5 2 2"/>
+        </svg>
+      `;
+    case 'dishwash':
+      // 6. 설거지: 반짝이는 접시와 물방울 & 달력 관리
+      return `
+        <svg class="${sizeClass}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 15c2 3 5.2 5 9 5s7-2 9-5H3Z"/>
+          <path d="M12 3v3"/>
+          <path d="M10.5 4.5h3"/>
+          <path d="M18 6c0 1.4-1.5 2.5-1.5 2.5S15 7.4 15 6a1.5 1.5 0 0 1 3 0Z"/>
+          <path d="M6.5 8.5v2"/>
+          <path d="M5.5 9.5h2"/>
+        </svg>
+      `;
+    default:
+      return '';
+  }
+}
+
 const CATEGORIES = [
-  { id: 'register', label: '제품 등록', icon: '📝' },
-  { id: 'kitchen', label: '조리실', icon: '🍳' },
-  { id: 'michelin', label: '미슐랭', icon: '🏅' },
-  { id: 'pantry', label: '팬트리', icon: '🗄️' },
-  { id: 'recipe', label: '레시피분석', icon: '📖' },
-  { id: 'dishwash', label: '설거지', icon: '🧼' }
+  { id: 'register', label: '제품 등록' },
+  { id: 'kitchen', label: '조리실' },
+  { id: 'michelin', label: '미슐랭' },
+  { id: 'pantry', label: '팬트리' },
+  { id: 'recipe', label: '레시피분석' },
+  { id: 'dishwash', label: '설거지' }
 ];
 
 const SOURCE_OPTIONS = ['투데이 베스트', '신규 베스트', '기타'];
@@ -656,7 +734,7 @@ const FLAG_OPTIONS = [
 
 /**
  * ============================================================================
- * 3. 전역 상태 및 스토리지 관리
+ * 3. 전역 상태 및 스토리지 관리 (초기 샘플 데이터 포함)
  * ============================================================================
  */
 let state = {
@@ -694,6 +772,101 @@ function getTodayStr() {
   return `${y}-${m}-${day}`;
 }
 
+function getOffsetDateStr(daysAgo) {
+  const d = new Date();
+  d.setDate(d.getDate() - daysAgo);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function createSampleData() {
+  const today = getTodayStr();
+  const twoDaysAgo = getOffsetDateStr(2);
+  const fiveDaysAgo = getOffsetDateStr(5);
+
+  return [
+    {
+      id: 'sample_temp_1',
+      sources: ['신규 베스트'],
+      title: '아카데미의 고인물 조교가 되었다',
+      genre: '',
+      author: '',
+      stage: 'temp',
+      inRecipeQueue: false,
+      recipeCompleted: false,
+      registeredAt: new Date().toISOString(),
+      registeredDate: today,
+      michelin: { tier: '분석 전', conversionRate: null, freeLastEp: null, hasEntered: false },
+      rating: 0,
+      flags: { legend: false, supernormal: false, recipe: false, fridge: false },
+      tags: [],
+      recipes: {}
+    },
+    {
+      id: 'sample_kitchen_1',
+      sources: ['투데이 베스트', '신규 베스트'],
+      title: '회귀한 천재 외과의의 메스',
+      genre: '현대판타지',
+      author: '닥터스틸',
+      stage: 'kitchen',
+      inRecipeQueue: false,
+      recipeCompleted: false,
+      registeredAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+      registeredDate: twoDaysAgo,
+      michelin: { tier: '전환 예정', conversionRate: 42.5, freeLastEp: 25, hasEntered: true },
+      rating: 3,
+      flags: { legend: false, supernormal: true, recipe: true, fridge: false },
+      tags: ['전문직고증', '사이다전개'],
+      recipes: {}
+    },
+    {
+      id: 'sample_pantry_1',
+      sources: ['투데이 베스트'],
+      title: '북부 대공가의 시한부 막내아들',
+      genre: '판타지',
+      author: '은빛늑대',
+      stage: 'pantry',
+      inRecipeQueue: true,
+      recipeCompleted: false,
+      registeredAt: new Date(Date.now() - 86400000 * 5).toISOString(),
+      registeredDate: fiveDaysAgo,
+      cookedAt: new Date(Date.now() - 86400000 * 4).toISOString(),
+      michelin: { tier: '전환 1티어', conversionRate: 58.2, freeLastEp: 25, hasEntered: true },
+      rating: 4,
+      flags: { legend: true, supernormal: false, recipe: true, fridge: true },
+      tags: ['필력우수', '초반흡입력', '주인공매력'],
+      recipes: {
+        genre: { majors: ['① 판타지 계열'], items: ['회귀물', '영지물', '기사물'] },
+        protagonist: { majors: ['③ 회귀·환생·빙의 중심 주인공'], items: ['회귀자', '시한부 운명 극복'] }
+      }
+    },
+    {
+      id: 'sample_pantry_2',
+      sources: ['투데이 베스트'],
+      title: '무림맹 말단 서기의 천하제일 비급록',
+      genre: '무협',
+      author: '청풍검객',
+      stage: 'pantry',
+      inRecipeQueue: false,
+      recipeCompleted: true,
+      registeredAt: new Date(Date.now() - 86400000 * 5).toISOString(),
+      registeredDate: fiveDaysAgo,
+      cookedAt: new Date(Date.now() - 86400000 * 3).toISOString(),
+      michelin: { tier: '전환 2티어', conversionRate: 49.0, freeLastEp: 30, hasEntered: true },
+      rating: 4,
+      flags: { legend: false, supernormal: true, recipe: true, fridge: true },
+      tags: ['클리셰비틀기', '필력우수'],
+      recipes: {
+        genre: { majors: ['③ 무협 계열'], items: ['신무협', '무공성장물'] },
+        background: { majors: ['(4) 무협 및 동양 판타지 - ① 무림사회'], items: ['무림맹', '장서각'] },
+        ability: { majors: ['③ 정보 및 미래 예측 능력'], items: ['아이템감정', '완전기억능력'] }
+      }
+    }
+  ];
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -701,10 +874,32 @@ function loadState() {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed.novels)) state.novels = parsed.novels;
       if (Array.isArray(parsed.tagPool)) state.tagPool = parsed.tagPool;
+    } else {
+      // 최초 실행 시 현실적인 샘플 작품 4편 자동 로드
+      state.novels = createSampleData();
+      saveState();
     }
   } catch (e) {
     console.error('Failed to load state:', e);
   }
+}
+
+function resetToSampleData() {
+  openConfirmDialog({
+    title: '샘플 데이터 초기화',
+    message: '현재 데이터를 초기화하고 기본 샘플 작품 4편으로 되돌리시겠습니까?',
+    confirmText: '초기화',
+    isDanger: true,
+    onConfirm: () => {
+      state.novels = createSampleData();
+      state.tagPool = ['사이다전개', '필력우수', '초반흡입력', '클리셰비틀기', '전문직고증', '주인공매력'];
+      state.recipeSelectedNovelId = null;
+      state.kitchenExpandedId = null;
+      saveState();
+      renderAll();
+      showToast('샘플 데이터로 초기화되었습니다.', 'success');
+    }
+  });
 }
 
 function saveState() {
@@ -770,13 +965,13 @@ function escapeHtml(str) {
 function getTierMedalBadge(tier) {
   switch (tier) {
     case '전환 1티어':
-      return `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-800 border border-amber-300 shadow-2xs" title="전환 1티어">🥇1</span>`;
+      return `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-800 border border-amber-300 shadow-2xs" title="전환 1티어">🥇1️⃣</span>`;
     case '전환 2티어':
-      return `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-100 text-slate-700 border border-slate-300 shadow-2xs" title="전환 2티어">🥈2</span>`;
+      return `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-100 text-slate-700 border border-slate-300 shadow-2xs" title="전환 2티어">🥈2️⃣</span>`;
     case '전환 3티어':
-      return `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[11px] font-extrabold bg-orange-100 text-orange-800 border border-orange-300 shadow-2xs" title="전환 3티어">🥉3</span>`;
+      return `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[11px] font-extrabold bg-orange-100 text-orange-800 border border-orange-300 shadow-2xs" title="전환 3티어">🥉3️⃣</span>`;
     case '전환 4티어':
-      return `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[11px] font-extrabold bg-teal-100 text-teal-800 border border-teal-300 shadow-2xs" title="전환 4티어">🏅4</span>`;
+      return `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[11px] font-extrabold bg-teal-100 text-teal-800 border border-teal-300 shadow-2xs" title="전환 4티어">🏅4️⃣</span>`;
     default:
       return '';
   }
@@ -791,21 +986,25 @@ function getCuteChefMascotSVG() {
       <circle cx="78" cy="30" r="16" fill="#FFFFFF" stroke="#D97706" stroke-width="3"/>
       <rect x="36" y="34" width="48" height="16" rx="6" fill="#FFFFFF" stroke="#D97706" stroke-width="3"/>
       <line x1="42" y1="43" x2="78" y2="43" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- 귀 (귀여운 쉐프 아기곰) -->
+      <circle cx="35" cy="54" r="8" fill="#FDE68A" stroke="#D97706" stroke-width="2.5"/>
+      <circle cx="85" cy="54" r="8" fill="#FDE68A" stroke="#D97706" stroke-width="2.5"/>
       <!-- 얼굴 -->
-      <circle cx="60" cy="70" r="28" fill="#FDE68A" stroke="#D97706" stroke-width="3"/>
+      <circle cx="60" cy="72" r="27" fill="#FDE68A" stroke="#D97706" stroke-width="3"/>
       <!-- 볼터치 -->
-      <ellipse cx="43" cy="75" rx="5" ry="3.5" fill="#FCA5A5" opacity="0.85"/>
-      <ellipse cx="77" cy="75" rx="5" ry="3.5" fill="#FCA5A5" opacity="0.85"/>
+      <ellipse cx="43" cy="77" rx="5" ry="3.5" fill="#FCA5A5" opacity="0.85"/>
+      <ellipse cx="77" cy="77" rx="5" ry="3.5" fill="#FCA5A5" opacity="0.85"/>
       <!-- 눈 (깜짝 놀란 귀여운 표정) -->
-      <circle cx="49" cy="66" r="3.5" fill="#1F2937"/>
-      <circle cx="50" cy="65" r="1.2" fill="#FFFFFF"/>
-      <circle cx="71" cy="66" r="3.5" fill="#1F2937"/>
-      <circle cx="72" cy="65" r="1.2" fill="#FFFFFF"/>
-      <!-- 입 -->
-      <ellipse cx="60" cy="79" rx="4.5" ry="5" fill="#EF4444" stroke="#991B1B" stroke-width="1.5"/>
-      <!-- 땀방울 / 느낌표 -->
-      <path d="M97 44L100 54" stroke="#EF4444" stroke-width="3.5" stroke-linecap="round"/>
-      <circle cx="101" cy="60" r="2" fill="#EF4444"/>
+      <circle cx="49" cy="68" r="3.5" fill="#1F2937"/>
+      <circle cx="50" cy="67" r="1.2" fill="#FFFFFF"/>
+      <circle cx="71" cy="68" r="3.5" fill="#1F2937"/>
+      <circle cx="72" cy="67" r="1.2" fill="#FFFFFF"/>
+      <!-- 코와 입 -->
+      <ellipse cx="60" cy="74" rx="3" ry="2" fill="#92400E"/>
+      <ellipse cx="60" cy="82" rx="4.5" ry="4.5" fill="#EF4444" stroke="#991B1B" stroke-width="1.5"/>
+      <!-- 경고 국자 -->
+      <line x1="98" y1="98" x2="103" y2="68" stroke="#92400E" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="104" cy="63" r="6" fill="#E5E7EB" stroke="#6B7280" stroke-width="2"/>
     </svg>
   `;
 }
@@ -860,8 +1059,8 @@ function renderNav() {
     if (cat.id === 'recipe' && recipeCount > 0) badge = recipeCount;
 
     return `
-      <button onclick="switchTab('${cat.id}')" class="relative flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition ${active ? 'bg-amber-100/90 text-amber-900 font-extrabold' : 'text-stone-500 hover:bg-stone-100 font-medium'}">
-        <span class="text-base leading-none mb-1">${cat.icon}</span>
+      <button onclick="switchTab('${cat.id}')" class="relative flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition ${active ? 'bg-amber-100/90 text-amber-900 font-extrabold' : 'text-slate-500 hover:bg-stone-100 font-medium'}">
+        <span class="mb-1 flex items-center justify-center">${getCategorySVG(cat.id, 'w-[18px] h-[18px]')}</span>
         <span class="text-[10px] tracking-tighter leading-none">${cat.label}</span>
         ${badge ? `<span class="absolute top-1 right-1.5 min-w-[14px] h-[14px] px-1 rounded-full bg-orange-600 text-white text-[9px] font-bold flex items-center justify-center">${badge}</span>` : ''}
       </button>
@@ -869,7 +1068,8 @@ function renderNav() {
   }).join('');
 
   const current = CATEGORIES.find(c => c.id === state.activeTab);
-  document.getElementById('header-badge').textContent = `${current.icon} ${current.label}`;
+  const badgeEl = document.getElementById('header-badge');
+  badgeEl.innerHTML = `${getCategorySVG(current.id, 'w-3 h-3')}<span>${current.label}</span>`;
 }
 
 function switchTab(tabId) {
@@ -1103,9 +1303,9 @@ function renderRegisterView() {
             <p class="text-[11px] font-semibold opacity-90">STEP 1 ~ 3 통합 주방 입고</p>
             <h2 class="text-lg font-extrabold tracking-tight mt-0.5">${f.editingId ? '임시등록 작품 수정 & 완료' : '새 웹소설 재료 등록'}</h2>
           </div>
-          ${f.editingId ? `<button onclick="resetRegForm()" class="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-xs font-bold">신규 등록 전환</button>` : `<span class="text-2xl">🧺</span>`}
+          ${f.editingId ? `<button onclick="resetRegForm()" class="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-xs font-bold">신규 등록 전환</button>` : `<div class="p-2 rounded-2xl bg-white/20">${getCategorySVG('register', 'w-6 h-6')}</div>`}
         </div>
-        <p class="text-[11px] mt-1.5 opacity-95">제목만 입력하면 <strong>[임시등록]</strong>, 장르+작가명까지 입력 시 즉시 <strong>🍳 조리실</strong>로 이동합니다.</p>
+        <p class="text-[11px] mt-1.5 opacity-95">제목만 입력하면 <strong>[임시등록]</strong>, 장르+작가명까지 입력 시 즉시 <strong>조리실</strong>로 이동합니다.</p>
       </div>
 
       <!-- 1단계: 메뉴 선정 -->
@@ -1393,9 +1593,12 @@ function renderKitchenView() {
     <div class="space-y-4">
       <div class="bg-gradient-to-r from-orange-500 to-rose-500 rounded-3xl p-4 text-white shadow-md">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-[11px] font-semibold opacity-90">TASTING &amp; RATING</p>
-            <h2 class="text-lg font-extrabold tracking-tight mt-0.5">🍳 조리실 (시식 및 평가)</h2>
+          <div class="flex items-center gap-2.5">
+            <div class="p-2 rounded-2xl bg-white/20">${getCategorySVG('kitchen', 'w-6 h-6')}</div>
+            <div>
+              <p class="text-[11px] font-semibold opacity-90">TASTING &amp; RATING</p>
+              <h2 class="text-lg font-extrabold tracking-tight mt-0.5">조리실 (시식 및 평가)</h2>
+            </div>
           </div>
           <span class="px-3 py-1 rounded-full bg-white/20 text-xs font-extrabold">대기 ${kitchenNovels.length}편</span>
         </div>
@@ -1601,9 +1804,14 @@ function renderMichelinView() {
       <!-- 상단 그래프 카드 -->
       <section class="bg-white rounded-3xl p-4 shadow-xs border border-stone-200/90 space-y-3">
         <div class="flex items-center justify-between">
-          <div>
-            <span class="text-[11px] font-bold text-amber-700">MICHELIN TIER ANALYTICS</span>
-            <h2 class="text-base font-extrabold text-stone-900">🏅 미슐랭 유료 전환 티어 분포</h2>
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+              ${getCategorySVG('michelin', 'w-5 h-5')}
+            </div>
+            <div>
+              <span class="text-[11px] font-bold text-amber-700">MICHELIN TIER ANALYTICS</span>
+              <h2 class="text-base font-extrabold text-stone-900">미슐랭 유료 전환 티어 분포</h2>
+            </div>
           </div>
           <span class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800">총 ${michelinNovels.length}편</span>
         </div>
@@ -1743,9 +1951,12 @@ function renderPantryView() {
     <div class="space-y-4">
       <div class="bg-gradient-to-r from-stone-800 to-stone-700 rounded-3xl p-4 text-white shadow-md">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-[11px] font-semibold opacity-80">CURATED ARCHIVE</p>
-            <h2 class="text-lg font-extrabold tracking-tight mt-0.5">🗄️ 팬트리 (조리 완료 보관함)</h2>
+          <div class="flex items-center gap-2.5">
+            <div class="p-2 rounded-2xl bg-white/15">${getCategorySVG('pantry', 'w-6 h-6')}</div>
+            <div>
+              <p class="text-[11px] font-semibold opacity-80">CURATED ARCHIVE</p>
+              <h2 class="text-lg font-extrabold tracking-tight mt-0.5">팬트리 (조리 완료 보관함)</h2>
+            </div>
           </div>
           <span class="px-3 py-1 rounded-full bg-white/15 text-xs font-extrabold">${pantryNovels.length}편</span>
         </div>
@@ -1917,9 +2128,14 @@ function renderRecipeView() {
       <!-- 상단 [메타데이터] 취향 분석 대시보드 -->
       <section class="bg-white rounded-3xl p-4 shadow-xs border border-emerald-200/90 space-y-3">
         <div class="flex items-center justify-between">
-          <div>
-            <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold">[메타데이터]</span>
-            <h2 class="text-base font-extrabold text-stone-900 mt-1">📊 나의 웹소설 취향 &amp; 장르 분석</h2>
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+              ${getCategorySVG('recipe', 'w-5 h-5')}
+            </div>
+            <div>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold">[메타데이터]</span>
+              <h2 class="text-base font-extrabold text-stone-900 mt-0.5">나의 웹소설 취향 &amp; 장르 분석</h2>
+            </div>
           </div>
           <span class="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-xl">누적 ${analyzedNovels.length}편</span>
         </div>
@@ -2249,9 +2465,12 @@ function renderDishwashView() {
       <!-- 월별 통계 요약 카드 -->
       <section class="bg-gradient-to-br from-sky-600 to-indigo-700 rounded-3xl p-4 text-white shadow-md space-y-3">
         <div class="flex items-center justify-between">
-          <div>
-            <p class="text-[11px] font-semibold opacity-85">MONTHLY INPUT ANALYTICS</p>
-            <h2 class="text-lg font-extrabold tracking-tight mt-0.5">🧼 설거지 &amp; 월별 등록 통계</h2>
+          <div class="flex items-center gap-2.5">
+            <div class="p-2 rounded-2xl bg-white/15">${getCategorySVG('dishwash', 'w-6 h-6')}</div>
+            <div>
+              <p class="text-[11px] font-semibold opacity-85">MONTHLY INPUT ANALYTICS</p>
+              <h2 class="text-lg font-extrabold tracking-tight mt-0.5">설거지 &amp; 월별 등록 통계</h2>
+            </div>
           </div>
           <span class="px-2.5 py-1 rounded-full bg-white/20 text-xs font-extrabold">${y}년 ${m + 1}월</span>
         </div>
@@ -2270,8 +2489,8 @@ function renderDishwashView() {
             <div class="text-base font-extrabold mt-0.5">${monthTieredCount}편</div>
           </div>
           <div class="bg-white/15 rounded-2xl p-2.5 text-center">
-            <div class="text-[10px] opacity-85">★★★ 이상</div>
-            <div class="text-base font-extrabold mt-0.5">${monthHighRatedCount}편</div>
+            <div class="text-[10px] opacity-85">누적 전체</div>
+            <div class="text-base font-extrabold mt-0.5">${state.novels.length}편</div>
           </div>
         </div>
       </section>
@@ -2347,18 +2566,23 @@ function renderDishwashView() {
 
       <!-- 데이터 백업 및 복구 -->
       <section class="bg-white rounded-3xl p-4 border border-stone-200 shadow-xs space-y-3">
-        <div>
-          <h3 class="text-sm font-extrabold text-stone-900">💾 데이터 백업 및 복구</h3>
-          <p class="text-[11px] text-stone-500 mt-0.5">브라우저 캐시 삭제에 대비해 전체 작품·별점·레시피 데이터를 파일로 보관하세요.</p>
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-extrabold text-stone-900">💾 데이터 백업 및 복구</h3>
+            <p class="text-[11px] text-stone-500 mt-0.5">전체 작품·별점·레시피 데이터를 파일로 안전하게 보관하세요.</p>
+          </div>
+          <button type="button" onclick="resetToSampleData()" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-[10px] font-bold text-stone-600 transition">
+            샘플 초기화
+          </button>
         </div>
         <div class="grid grid-cols-2 gap-2.5">
           <button type="button" onclick="exportBackupJSON()" class="py-3 px-3 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 transition">
             <span>📤</span>
-            <span>데이터 백업</span>
+            <span>데이터 백업 (JSON)</span>
           </button>
           <button type="button" onclick="triggerImportJSON()" class="py-3 px-3 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-extrabold flex items-center justify-center gap-1.5 transition">
             <span>📥</span>
-            <span>데이터 복구</span>
+            <span>데이터 복구 (JSON)</span>
           </button>
         </div>
         <input id="backup-file-input" type="file" accept=".json,application/json" onchange="handleImportJSONFile(event)" class="hidden" />
