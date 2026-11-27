@@ -102,7 +102,7 @@
             <h1 class="text-base font-extrabold tracking-tight text-ink truncate">쉐프 노트</h1>
             <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amberwarm/20 text-amber-900">LAB</span>
           </div>
-          <p class="text-[11px] text-muted truncate">문피아 투데이·신규 베스트 & 차기작 레시피</p>
+          <p class="text-[11px] text-muted truncate">문피아 투데이·신규 베스트 &amp; 차기작 레시피</p>
         </div>
       </div>
 
@@ -813,7 +813,7 @@
 
       return {
         activeCategory: 'register',
-        // 제품 등록 하위 필터: 'all' | 'draft' | 'michelin_ready'
+        // 제품 등록 하위 필터: 'all' | 'draft' | 'labeled'
         registerFilter: 'all',
         // 미슐랭 선택 티어 (null이면 전체 보기)
         selectedMichelinTier: null,
@@ -860,7 +860,7 @@
           ],
         },
         // 작품 목록
-        // location: 'register' | 'kitchen' | 'pantry' | 'recipe_done'
+        // location: 'register' | 'kitchen' | 'pantry' | 'recipe'
         novels: [
           {
             id: 'n_sample_1',
@@ -935,7 +935,7 @@
               conversionRate: '27.4',
               freeEndEpisode: '25',
             },
-            location: 'kitchen', // 레시피분석 활성 항목 (조리 완료 시 레시피분석으로 이동)
+            location: 'recipe', // 레시피분석 활성 항목
             rating: '★★★★ 16화 이상 정독',
             specials: ['legend', 'recipe'],
             tags: ['전투연출', '사이다전개'],
@@ -1125,7 +1125,6 @@
         await navigator.clipboard.writeText(title.trim());
         showToast(`"${title.trim()}" 문피아 검색용 제목 복사 완료!`);
       } catch {
-        // 폴백 복사
         const ta = document.createElement('textarea');
         ta.value = title.trim();
         document.body.appendChild(ta);
@@ -1154,7 +1153,7 @@
       return Boolean((novel.genre || '').trim() && (novel.author || '').trim());
     }
 
-    // 미슐랭 선정 완료 여부 (3가지 항목: 유료 도달 티어, 전환값, 무료 최종화 입력 시 미슐랭 반영)
+    // 미슐랭 선정 완료 여부 (3가지 항목 중 하나 이상 입력 시 미슐랭 반영)
     function hasMichelinInput(novel) {
       const m = novel.michelin || {};
       const tierSet = Boolean(m.tier && m.tier !== '분석 전');
@@ -1328,14 +1327,13 @@
       const cat = CATEGORIES.find((c) => c.id === state.activeCategory) || CATEGORIES[0];
       const banner = document.getElementById('category-banner');
 
-      // 카테고리별 실시간 카운트 뱃지 계산
       const regCount = state.novels.filter((n) => n.location === 'register').length;
       const draftCount = state.novels.filter((n) => n.location === 'register' && !isLabelingComplete(n)).length;
       const kitchenCount = state.novels.filter((n) => n.location === 'kitchen').length;
       const michelinCount = state.novels.filter((n) => hasMichelinInput(n)).length;
       const pantryCount = state.novels.filter((n) => n.location === 'pantry').length;
       const recipeActiveCount = state.novels.filter(
-        (n) => (n.location === 'recipe' || (n.specials || []).includes('recipe')) && !n.recipeCompleted && n.location !== 'pantry'
+        (n) => n.location === 'recipe' && !n.recipeCompleted
       ).length;
 
       let statText = '';
@@ -1369,7 +1367,6 @@
     // 1. 제품 등록 (🛒) : 3단계(메뉴 선정 -> 라벨링 -> 미슐랭 선정) & 임시등록
     // =========================================================================
     function renderRegisterView(container) {
-      // 다른 카테고리로 이동된 작품은 제품 등록 목록에서 숨김
       const activeRegNovels = state.novels.filter((n) => n.location === 'register');
       const draftNovels = activeRegNovels.filter((n) => !isLabelingComplete(n));
       const labeledNovels = activeRegNovels.filter((n) => isLabelingComplete(n));
@@ -1515,7 +1512,7 @@
               type="button"
               class="py-3 px-3 rounded-2xl bg-terracotta hover:bg-terracottaDark text-white text-xs font-extrabold shadow-soft transition active:scale-95"
             >
-              🍳 라벨 완료 & 조리실 이동
+              🍳 라벨 완료 &amp; 조리실 이동
             </button>
           </div>
         </section>
@@ -1648,7 +1645,6 @@
         </section>
       `;
 
-      // 이벤트 바인딩: 필터 버튼
       container.querySelectorAll('button[data-reg-filter]').forEach((btn) => {
         btn.addEventListener('click', () => {
           state.registerFilter = btn.dataset.regFilter;
@@ -1657,7 +1653,6 @@
         });
       });
 
-      // 제목 입력 실시간 중복 검사
       const titleInput = document.getElementById('reg-title-input');
       const dupBox = document.getElementById('reg-duplicate-box');
       const checkDup = () => {
@@ -1666,12 +1661,10 @@
       };
       titleInput.addEventListener('input', checkDup);
 
-      // 입력폼 제목 복사 버튼
       document.getElementById('reg-copy-title-btn').addEventListener('click', () => {
         copyTitleForMunpia(titleInput.value);
       });
 
-      // 폼 데이터 수집 헬퍼
       const collectFormNovel = (moveToKitchenIfLabeled) => {
         const title = (titleInput.value || '').trim();
         if (!title) {
@@ -1753,7 +1746,6 @@
         renderApp();
       });
 
-      // 목록 버튼 이벤트 위임
       container.querySelectorAll('button[data-copy-title]').forEach((btn) => {
         btn.addEventListener('click', () => copyTitleForMunpia(btn.dataset.copyTitle));
       });
@@ -1856,7 +1848,7 @@
               저장하기
             </button>
             <button id="modal-reg-send-kitchen" type="button" class="w-full py-2.5 rounded-2xl bg-terracotta hover:bg-terracottaDark text-white text-xs font-extrabold">
-              🍳 라벨 완료 & 조리실로 보내기
+              🍳 라벨 완료 &amp; 조리실로 보내기
             </button>
             <button id="modal-reg-delete" type="button" class="w-full py-2.5 rounded-2xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold">
               🗑️ 해당 작품 삭제
@@ -1931,7 +1923,6 @@
     // 2. 조리실 (🍳) : 별점 · 특별전 · 추가 태그 · 삭제 · 조리 완료
     // =========================================================================
     function renderKitchenView(container) {
-      // 등록 순서(order)대로 정렬
       const kitchenNovels = state.novels
         .filter((n) => n.location === 'kitchen')
         .sort((a, b) => (a.order || 0) - (b.order || 0));
@@ -2076,7 +2067,6 @@
                   <span class="text-[11px] font-bold text-muted">${currentTags.length} / 5</span>
                 </div>
 
-                <!-- 현재 작품 태그 -->
                 <div class="flex flex-wrap gap-1.5 min-h-[26px]">
                   ${
                     currentTags.length === 0
@@ -2100,7 +2090,6 @@
                   }
                 </div>
 
-                <!-- 태그 직접 입력 -->
                 <div class="flex gap-1.5">
                   <input
                     type="text"
@@ -2117,7 +2106,6 @@
                   </button>
                 </div>
 
-                <!-- 저장된 태그 풀 빠른 선택 -->
                 ${
                   state.globalTags.length > 0
                     ? `
@@ -2172,7 +2160,6 @@
         })
         .join('');
 
-      // 이벤트 바인딩
       container.querySelectorAll('button[data-copy-title]').forEach((btn) => {
         btn.addEventListener('click', () => copyTitleForMunpia(btn.dataset.copyTitle));
       });
@@ -2274,7 +2261,6 @@
         btn.addEventListener('click', () => deleteNovel(btn.dataset.kitchenDelete));
       });
 
-      // 조리 완료 버튼: 조리실에서 제거, '레시피분석 (좋은소스)' 선택 시 레시피분석 이동, 그 외 팬트리 이동, 설거지 일별 카운트 기록
       container.querySelectorAll('button[data-kitchen-complete]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const novel = state.novels.find((n) => n.id === btn.dataset.kitchenComplete);
@@ -2287,7 +2273,6 @@
             state.selectedRecipeNovelId = novel.id;
           }
 
-          // 설거지 달력 일별 완료 기록 추가
           const today = getTodayStr();
           state.dishwashLogs[today] = state.dishwashLogs[today] || [];
           state.dishwashLogs[today].push({
@@ -2319,7 +2304,6 @@
     function renderMichelinView(container) {
       const michelinWorks = state.novels.filter((n) => hasMichelinInput(n));
 
-      // 티어별 카운트 계산
       const countsByTier = {};
       MICHELIN_TIERS.forEach((t) => (countsByTier[t] = 0));
       michelinWorks.forEach((n) => {
@@ -2512,7 +2496,7 @@
         <!-- 분류/정렬 버튼 바 -->
         <section class="bg-cardbg border border-line rounded-3xl p-3.5 shadow-soft space-y-2.5">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-extrabold text-ink">팬트리 분류 & 정렬</span>
+            <span class="text-xs font-extrabold text-ink">팬트리 분류 &amp; 정렬</span>
             <span class="text-[11px] font-bold text-muted">${list.length}편 표시</span>
           </div>
           <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
@@ -2647,7 +2631,7 @@
     }
 
     // 전체 세부 수정 모달 (미슐랭 & 팬트리 공용 — 삭제 버튼 포함)
-    function openFullEditModal(novelId, origin = 'pantry') {
+    function openFullEditModal(novelId) {
       const novel = state.novels.find((n) => n.id === novelId);
       if (!novel) return;
 
@@ -2803,7 +2787,6 @@
     }
 
     function renderRecipeView(container) {
-      // 레시피가 등록된 작품들의 장르 분포 자동 집계 ([메타데이터])
       const worksWithRecipe = state.novels.filter((n) => hasAnyRecipeSelected(n));
       const genreCounts = {};
       worksWithRecipe.forEach((n) => {
@@ -2813,7 +2796,6 @@
       const sortedGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]);
       const maxGenreCnt = Math.max(1, ...sortedGenres.map(([, c]) => c));
 
-      // 현재 레시피분석 대상 큐 (분석완료 누른 작품은 보이지 않음)
       const activeRecipeQueue = state.novels.filter(
         (n) => n.location === 'recipe' && !n.recipeCompleted
       );
@@ -2882,7 +2864,6 @@
                 </div>
               `
               : `
-                <!-- 작품 선택 칩 -->
                 <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
                   ${activeRecipeQueue.map((n) => {
                     const active = selectedNovel && selectedNovel.id === n.id;
@@ -2948,7 +2929,6 @@
                     return `
                       <div class="rounded-xl bg-cardbg border border-line/90 overflow-hidden">
                         <div class="flex items-center justify-between px-2.5 py-2 gap-1.5">
-                          <!-- 큰 계열 선택 버튼 (큰 계열만 선택해도 OK!) -->
                           <button
                             type="button"
                             data-recipe-group="${dimKey}"
@@ -2966,7 +2946,6 @@
                             }
                           </button>
 
-                          <!-- 세부 항목 펼치기/접기 토글 -->
                           <button
                             type="button"
                             data-toggle-subs="${dimKey}_${grp.id}"
@@ -2976,7 +2955,6 @@
                           </button>
                         </div>
 
-                        <!-- 세부 항목 패널 (기본 접힘 or 선택된 세부 항목이 있으면 표시 가능하도록 토글) -->
                         <div
                           id="subs-panel-${dimKey}_${grp.id}"
                           class="${selectedSubsInGroup.length > 0 ? '' : 'hidden'} px-2.5 pb-2.5 pt-1 border-t border-line/60 bg-stonebg/40"
@@ -3047,7 +3025,6 @@
     function bindRecipeEditorEvents(container, novel) {
       novel.recipe = novel.recipe || createEmptyRecipe();
 
-      // 큰 계열 토글
       container.querySelectorAll('button[data-recipe-group]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const dimKey = btn.dataset.recipeGroup;
@@ -3064,7 +3041,6 @@
         });
       });
 
-      // 세부 항목 패널 펼치기/접기
       container.querySelectorAll('button[data-toggle-subs]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const panel = document.getElementById(`subs-panel-${btn.dataset.toggleSubs}`);
@@ -3072,7 +3048,6 @@
         });
       });
 
-      // 세부 항목 토글 (세부 선택 시 해당 큰 계열도 자동으로 함께 체크해 주면 메타/계층 파악에 유리)
       container.querySelectorAll('button[data-recipe-sub]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const dimKey = btn.dataset.recipeSub;
@@ -3094,7 +3069,6 @@
         });
       });
 
-      // 분석완료 버튼: 레시피분석 항목에서 더 이상 보이지 않게 숨김
       const handleCompleteRecipe = () => {
         novel.recipeCompleted = true;
         saveState();
@@ -3127,10 +3101,9 @@
       const month = mStr || new Date().getMonth() + 1;
 
       const firstDayOfMonth = new Date(year, month - 1, 1);
-      const startWeekday = firstDayOfMonth.getDay(); // 0(일)~6(토)
+      const startWeekday = firstDayOfMonth.getDay();
       const daysInMonth = new Date(year, month, 0).getDate();
 
-      // 월별 통계 계산
       let monthTotal = 0;
       let peakDay = null;
       let peakCount = 0;
@@ -3161,7 +3134,6 @@
         renderApp();
       };
 
-      // 달력 셀 구성
       const calendarCells = [];
       for (let i = 0; i < startWeekday; i++) {
         calendarCells.push(`<div class="h-12 rounded-xl bg-stonebg/30"></div>`);
