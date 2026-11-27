@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <script>
     tailwind.config = {
       theme: {
@@ -16,9 +16,9 @@
             sans: ['"Noto Sans KR"', 'Inter', 'sans-serif'],
           },
           colors: {
-            munpia: {
+            brand: {
               50: '#eef4ff',
-              100: '#d9e6ff',
+              100: '#dbe8ff',
               500: '#2563eb',
               600: '#1d4ed8',
               700: '#1e40af',
@@ -27,14 +27,15 @@
             vault: {
               50: '#fffbeb',
               100: '#fef3c7',
+              200: '#fde68a',
               400: '#fbbf24',
               500: '#f59e0b',
               600: '#d97706',
               900: '#78350f',
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     };
   </script>
   <style>
@@ -44,22 +45,22 @@
     }
     body {
       margin: 0;
-      background-color: #0f172a;
+      background: radial-gradient(circle at top, #1e293b 0%, #090d16 100%);
       color: #0f172a;
       font-family: 'Noto Sans KR', 'Inter', sans-serif;
+      min-height: 100vh;
     }
-    /* 모바일 프레임 중심 레이아웃이면서도 데스크톱에서도 쾌적하게 중앙 정렬 */
-    .app-shell {
+    /* 모바일 프레임 중심 레이아웃이면서도 모바일 기기 및 데스크톱 양쪽에서 쾌적하게 표시 */
+    .mobile-frame {
       width: 100%;
-      max-width: 520px;
+      max-width: 480px;
       min-height: 100vh;
       margin: 0 auto;
       background-color: #f8fafc;
       position: relative;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.55);
-      padding-bottom: 88px;
+      box-shadow: 0 25px 70px -15px rgba(0, 0, 0, 0.65);
+      padding-bottom: 92px;
     }
-    /* 커스텀 스크롤바 숨김/슬림화 */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -67,1125 +68,764 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-    @keyframes fadeSlideUp {
-      from {
+    @keyframes popIn {
+      0% {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(10px) scale(0.96);
       }
-      to {
+      100% {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
     }
-    .animate-fade-up {
-      animation: fadeSlideUp 0.24s ease-out forwards;
+    @keyframes floatBounce {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-5px);
+      }
     }
-    .vault-glow {
-      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 55%, #fde68a 100%);
-      border: 1.5px solid #f59e0b;
-      box-shadow: 0 10px 25px -8px rgba(217, 119, 6, 0.28);
+    .animate-pop-in {
+      animation: popIn 0.22s ease-out forwards;
+    }
+    .animate-float {
+      animation: floatBounce 2.2s ease-in-out infinite;
+    }
+    .vault-card-highlight {
+      background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 55%, #fde68a 100%);
+      border: 2px solid #f59e0b;
+      box-shadow: 0 12px 28px -10px rgba(217, 119, 6, 0.35);
     }
   </style>
 </head>
 <body>
-  <div id="app" class="app-shell flex flex-col">
+  <div id="app" class="mobile-frame flex flex-col">
     <!-- 상단 헤더 -->
-    <header class="sticky top-0 z-30 bg-slate-900 text-white px-4 py-3.5 shadow-md rounded-b-2xl">
+    <header class="sticky top-0 z-30 bg-slate-950 text-white px-4 pt-3.5 pb-3 rounded-b-3xl shadow-lg">
       <div class="flex items-center justify-between gap-2">
-        <div>
+        <div class="min-w-0">
           <div class="flex items-center gap-1.5">
             <span class="inline-block w-2 h-2 rounded-full bg-amber-400"></span>
-            <span class="text-[11px] font-semibold tracking-wider text-amber-300 uppercase">
-              MUNPIA TREND & IDEA LAB
+            <span class="text-[11px] font-bold tracking-wider text-amber-300">
+              MUNPIA TREND & NEXT-WORK LAB
             </span>
           </div>
-          <h1 class="text-base sm:text-lg font-extrabold tracking-tight mt-0.5">
-            베스트 분석 · 차기작 구상 노트
+          <h1 class="text-base sm:text-lg font-black tracking-tight mt-0.5 truncate">
+            문피아 베스트 분석 · 차기작 스튜디오
           </h1>
         </div>
-        <button
-          id="btn-reset-demo"
-          type="button"
-          class="px-2.5 py-1.5 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl transition cursor-pointer"
-          title="초기 샘플 데이터 복원"
-        >
-          샘플 초기화
-        </button>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button
+            id="btn-restore-seed"
+            type="button"
+            class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-bold transition cursor-pointer"
+          >
+            샘플복원
+          </button>
+        </div>
       </div>
-      <!-- 상단 요약 미니 바 -->
-      <div id="header-summary" class="mt-2.5 pt-2.5 border-t border-slate-800 flex items-center justify-between text-xs text-slate-300">
-        <!-- JS로 동적 렌더링 -->
-      </div>
+
+      <!-- 상단 요약 상태 바 -->
+      <div id="header-stats" class="mt-2.5 pt-2.5 border-t border-slate-800/90 flex items-center justify-between gap-2 text-xs text-slate-300"></div>
     </header>
 
-    <!-- 토스트 / 안내 배너 -->
-    <div id="toast-container" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[480px] pointer-events-none flex flex-col gap-2"></div>
+    <!-- 토스트 알림 컨테이너 -->
+    <div id="toast-area" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[440px] pointer-events-none flex flex-col gap-2"></div>
 
-    <!-- 메인 컨텐츠 영역 -->
-    <main id="main-content" class="flex-1 px-3.5 pt-4 space-y-4"></main>
+    <!-- 메인 뷰 영역 -->
+    <main id="main-view" class="flex-1 px-3.5 pt-3.5 space-y-4"></main>
 
-    <!-- 하단 모바일 네비게이션 바 (4개 탭: 등록/목록, 카테고리/보관함, 아이디어변형, 달력/통계) -->
-    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-full max-w-[520px] bg-white/95 backdrop-blur border-t border-slate-200 px-2 py-1.5 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] rounded-t-2xl">
-      <div class="grid grid-cols-4 gap-1">
-        <button data-tab="register" class="nav-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-xs font-semibold transition cursor-pointer">
+    <!-- 하단 모바일 5탭 내비게이션 -->
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-full max-w-[480px] bg-white/95 backdrop-blur border-t border-slate-200 px-1.5 py-1.5 rounded-t-3xl shadow-[0_-8px_25px_rgba(15,23,42,0.08)]">
+      <div class="grid grid-cols-5 gap-1">
+        <button type="button" data-nav="register" class="bottom-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-2xl text-[11px] font-bold transition cursor-pointer relative">
           <span class="text-base leading-none mb-1">✍️</span>
-          <span>작품등록</span>
+          <span>등록/임시</span>
+          <span id="nav-badge-temp" class="hidden absolute top-1 right-1.5 min-w-[15px] h-3.5 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center">0</span>
         </button>
-        <button data-tab="categories" class="nav-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-xs font-semibold transition cursor-pointer">
+        <button type="button" data-nav="categories" class="bottom-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-2xl text-[11px] font-bold transition cursor-pointer relative">
           <span class="text-base leading-none mb-1">🗂️</span>
           <span>카테고리</span>
+          <span id="nav-badge-vault" class="hidden absolute top-1 right-1.5 min-w-[15px] h-3.5 px-1 rounded-full bg-amber-500 text-white text-[9px] font-black flex items-center justify-center">0</span>
         </button>
-        <button data-tab="vault" class="nav-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-xs font-semibold transition cursor-pointer relative">
+        <button type="button" data-nav="studio" class="bottom-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-2xl text-[11px] font-bold transition cursor-pointer">
           <span class="text-base leading-none mb-1">💡</span>
-          <span>보관함변형</span>
-          <span id="vault-badge-count" class="hidden absolute top-1 right-2.5 min-w-[16px] h-4 px-1 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center">0</span>
+          <span>변형스튜디오</span>
         </button>
-        <button data-tab="calendar" class="nav-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-xs font-semibold transition cursor-pointer">
+        <button type="button" data-nav="calendar" class="bottom-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-2xl text-[11px] font-bold transition cursor-pointer">
           <span class="text-base leading-none mb-1">📅</span>
-          <span>달력·통계</span>
+          <span>달력</span>
+        </button>
+        <button type="button" data-nav="metadata" class="bottom-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-2xl text-[11px] font-bold transition cursor-pointer">
+          <span class="text-base leading-none mb-1">📈</span>
+          <span>메타/백업</span>
         </button>
       </div>
     </nav>
 
-    <!-- 아이디어 초안 저장 모달/시트 -->
-    <div id="draft-modal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-3">
-      <div class="bg-white w-full max-w-[490px] rounded-2xl p-4 shadow-2xl max-h-[82vh] overflow-y-auto animate-fade-up">
-        <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
-          <h3 class="font-bold text-base text-slate-900">📌 저장된 차기작 기획안</h3>
-          <button id="btn-close-draft-modal" class="p-1.5 rounded-xl text-slate-500 hover:bg-slate-100 cursor-pointer">✕</button>
+    <!-- 중복 작품 안내 + 귀여운 캐릭터 팝업 모달 -->
+    <div id="duplicate-modal" class="fixed inset-0 z-50 hidden bg-slate-950/65 backdrop-blur-xs flex items-center justify-center p-4">
+      <div class="bg-white w-full max-w-[380px] rounded-3xl p-5 shadow-2xl border-2 border-amber-300 text-center animate-pop-in">
+        <!-- 귀여운 고양이 작가 SVG 캐릭터 -->
+        <div class="mx-auto w-24 h-24 animate-float">
+          <svg viewBox="0 0 120 120" class="w-full h-full" aria-hidden="true">
+            <!-- 귀 -->
+            <polygon points="24,48 16,14 48,32" fill="#fbbf24" stroke="#78350f" stroke-width="3" stroke-linejoin="round" />
+            <polygon points="96,48 104,14 72,32" fill="#fbbf24" stroke="#78350f" stroke-width="3" stroke-linejoin="round" />
+            <polygon points="27,43 22,22 42,34" fill="#fda4af" />
+            <polygon points="93,43 98,22 78,34" fill="#fda4af" />
+            <!-- 얼굴 -->
+            <ellipse cx="60" cy="64" rx="40" ry="34" fill="#fef3c7" stroke="#78350f" stroke-width="3" />
+            <!-- 볼 홍조 -->
+            <ellipse cx="34" cy="70" rx="6.5" ry="4" fill="#fb7185" opacity="0.55" />
+            <ellipse cx="86" cy="70" rx="6.5" ry="4" fill="#fb7185" opacity="0.55" />
+            <!-- 눈 -->
+            <circle cx="44" cy="60" r="5" fill="#1e293b" />
+            <circle cx="42.5" cy="58.2" r="1.8" fill="#ffffff" />
+            <circle cx="76" cy="60" r="5" fill="#1e293b" />
+            <circle cx="74.5" cy="58.2" r="1.8" fill="#ffffff" />
+            <!-- 코 & 입 -->
+            <polygon points="56,66 64,66 60,71" fill="#f43f5e" />
+            <path d="M52,74 Q56,79 60,74 Q64,79 68,74" fill="none" stroke="#78350f" stroke-width="2.5" stroke-linecap="round" />
+            <!-- 돋보기 -->
+            <circle cx="84" cy="84" r="11" fill="#e0f2fe" stroke="#0284c7" stroke-width="3" />
+            <line x1="92" y1="92" x2="103" y2="103" stroke="#78350f" stroke-width="4" stroke-linecap="round" />
+          </svg>
         </div>
-        <div id="saved-drafts-list" class="mt-3 space-y-3"></div>
+
+        <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[11px] font-extrabold">
+          중복 체크 발견!
+        </span>
+        <h3 class="text-lg font-black text-slate-900 mt-1.5">
+          이미 등록된 작품입니다
+        </h3>
+        <p id="duplicate-modal-desc" class="text-xs text-slate-600 mt-1.5 leading-relaxed"></p>
+
+        <div class="mt-4 flex flex-col gap-2">
+          <button
+            id="btn-dup-edit"
+            type="button"
+            class="w-full py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-extrabold transition cursor-pointer"
+          >
+            기존 작품 수정/평가하러 가기
+          </button>
+          <button
+            id="btn-dup-close"
+            type="button"
+            class="w-full py-2 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
+          >
+            닫기
+          </button>
+        </div>
       </div>
+    </div>
+
+    <!-- 1·2·3차 전체 수정 모달 -->
+    <div id="edit-work-modal" class="fixed inset-0 z-50 hidden bg-slate-950/65 backdrop-blur-xs flex items-end sm:items-center justify-center p-2.5">
+      <div id="edit-work-modal-panel" class="bg-white w-full max-w-[460px] rounded-3xl p-4 shadow-2xl max-h-[88vh] overflow-y-auto animate-pop-in"></div>
     </div>
   </div>
 
   <script>
     // =========================================================================
-    // 1. 상수 및 내장 베스트 데이터베이스 (투데이 베스트 / 신규 베스트 시뮬레이션)
+    // 1. 저장소 키 및 기준 상수 정의
     // =========================================================================
-    const STORAGE_KEY_WORKS = 'munpia_trend_lab_works_v1';
-    const STORAGE_KEY_TAGS = 'munpia_trend_lab_tags_v1';
-    const STORAGE_KEY_DRAFTS = 'munpia_trend_lab_drafts_v1';
+    const STORAGE_KEYS = {
+      WORKS: 'munpia_studio_works_v2',
+      TAGS: 'munpia_studio_tags_v2',
+      SAVED_IDEAS: 'munpia_studio_saved_ideas_v2',
+    };
 
-    const RATING_OPTIONS = [
-      { id: 'drop_1_5', label: '★ 1~5화 하차', shortLabel: '★ 1~5화', stars: '★', desc: '도입부 후킹·문체·전개 속도 미흡', color: 'bg-rose-50 text-rose-700 border-rose-200' },
-      { id: 'drop_6_10', label: '★★ 6~10화 하차', shortLabel: '★★ 6~10화', stars: '★★', desc: '초반 설정 이후 위기·보상 루프 약화', color: 'bg-orange-50 text-orange-700 border-orange-200' },
-      { id: 'drop_11_15', label: '★★★ 11~15화 하차', shortLabel: '★★★ 11~15화', desc: '무난하나 차별화 포인트·고구마 해소 아쉬움', color: 'bg-sky-50 text-sky-700 border-sky-200' },
-      { id: 'read_16_plus', label: '★★★★ 16화 이상 정독', shortLabel: '★★★★ 16화+', desc: '흡입력 우수 · 차기작 레퍼런스 가치 높음', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+    const BEST_SOURCES = [
+      { id: 'today', label: '투데이 베스트', badgeClass: 'bg-blue-100 text-blue-800 border-blue-200' },
+      { id: 'new', label: '신규 베스트', badgeClass: 'bg-indigo-100 text-indigo-800 border-indigo-200' },
     ];
 
-    const EXTRA_BADGES = [
-      { id: 'legend', label: '레전드 (작가뽕)', emoji: '🔥', activeClass: 'bg-purple-600 text-white border-purple-600', chipClass: 'bg-purple-100 text-purple-800 border-purple-200' },
-      { id: 'supernormal', label: '슈퍼노멀 (일반연재)', emoji: '⚡', activeClass: 'bg-blue-600 text-white border-blue-600', chipClass: 'bg-blue-100 text-blue-800 border-blue-200' },
-      { id: 'vault', label: '보관함 (좋은소스)', emoji: '💎', activeClass: 'bg-amber-500 text-white border-amber-500', chipClass: 'bg-amber-100 text-amber-900 border-amber-300' },
+    const GENRE_LIST = [
+      '현대판타지', '판타지', '무협', '퓨전판타지', '대체역사',
+      '스포츠', '전쟁·밀리터리', 'SF', '드라마'
     ];
 
-    const DEFAULT_TAG_POOL = [
-      '회귀', '빙의', '상태창', '먼치킨', '사이다', '착각계',
-      '아카데미', '재벌물', '현대판타지', '무협', '역대급', '성장형', '두뇌싸움'
+    // 요청된 5가지 별점 선택지 (단일 선택)
+    const RATING_CHOICES = [
+      { id: 'drop_1_5', label: '★ 1~5화 하차', short: '★ 1~5화', score: 1, pill: 'bg-rose-50 text-rose-700 border-rose-200' },
+      { id: 'drop_6_10', label: '★★ 6~10화 하차', short: '★★ 6~10화', score: 2, pill: 'bg-orange-50 text-orange-700 border-orange-200' },
+      { id: 'drop_11_15', label: '★★★ 11~15화 하차', short: '★★★ 11~15화', score: 3, pill: 'bg-sky-50 text-sky-700 border-sky-200' },
+      { id: 'read_16_plus', label: '★★★★ 16화 이상 정독', short: '★★★★ 16화+', score: 4, pill: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+      { id: 'pending', label: '☆ 판단 보류', short: '☆ 판단 보류', score: 2.5, pill: 'bg-slate-100 text-slate-700 border-slate-300' },
     ];
 
-    const VARIATION_IDEAS = [
-      { id: 'genre_shift', label: '장르 변경', icon: '🎭', hint: '기존 장르의 문법을 다른 장르 틀로 전복' },
-      { id: 'add_material', label: '다른 소재 첨가', icon: '🧩', hint: '이질적인 핵심 소재·시스템을 결합' },
-      { id: 'era_shift', label: '시대 변경', icon: '⏳', hint: '근미래·조선·아포칼립스·제국기로 배경 전환' },
-      { id: 'protagonist_shift', label: '주인공 변경', icon: '🔄', hint: '조연·악역·빌런·퇴물 전문가로 시점 전환' },
-      { id: 'rule_twist', label: '핵심 규칙 변주', icon: '⚙️', hint: '성장 조건이나 패널티를 역설적으로 설계' },
-      { id: 'tone_shift', label: '분위기·톤 전환', icon: '🌓', hint: '다크 시리어스 ↔ 유쾌한 코미디/착각 완급 조절' },
-    ];
-
-    // 문피아 투데이 베스트 & 신규 베스트 모의 데이터셋
-    const MUNPIA_SAMPLE_CATALOG = [
+    // 중복 선택 가능한 추가 표시 3종
+    const EXTRA_MARKS = [
       {
-        title: '망나니 3황자가 검신으로 각성함',
-        sources: ['today'],
-        genre: '판타지',
-        author: '청풍검객',
-        synopsis: '제국에서 손꼽히는 트러블메이커 3황자. 전생의 기억과 함께 마나 회로 대신 오러 코어를 개방하며 왕위 계승 판도를 뒤집는다.',
-        totalEpisodes: 184,
-        latestViews: '142,800',
-        tags: ['회귀', '먼치킨', '사이다', '성장형'],
+        id: 'legend',
+        label: '레전드 (작가뽕)',
+        short: '레전드',
+        icon: '🔥',
+        activeBtn: 'bg-purple-600 text-white border-purple-600 shadow-xs',
+        chip: 'bg-purple-100 text-purple-900 border-purple-300',
       },
       {
-        title: 'AI가 점지해 준 S급 공략집',
-        sources: ['new'],
-        genre: '헌터/현대판타지',
-        author: '코드네임제로',
-        synopsis: '각성 테스트 낙제생에게 주어진 건 몬스터의 약점과 던전 변수를 실시간 시뮬레이션하는 전술 AI였다.',
-        totalEpisodes: 42,
-        latestViews: '58,420',
-        tags: ['현대판타지', '두뇌싸움', '사이다'],
+        id: 'supernormal',
+        label: '슈퍼노멀 (일반연재)',
+        short: '슈퍼노멀',
+        icon: '⚡',
+        activeBtn: 'bg-cyan-600 text-white border-cyan-600 shadow-xs',
+        chip: 'bg-cyan-100 text-cyan-900 border-cyan-300',
       },
       {
-        title: '무림맹 의원님은 칼보다 바늘이 빠르다',
-        sources: ['today', 'new'],
-        genre: '무협',
-        author: '백화곡주',
-        synopsis: '혈도를 짚는 순간 고수의 내공이 역류한다. 정파와 사파가 벌이는 치열한 암투 속에서 침술 하나로 판을 흔드는 무림 명의 이야기.',
-        totalEpisodes: 96,
-        latestViews: '91,350',
-        tags: ['무협', '착각계', '사이다', '역대급'],
-      },
-      {
-        title: '파산 직전 게임사의 마지막 투자자',
-        sources: ['new'],
-        genre: '현대판타지',
-        author: '리셋버튼',
-        synopsis: '망작 판정을 받은 가상현실 MMORPG의 숨겨진 버그를 독점한 남자가 현실의 금융과 게임 시장을 동시에 장악한다.',
-        totalEpisodes: 31,
-        latestViews: '47,910',
-        tags: ['재벌물', '두뇌싸움', '역대급'],
-      },
-      {
-        title: '아카데미 최하위권의 마법 공학 노트',
-        sources: ['today'],
-        genre: '퓨전판타지',
-        author: '기어스미스',
-        synopsis: '정통 마법에는 재능이 없지만 마력 효율을 극대화하는 마도 공학만큼은 누구보다 천재적인 소년의 아카데미 생존기.',
-        totalEpisodes: 152,
-        latestViews: '118,600',
-        tags: ['아카데미', '성장형', '착각계'],
-      },
-      {
-        title: '멸망한 성좌들의 마지막 스폰서',
-        sources: ['today'],
-        genre: '판타지',
-        author: '은하수고래',
-        synopsis: '성좌에게 선택받는 대신, 몰락한 고대 신격들에게 코인을 투자하며 최강의 권능을 회수하는 역발상 방송·던전물.',
-        totalEpisodes: 215,
-        latestViews: '167,200',
-        tags: ['상태창', '먼치킨', '사이다'],
+        id: 'vault',
+        label: '보관함 (좋은소스)',
+        short: '보관함',
+        icon: '💎',
+        activeBtn: 'bg-amber-500 text-white border-amber-500 shadow-xs',
+        chip: 'bg-amber-200 text-amber-950 border-amber-400',
       },
     ];
 
-    // 로컬 날짜 문자열 헬퍼 (YYYY-MM-DD)
-    function formatDateKey(dateObj) {
+    const DEFAULT_TAGS = [
+      '회귀', '빙의', '상태창', '먼치킨', '사이다',
+      '착각계', '아카데미', '재벌물', '무협', '생존', '두뇌싸움'
+    ];
+
+    const TWIST_AXES = [
+      { id: 'genre', label: '장르 변경', icon: '🎭', desc: '기존 장르 문법을 다른 장르 틀로 전환' },
+      { id: 'material', label: '다른 소재 첨가', icon: '🧩', desc: '독특한 시스템·직업·아이템 소재 결합' },
+      { id: 'era', label: '시대 변경', icon: '⏳', desc: '근미래·조선·제국·아포칼립스 배경 전환' },
+      { id: 'protagonist', label: '주인공 변경', icon: '🔄', desc: '조연·악역·퇴물 전문가·행정가로 시점 전환' },
+    ];
+
+    // =========================================================================
+    // 2. 날짜 및 시드 데이터 헬퍼
+    // =========================================================================
+    function toDateKey(dateObj) {
       const y = dateObj.getFullYear();
       const m = String(dateObj.getMonth() + 1).padStart(2, '0');
       const d = String(dateObj.getDate()).padStart(2, '0');
       return `${y}-${m}-${d}`;
     }
 
-    function getRelativeDateKey(offsetDays) {
+    function offsetDateKey(daysOffset) {
       const now = new Date();
-      const dt = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offsetDays);
-      return formatDateKey(dt);
-    }
-
-    // 초기 데모 등록 작품 생성 (최근 며칠간 등록 기록 포함)
-    function buildInitialWorks() {
-      const todayKey = getRelativeDateKey(0);
-      const minus1Key = getRelativeDateKey(-1);
-      const minus2Key = getRelativeDateKey(-2);
-      const minus5Key = getRelativeDateKey(-5);
-
-      return [
-        {
-          id: 'w-101',
-          title: '망나니 3황자가 검신으로 각성함',
-          sources: ['today'],
-          genre: '판타지',
-          author: '청풍검객',
-          synopsis: '제국에서 손꼽히는 트러블메이커 3황자. 전생의 기억과 함께 마나 회로 대신 오러 코어를 개방하며 왕위 계승 판도를 뒤집는다.',
-          totalEpisodes: 184,
-          latestViews: '142,800',
-          rating: 'read_16_plus',
-          extras: ['legend', 'vault'],
-          tags: ['회귀', '먼치킨', '사이다', '성장형'],
-          createdAt: todayKey,
-        },
-        {
-          id: 'w-102',
-          title: 'AI가 점지해 준 S급 공략집',
-          sources: ['new'],
-          genre: '헌터/현대판타지',
-          author: '코드네임제로',
-          synopsis: '각성 테스트 낙제생에게 주어진 건 몬스터의 약점과 던전 변수를 실시간 시뮬레이션하는 전술 AI였다.',
-          totalEpisodes: 42,
-          latestViews: '58,420',
-          rating: 'drop_11_15',
-          extras: ['vault', 'supernormal'],
-          tags: ['현대판타지', '두뇌싸움', '사이다'],
-          createdAt: todayKey,
-        },
-        {
-          id: 'w-103',
-          title: '무림맹 의원님은 칼보다 바늘이 빠르다',
-          sources: ['today', 'new'],
-          genre: '무협',
-          author: '백화곡주',
-          synopsis: '혈도를 짚는 순간 고수의 내공이 역류한다. 정파와 사파가 벌이는 치열한 암투 속에서 침술 하나로 판을 흔드는 무림 명의 이야기.',
-          totalEpisodes: 96,
-          latestViews: '91,350',
-          rating: 'read_16_plus',
-          extras: ['legend'],
-          tags: ['무협', '착각계', '사이다', '역대급'],
-          createdAt: minus1Key,
-        },
-        {
-          id: 'w-104',
-          title: '파산 직전 게임사의 마지막 투자자',
-          sources: ['new'],
-          genre: '현대판타지',
-          author: '리셋버튼',
-          synopsis: '망작 판정을 받은 가상현실 MMORPG의 숨겨진 버그를 독점한 남자가 현실의 금융과 게임 시장을 동시에 장악한다.',
-          totalEpisodes: 31,
-          latestViews: '47,910',
-          rating: 'drop_6_10',
-          extras: ['supernormal'],
-          tags: ['재벌물', '두뇌싸움'],
-          createdAt: minus2Key,
-        },
-        {
-          id: 'w-105',
-          title: '아카데미 최하위권의 마법 공학 노트',
-          sources: ['today'],
-          genre: '퓨전판타지',
-          author: '기어스미스',
-          synopsis: '정통 마법에는 재능이 없지만 마력 효율을 극대화하는 마도 공학만큼은 누구보다 천재적인 소년의 아카데미 생존기.',
-          totalEpisodes: 152,
-          latestViews: '118,600',
-          rating: 'drop_1_5',
-          extras: ['vault'],
-          tags: ['아카데미', '성장형', '착각계'],
-          createdAt: minus5Key,
-        },
-      ];
-    }
-
-    // =========================================================================
-    // 2. 애플리케이션 상태 관리
-    // =========================================================================
-    const state = {
-      activeTab: 'register', // 'register' | 'categories' | 'vault' | 'calendar'
-      works: [],
-      tagPool: [],
-      savedDrafts: [],
-      // 등록 폼 상태
-      form: {
-        sources: ['today'],
-        title: '',
-        genre: '판타지',
-        author: '',
-        synopsis: '',
-        totalEpisodes: 25,
-        latestViews: '32,500',
-        rating: 'read_16_plus',
-        extras: ['vault'],
-        tags: ['사이다'],
-        customTagInput: '',
-        autoFilledNotice: '',
-      },
-      // 카테고리 필터 상태
-      categoryFilter: {
-        type: 'all', // 'all' | 'vault' | 'legend' | 'supernormal' | 'rating' | 'source_today' | 'source_new'
-        ratingId: 'read_16_plus',
-        searchQuery: '',
-      },
-      // 보관함 변형 스튜디오 상태
-      vaultStudio: {
-        selectedWorkId: null,
-        selectedIdeas: ['genre_shift', 'add_material'],
-        seed: 1,
-        generatedPlan: null,
-      },
-      // 달력 상태
-      calendar: {
-        year: new Date().getFullYear(),
-        month: new Date().getMonth(), // 0-indexed
-        selectedDate: formatDateKey(new Date()),
-      },
-      highlightWorkId: null,
-    };
-
-    function loadState() {
-      try {
-        const rawWorks = localStorage.getItem(STORAGE_KEY_WORKS);
-        const rawTags = localStorage.getItem(STORAGE_KEY_TAGS);
-        const rawDrafts = localStorage.getItem(STORAGE_KEY_DRAFTS);
-
-        state.works = rawWorks ? JSON.parse(rawWorks) : buildInitialWorks();
-        state.tagPool = rawTags ? JSON.parse(rawTags) : [...DEFAULT_TAG_POOL];
-        state.savedDrafts = rawDrafts ? JSON.parse(rawDrafts) : [];
-      } catch (err) {
-        console.error('스토리지 로드 실패:', err);
-        state.works = buildInitialWorks();
-        state.tagPool = [...DEFAULT_TAG_POOL];
-        state.savedDrafts = [];
-      }
-
-      const firstVault = state.works.find((w) => Array.isArray(w.extras) && w.extras.includes('vault'));
-      state.vaultStudio.selectedWorkId = firstVault ? firstVault.id : (state.works[0]?.id || null);
-      generateIdeaPlan();
-    }
-
-    function persistState() {
-      try {
-        localStorage.setItem(STORAGE_KEY_WORKS, JSON.stringify(state.works));
-        localStorage.setItem(STORAGE_KEY_TAGS, JSON.stringify(state.tagPool));
-        localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(state.savedDrafts));
-      } catch (err) {
-        console.error('스토리지 저장 실패:', err);
-        showToast('브라우저 저장 공간에 쓰기 중 오류가 발생했습니다.', 'error');
-      }
+      const target = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysOffset);
+      return toDateKey(target);
     }
 
     function normalizeTitle(str) {
       return (str || '').replace(/\s+/g, '').toLowerCase().trim();
     }
 
-    // =========================================================================
-    // 3. 토스트 알림 유틸리티
-    // =========================================================================
-    function showToast(message, type = 'info', actionLabel = null, onAction = null) {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
+    // 2차 등록 완료 여부 판별 (장르, 작가명, 총 회차 > 0, 최근화 조회수 입력 시 완료)
+    function isStage2Complete(work) {
+      return Boolean(
+        work &&
+        String(work.genre || '').trim() &&
+        String(work.author || '').trim() &&
+        Number(work.totalEpisodes) > 0 &&
+        String(work.latestViews || '').trim()
+      );
+    }
 
-      const styleMap = {
+    // [임시등록] 여부: 2차 등록이 완료되지 않은 작품은 무조건 [임시등록]
+    function isTempWork(work) {
+      return !isStage2Complete(work);
+    }
+
+    function createSeedWorks() {
+      return [
+        {
+          id: 'seed-1',
+          title: '재벌가 막내아들이 검도를 숨김',
+          sources: ['today'],
+          genre: '현대판타지',
+          author: '청룡검기',
+          totalEpisodes: 168,
+          latestViews: '154,200',
+          rating: 'read_16_plus',
+          extras: ['legend', 'vault'],
+          tags: ['회귀', '재벌물', '사이다', '먼치킨'],
+          createdAt: offsetDateKey(0),
+        },
+        {
+          id: 'seed-2',
+          title: '무림맹 수석 약사의 생존 일지',
+          sources: ['today', 'new'],
+          genre: '무협',
+          author: '백초선인',
+          totalEpisodes: 84,
+          latestViews: '79,450',
+          rating: 'read_16_plus',
+          extras: ['vault', 'supernormal'],
+          tags: ['무협', '착각계', '두뇌싸움'],
+          createdAt: offsetDateKey(0),
+        },
+        {
+          id: 'seed-3',
+          title: '레벨 1 공성전 기술자의 요새 설계',
+          sources: ['new'],
+          genre: '판타지',
+          author: '철벽기사',
+          totalEpisodes: 29,
+          latestViews: '38,900',
+          rating: 'drop_11_15',
+          extras: ['vault'],
+          tags: ['아카데미', '생존', '두뇌싸움'],
+          createdAt: offsetDateKey(-1),
+        },
+        {
+          id: 'seed-4',
+          title: '던전 속 편의점 알바생이 된 사연',
+          sources: ['new'],
+          genre: '퓨전판타지',
+          author: '야간근무자',
+          totalEpisodes: 19,
+          latestViews: '24,110',
+          rating: 'drop_6_10',
+          extras: ['supernormal'],
+          tags: ['빙의', '상태창', '착각계'],
+          createdAt: offsetDateKey(-2),
+        },
+        {
+          id: 'seed-5',
+          title: '조선 말기 철도왕의 비밀 금고',
+          sources: ['today'],
+          genre: '대체역사',
+          author: '증기기관사',
+          totalEpisodes: 112,
+          latestViews: '66,800',
+          rating: 'pending',
+          extras: ['legend'],
+          tags: ['재벌물', '두뇌싸움'],
+          createdAt: offsetDateKey(-4),
+        },
+        // 1차만 등록된 [임시등록] 샘플 작품 (2차 등록 완료 시 3차 평가 가능)
+        {
+          id: 'seed-temp-1',
+          title: '퇴마사 길드의 꼴찌 기록관',
+          sources: ['new'],
+          genre: '',
+          author: '',
+          totalEpisodes: 0,
+          latestViews: '',
+          rating: null,
+          extras: [],
+          tags: [],
+          createdAt: offsetDateKey(0),
+        },
+        {
+          id: 'seed-temp-2',
+          title: '성좌들의 경매장에 낙찰된 폐급 스킬',
+          sources: ['today'],
+          genre: '판타지',
+          author: '',
+          totalEpisodes: 0,
+          latestViews: '',
+          rating: null,
+          extras: [],
+          tags: ['상태창'],
+          createdAt: offsetDateKey(-1),
+        },
+      ];
+    }
+
+    // =========================================================================
+    // 3. 앱 상태 및 로컬스토리지 관리
+    // =========================================================================
+    const appState = {
+      activeTab: 'register', // 'register' | 'categories' | 'studio' | 'calendar' | 'metadata'
+      works: [],
+      tagPool: [],
+      savedIdeas: [],
+      // 1차 & 연속 2차 등록 폼 상태
+      regForm: {
+        sources: ['today'],
+        title: '',
+        openStage2Now: true,
+        genre: '현대판타지',
+        author: '',
+        totalEpisodes: '',
+        latestViews: '',
+        tagInput: '',
+      },
+      // 카테고리 탭 상태
+      catState: {
+        filter: 'all', // 'all' | 'temp' | 'vault' | 'legend' | 'supernormal' | 'rating' | 'tag'
+        ratingFilter: 'read_16_plus',
+        tagFilter: '',
+        search: '',
+      },
+      // 보관함 변형 스튜디오 상태
+      studioState: {
+        selectedWorkId: null,
+        selectedAxes: ['genre', 'material'],
+        ideaSeed: 1,
+        titleSeed: 1,
+        generatedTwists: [],
+        generatedTitles: [],
+      },
+      // 달력 상태
+      calState: {
+        year: new Date().getFullYear(),
+        month: new Date().getMonth(),
+        selectedDate: toDateKey(new Date()),
+      },
+      // 중복 팝업 대상 작품 ID
+      duplicateTargetId: null,
+      // 현재 수정 중인 작품 ID
+      editingWorkId: null,
+    };
+
+    function loadFromStorage() {
+      try {
+        const rawWorks = localStorage.getItem(STORAGE_KEYS.WORKS);
+        const rawTags = localStorage.getItem(STORAGE_KEYS.TAGS);
+        const rawIdeas = localStorage.getItem(STORAGE_KEYS.SAVED_IDEAS);
+
+        appState.works = rawWorks ? JSON.parse(rawWorks) : createSeedWorks();
+        appState.tagPool = rawTags ? JSON.parse(rawTags) : [...DEFAULT_TAGS];
+        appState.savedIdeas = rawIdeas ? JSON.parse(rawIdeas) : [];
+      } catch (err) {
+        console.error('로컬스토리지 읽기 오류:', err);
+        appState.works = createSeedWorks();
+        appState.tagPool = [...DEFAULT_TAGS];
+        appState.savedIdeas = [];
+      }
+
+      syncStudioSelection();
+      rebuildStudioTwists();
+      rebuildStudioTitles();
+    }
+
+    function saveToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEYS.WORKS, JSON.stringify(appState.works));
+        localStorage.setItem(STORAGE_KEYS.TAGS, JSON.stringify(appState.tagPool));
+        localStorage.setItem(STORAGE_KEYS.SAVED_IDEAS, JSON.stringify(appState.savedIdeas));
+      } catch (err) {
+        console.error('로컬스토리지 저장 오류:', err);
+        showToast('저장 공간에 쓰지 못했습니다.', 'error');
+      }
+    }
+
+    function syncStudioSelection() {
+      const vaultList = appState.works.filter((w) => Array.isArray(w.extras) && w.extras.includes('vault'));
+      const pool = vaultList.length ? vaultList : appState.works;
+      if (!pool.length) {
+        appState.studioState.selectedWorkId = null;
+        return;
+      }
+      const exists = pool.some((w) => w.id === appState.studioState.selectedWorkId);
+      if (!exists) {
+        appState.studioState.selectedWorkId = pool[0].id;
+      }
+    }
+
+    // =========================================================================
+    // 4. 토스트 & 클립보드 유틸리티
+    // =========================================================================
+    function showToast(message, type = 'info') {
+      const area = document.getElementById('toast-area');
+      const el = document.createElement('div');
+
+      const palette = {
         info: 'bg-slate-900 text-white border-slate-700',
-        success: 'bg-emerald-950 text-emerald-100 border-emerald-600',
+        success: 'bg-emerald-950 text-emerald-100 border-emerald-500',
         warning: 'bg-amber-950 text-amber-100 border-amber-500',
         error: 'bg-rose-950 text-rose-100 border-rose-500',
       };
 
-      toast.className = `pointer-events-auto border rounded-2xl px-3.5 py-2.5 shadow-xl text-xs sm:text-sm font-medium flex items-center justify-between gap-2 animate-fade-up ${styleMap[type] || styleMap.info}`;
+      el.className = `pointer-events-auto border rounded-2xl px-3.5 py-2.5 text-xs font-bold shadow-xl animate-pop-in ${palette[type] || palette.info}`;
+      el.textContent = message;
+      area.appendChild(el);
 
-      const textSpan = document.createElement('span');
-      textSpan.textContent = message;
-      toast.appendChild(textSpan);
-
-      if (actionLabel && typeof onAction === 'function') {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.textContent = actionLabel;
-        btn.className = 'shrink-0 px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-bold text-xs hover:bg-amber-300 cursor-pointer';
-        btn.addEventListener('click', () => {
-          onAction();
-          toast.remove();
-        });
-        toast.appendChild(btn);
-      }
-
-      container.appendChild(toast);
       setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.25s ease';
-        setTimeout(() => toast.remove(), 250);
-      }, 3400);
+        el.style.opacity = '0';
+        el.style.transition = 'opacity 0.22s ease';
+        setTimeout(() => el.remove(), 220);
+      }, 2800);
+    }
+
+    function copyTitleToClipboard(title) {
+      if (!title) return;
+      const textarea = document.createElement('textarea');
+      textarea.value = title;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast(`"${title}" 제목 복사 완료! 문피아 앱에서 검색해보세요.`, 'success');
+      } catch (err) {
+        showToast('제목 복사에 실패했습니다.', 'error');
+      } finally {
+        textarea.remove();
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     // =========================================================================
-    // 4. 문피아 베스트 자동 정보 검색/생성 시뮬레이터
+    // 5. 보관함 아이디어 변형 & 가제목 3종 생성 엔진
     // =========================================================================
-    function lookupMunpiaMetadata(rawTitle) {
-      const clean = (rawTitle || '').trim();
-      const norm = normalizeTitle(clean);
-
-      // 1) 내장 샘플 카탈로그에서 부분/정확 매칭
-      const matched = MUNPIA_SAMPLE_CATALOG.find((item) => {
-        const itemNorm = normalizeTitle(item.title);
-        return itemNorm === norm || itemNorm.includes(norm) || (norm.length >= 3 && norm.includes(itemNorm));
-      });
-
-      if (matched) {
-        return {
-          matched: true,
-          sourceLabel: matched.sources.map((s) => (s === 'today' ? '투데이 베스트' : '신규 베스트')).join(' · '),
-          genre: matched.genre,
-          author: matched.author,
-          synopsis: matched.synopsis,
-          totalEpisodes: matched.totalEpisodes,
-          latestViews: matched.latestViews,
-          suggestedTags: [...matched.tags],
-        };
-      }
-
-      // 2) 미등록 제목일 경우 키워드 기반 자동 메타데이터 생성
-      let genre = '판타지';
-      let suggestedTags = ['사이다', '성장형'];
-      if (/검|무림|협|도|내공|문파|의원/.test(clean)) {
-        genre = '무협';
-        suggestedTags = ['무협', '사이다', '역대급'];
-      } else if (/헌터|게이트|각성|던전|성좌|상태창|재벌|회사|AI|시스템/.test(clean)) {
-        genre = '현대판타지';
-        suggestedTags = ['상태창', '현대판타지', '사이다'];
-      } else if (/아카데미|마법|영주|황자|공작|빙의|회귀/.test(clean)) {
-        genre = '퓨전판타지';
-        suggestedTags = ['회귀', '빙의', '착각계'];
-      }
-
-      const hash = Array.from(clean).reduce((acc, ch) => acc + ch.charCodeAt(0), 17);
-      const authors = ['별빛작가', '천마서생', '달빛잉크', '은빛펜촉', '현실도피자', '네오스토리'];
-      const author = authors[hash % authors.length];
-      const totalEpisodes = 18 + (hash % 165);
-      const viewsNum = 14500 + ((hash * 3791) % 145000);
-
-      return {
-        matched: false,
-        sourceLabel: '문피아 베스트 자동 추정',
-        genre,
-        author,
-        synopsis: `「${clean}」 — 초반 전개 속도와 고유 설정을 중심으로 독자 유입을 노리는 ${genre} 작품. 핵심 갈등 구조와 보상 타이밍을 분석하기 좋은 트렌드 샘플입니다.`,
-        totalEpisodes,
-        latestViews: viewsNum.toLocaleString('ko-KR'),
-        suggestedTags,
-      };
+    function getSelectedStudioWork() {
+      const vaultList = appState.works.filter((w) => Array.isArray(w.extras) && w.extras.includes('vault'));
+      const pool = vaultList.length ? vaultList : appState.works;
+      return pool.find((w) => w.id === appState.studioState.selectedWorkId) || pool[0] || null;
     }
 
-    function applyAutoMetadataToForm() {
-      const title = state.form.title.trim();
-      if (!title) {
-        showToast('먼저 작품 제목을 입력해주세요.', 'warning');
+    function rebuildStudioTwists() {
+      const work = getSelectedStudioWork();
+      if (!work) {
+        appState.studioState.generatedTwists = [];
         return;
       }
 
-      // 중복 체크 안내
-      const duplicate = state.works.find((w) => normalizeTitle(w.title) === normalizeTitle(title));
-      if (duplicate) {
-        showToast('이미 등록된 작품입니다', 'warning', '목록 보기', () => {
-          state.activeTab = 'categories';
-          state.categoryFilter.type = 'all';
-          state.highlightWorkId = duplicate.id;
-          renderAll();
-        });
-      }
+      const seed = appState.studioState.ideaSeed;
+      const axes = appState.studioState.selectedAxes.length
+        ? appState.studioState.selectedAxes
+        : ['genre'];
 
-      const meta = lookupMunpiaMetadata(title);
-      state.form.genre = meta.genre;
-      state.form.author = meta.author;
-      state.form.synopsis = meta.synopsis;
-      state.form.totalEpisodes = meta.totalEpisodes;
-      state.form.latestViews = meta.latestViews;
-
-      // 추천 태그를 기존 선택 태그와 합쳐 최대 5개까지 채움
-      const mergedTags = [...new Set([...state.form.tags, ...meta.suggestedTags])].slice(0, 5);
-      state.form.tags = mergedTags;
-      state.form.autoFilledNotice = meta.matched
-        ? `문피아(${meta.sourceLabel}) DB에서 정보를 자동 불러왔습니다.`
-        : `입력하신 제목을 기준으로 ${meta.genre} 장르 메타데이터를 자동 생성했습니다. 필요시 직접 수정하세요.`;
-
-      renderAll();
-      showToast('작품 정보가 자동으로 채워졌습니다.', 'success');
-    }
-
-    // =========================================================================
-    // 5. 보관함(좋은소스) 차기작 아이디어 변형 엔진
-    // =========================================================================
-    function generateIdeaPlan() {
-      const vaultWorks = state.works.filter((w) => Array.isArray(w.extras) && w.extras.includes('vault'));
-      const sourceWork =
-        vaultWorks.find((w) => w.id === state.vaultStudio.selectedWorkId) ||
-        vaultWorks[0] ||
-        state.works[0];
-
-      if (!sourceWork) {
-        state.vaultStudio.generatedPlan = null;
-        return;
-      }
-
-      state.vaultStudio.selectedWorkId = sourceWork.id;
-      const chosenIds = state.vaultStudio.selectedIdeas.length
-        ? state.vaultStudio.selectedIdeas
-        : ['genre_shift'];
-
-      const s = state.vaultStudio.seed;
-
-      // 변형 요소별 구체 아이디어 풀
-      const twistPool = {
-        genre_shift: [
-          `${sourceWork.genre} 문법을 '미식·경영 느와르' 구조로 전복`,
-          `전투 중심 서사를 '법정·협상 스릴러' 전개로 재설계`,
-          `정통 ${sourceWork.genre} 클리셰를 '미스터리 추리 수사극'으로 전환`,
+      const pools = {
+        genre: [
+          `${work.genre || '판타지'} 핵심 갈등을 '미식·경영 느와르' 전개로 전환`,
+          `전투 위주 구조를 '법정·협상 심리전' 중심으로 재배치`,
+          `기존 클리셰를 '미스터리 추리 수사극' 서사로 변주`,
         ],
-        add_material: [
-          `'기억 경매소' 시스템과 '생존 요리/공방' 소재를 결합`,
-          `'폐기된 스킬 거래소'와 '정치 킹메이커' 요소를 접목`,
-          `'예지 로그(미래 오답노트)'와 '특수 직무 시뮬레이션' 결합`,
+        material: [
+          `'기억 잔재 회수' 시스템과 '특수 공방/제조' 소재 결합`,
+          `'폐기된 스킬 거래소'와 '정치 킹메이커' 요소 접목`,
+          `'미래 오답노트(예지 로그)'와 '현실 정산·투자' 결합`,
         ],
-        era_shift: [
+        era: [
           `배경을 '아포칼립스 이후 궤도 엘리베이터 도시'로 변경`,
           `무대를 '근대 개화기·철도 제국 시대'로 전환`,
-          `배경을 '초고령화·AI 통제 메가시티'로 재설정`,
+          `배경을 'AI 통제 메가시티·심해 기지'로 재설정`,
         ],
-        protagonist_shift: [
+        protagonist: [
           `주인공을 영웅이 아닌 '현장 철거/정산 전문가'로 변경`,
-          `주인공을 몰락 귀족의 '수석 집사·회계사'로 전환`,
-          `주인공을 은퇴한 '2인자·교관' 포지션으로 변경`,
-        ],
-        rule_twist: [
-          `강해질수록 '감정·기억 일부를 대가로 지불'하는 규칙 도입`,
-          `패배하거나 위기에 처할수록 '상대 역량이 복제'되는 반전 규칙`,
-          `하루 단위로 '능력치 배분이 리셋'되는 하이리스크 설계`,
-        ],
-        tone_shift: [
-          `어두운 생존극 톤에 '극단적 현실주의·블랙코미디'를 가미`,
-          `진지한 세계관 속에서 주인공만 '초월적 마이페이스'로 진행`,
-          `초반 사이다 쾌감을 '치밀한 복선 회수형 카타르시스'로 변주`,
+          `주인공을 귀족가의 '수석 집사·회계사'로 전환`,
+          `주인공을 은퇴한 '현장 교관·2인자' 포지션으로 변경`,
         ],
       };
 
-      const selectedTwistLines = chosenIds.map((id) => {
-        const list = twistPool[id] || twistPool.genre_shift;
+      appState.studioState.generatedTwists = axes.map((axisId) => {
+        const meta = TWIST_AXES.find((a) => a.id === axisId) || TWIST_AXES[0];
+        const list = pools[axisId] || pools.genre;
         return {
-          id,
-          label: VARIATION_IDEAS.find((v) => v.id === id)?.label || id,
-          text: list[s % list.length],
+          axisId,
+          label: meta.label,
+          icon: meta.icon,
+          ideaText: list[seed % list.length],
         };
       });
+    }
 
-      const baseKeyword = sourceWork.title.split(' ').slice(0, 2).join(' ');
-      const tagKeyword = sourceWork.tags[s % Math.max(1, sourceWork.tags.length)] || '역대급';
-      const primaryTwistLabel = selectedTwistLines[0]?.label || '아이디어 변주';
+    function rebuildStudioTitles() {
+      const work = getSelectedStudioWork();
+      if (!work) {
+        appState.studioState.generatedTitles = [];
+        return;
+      }
 
-      const candidateTitles = [
-        `${baseKeyword}, ${primaryTwistLabel}로 판을 뒤집다`,
-        `[${tagKeyword} 변주] ${sourceWork.genre} 천재는 룰을 새로 쓴다`,
-        `망한 줄 알았던 ${baseKeyword}의 숨겨진 공략법`,
+      const tSeed = appState.studioState.titleSeed;
+      const baseWords = (work.title || '차기작').split(' ').slice(0, 2).join(' ');
+      const tagSample = (work.tags && work.tags[tSeed % work.tags.length]) || '역대급';
+      const twistLabels = appState.studioState.generatedTwists.map((t) => t.label).join('·') || '변주';
+
+      const titlePacks = [
+        [
+          `${baseWords}, ${twistLabels}로 판을 뒤집다`,
+          `[${tagSample} 변주] ${work.genre || '판타지'} 천재는 규칙을 새로 쓴다`,
+          `망한 줄 알았던 ${baseWords}의 숨겨진 공략법`,
+        ],
+        [
+          `${twistLabels} 마스터는 1화부터 치트키를 쓴다`,
+          `두 번째 인생, ${baseWords}의 룰을 역이용하다`,
+          `모두가 포기한 ${baseWords}, 나만 정답을 안다`,
+        ],
+        [
+          `[${tagSample}] ${baseWords}으로 제국을 설계한다`,
+          `한계 돌파! ${twistLabels} 각성자의 역전극`,
+          `${work.genre || '판타지'} 최약체가 판도를 바꾸는 법`,
+        ],
       ];
 
-      const twistSummaryText = selectedTwistLines.map((t) => `• [${t.label}] ${t.text}`).join('\n');
-
-      const pitchSynopsis = [
-        `원작 「${sourceWork.title}」(${sourceWork.genre}, ${sourceWork.totalEpisodes}화 연재 트렌드 참고)의 핵심 매력인 '${sourceWork.tags.slice(0, 2).join('·') || '고속 전개'}' 감각을 가져오되, 차기작에서는 다음과 같이 변주했습니다.`,
-        twistSummaryText,
-        `1화부터 명확한 목표와 손에 잡히는 보상을 제시하며, 독자가 "다음 화를 안 보면 손해다"라고 느끼게 만드는 고밀도 차기작 시놉시스 가안입니다.`,
-      ].join('\n\n');
-
-      state.vaultStudio.generatedPlan = {
-        sourceTitle: sourceWork.title,
-        sourceGenre: sourceWork.genre,
-        twistLines: selectedTwistLines,
-        candidateTitles,
-        pitchSynopsis,
-      };
+      appState.studioState.generatedTitles = titlePacks[tSeed % titlePacks.length];
     }
 
     // =========================================================================
-    // 6. 문피아 앱/웹 바로가기 URL 헬퍼
+    // 6. 헤더, 내비게이션, 공통 카드 렌더링
     // =========================================================================
-    function getMunpiaLinks(title) {
-      const encoded = encodeURIComponent(title.trim());
-      return {
-        appScheme: `munpia://search?keyword=${encoded}`,
-        webSearchUrl: `https://www.munpia.com/search?keyword=${encoded}`,
-        bestBoardUrl: 'https://www.munpia.com/best/today?displayType=LIST',
-      };
-    }
+    function renderHeaderAndNav() {
+      const total = appState.works.length;
+      const tempCount = appState.works.filter(isTempWork).length;
+      const vaultCount = appState.works.filter((w) => w.extras?.includes('vault')).length;
+      const legendCount = appState.works.filter((w) => w.extras?.includes('legend')).length;
 
-    function openMunpiaApp(title) {
-      const links = getMunpiaLinks(title);
-      // 모바일 앱 스킴 호출 시도 후 웹 검색 페이지 새 탭 오픈
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = links.appScheme;
-      document.body.appendChild(iframe);
-      setTimeout(() => iframe.remove(), 800);
-
-      window.open(links.webSearchUrl, '_blank', 'noopener,noreferrer');
-      showToast(`"${title}" 문피아 앱/검색 페이지를 열었습니다.`, 'info');
-    }
-
-    // =========================================================================
-    // 7. 렌더링 함수들
-    // =========================================================================
-    function renderHeaderSummary() {
-      const total = state.works.length;
-      const vaultCount = state.works.filter((w) => w.extras?.includes('vault')).length;
-      const legendCount = state.works.filter((w) => w.extras?.includes('legend')).length;
-      const readPlusCount = state.works.filter((w) => w.rating === 'read_16_plus').length;
-
-      document.getElementById('header-summary').innerHTML = `
-        <div class="flex items-center gap-3">
-          <span>등록 <strong class="text-white">${total}</strong>편</span>
-          <span>정독(16화+) <strong class="text-emerald-400">${readPlusCount}</strong></span>
+      document.getElementById('header-stats').innerHTML = `
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <span>전체 <strong class="text-white">${total}</strong>편</span>
+          <span>임시 <strong class="text-rose-300">${tempCount}</strong></span>
           <span>레전드 <strong class="text-purple-300">${legendCount}</strong></span>
         </div>
-        <button id="btn-quick-vault" type="button" class="px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-400/40 font-semibold hover:bg-amber-500/30 cursor-pointer">
+        <button type="button" id="btn-header-vault" class="px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-400/40 font-extrabold text-[11px] cursor-pointer">
           💎 보관함 ${vaultCount}
         </button>
       `;
 
-      document.getElementById('btn-quick-vault')?.addEventListener('click', () => {
-        state.activeTab = 'vault';
-        renderAll();
+      document.getElementById('btn-header-vault')?.addEventListener('click', () => {
+        appState.activeTab = 'categories';
+        appState.catState.filter = 'vault';
+        renderApp();
       });
 
-      const badgeEl = document.getElementById('vault-badge-count');
-      if (vaultCount > 0) {
-        badgeEl.textContent = String(vaultCount);
-        badgeEl.classList.remove('hidden');
+      const tempBadge = document.getElementById('nav-badge-temp');
+      if (tempCount > 0) {
+        tempBadge.textContent = String(tempCount);
+        tempBadge.classList.remove('hidden');
       } else {
-        badgeEl.classList.add('hidden');
+        tempBadge.classList.add('hidden');
       }
-    }
 
-    function renderNav() {
-      document.querySelectorAll('.nav-btn').forEach((btn) => {
-        const tab = btn.getAttribute('data-tab');
-        if (tab === state.activeTab) {
-          btn.className = 'nav-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-xs font-bold bg-munpia-600 text-white shadow-xs transition cursor-pointer relative';
+      const vaultBadge = document.getElementById('nav-badge-vault');
+      if (vaultCount > 0) {
+        vaultBadge.textContent = String(vaultCount);
+        vaultBadge.classList.remove('hidden');
+      } else {
+        vaultBadge.classList.add('hidden');
+      }
+
+      document.querySelectorAll('.bottom-nav-btn').forEach((btn) => {
+        const nav = btn.getAttribute('data-nav');
+        if (nav === appState.activeTab) {
+          btn.className = 'bottom-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-2xl text-[11px] font-extrabold bg-brand-600 text-white shadow-xs transition cursor-pointer relative';
         } else {
-          btn.className = 'nav-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition cursor-pointer relative';
+          btn.className = 'bottom-nav-btn flex flex-col items-center justify-center py-1.5 px-0.5 rounded-2xl text-[11px] font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer relative';
         }
       });
     }
 
-    // 탭 1: 작품 등록 + 빠른 최근 등록 리스트
-    function renderRegisterTab() {
-      const f = state.form;
-      const todayKey = formatDateKey(new Date());
-      const todayCount = state.works.filter((w) => w.createdAt === todayKey).length;
+    function renderWorkCard(work, options = { showDelete: true }) {
+      const temp = isTempWork(work);
+      const isVault = Array.isArray(work.extras) && work.extras.includes('vault');
+      const ratingObj = RATING_CHOICES.find((r) => r.id === work.rating);
 
       return `
-        <section class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80 space-y-4 animate-fade-up">
-          <div class="flex items-center justify-between">
-            <div>
-              <h2 class="text-base font-bold text-slate-900">1. 베스트 작품 등록 & 자동 분석</h2>
-              <p class="text-xs text-slate-500 mt-0.5">투데이/신규 베스트 체크 후 제목을 입력하면 정보를 자동 채웁니다.</p>
-            </div>
-            <span class="px-2.5 py-1 rounded-full bg-munpia-50 text-munpia-700 text-[11px] font-bold">
-              오늘 ${todayCount}편 등록
-            </span>
-          </div>
-
-          <!-- 1) 베스트 구분 수동 체크 -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">베스트 구분 (수동 체크)</label>
-            <div class="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                data-source="today"
-                class="source-toggle-btn py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
-                  f.sources.includes('today')
-                    ? 'bg-munpia-600 text-white border-munpia-600 shadow-xs'
-                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                }"
-              >
-                <span>${f.sources.includes('today') ? '☑' : '☐'}</span>
-                <span>투데이 베스트</span>
-              </button>
-              <button
-                type="button"
-                data-source="new"
-                class="source-toggle-btn py-2.5 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
-                  f.sources.includes('new')
-                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                }"
-              >
-                <span>${f.sources.includes('new') ? '☑' : '☐'}</span>
-                <span>신규 베스트</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- 2) 제목 입력 + 자동검색 + 등록하기 -->
-          <div>
-            <label for="input-title" class="block text-xs font-bold text-slate-700 mb-1.5">작품 제목</label>
-            <div class="flex gap-2">
-              <input
-                id="input-title"
-                type="text"
-                value="${escapeHtml(f.title)}"
-                placeholder="예: 망나니 3황자가 검신으로 각성함"
-                class="flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-munpia-500"
-              />
-              <button
-                id="btn-auto-fill"
-                type="button"
-                class="shrink-0 px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold transition cursor-pointer"
-              >
-                자동입력
-              </button>
-            </div>
-            <!-- 빠른 샘플 제목 칩 -->
-            <div class="mt-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
-              <span class="text-[11px] text-slate-400 shrink-0">샘플:</span>
-              ${MUNPIA_SAMPLE_CATALOG.slice(0, 4).map((s) => `
-                <button
-                  type="button"
-                  data-sample-title="${escapeHtml(s.title)}"
-                  class="sample-title-chip shrink-0 px-2 py-1 rounded-lg bg-slate-100 hover:bg-munpia-50 text-slate-700 hover:text-munpia-700 text-[11px] font-medium transition cursor-pointer"
-                >
-                  ${escapeHtml(s.title)}
-                </button>
-              `).join('')}
-            </div>
-            ${f.autoFilledNotice ? `
-              <p class="mt-1.5 text-[11px] text-munpia-700 bg-munpia-50 border border-munpia-100 rounded-xl px-2.5 py-1.5">
-                ✨ ${escapeHtml(f.autoFilledNotice)}
-              </p>
-            ` : ''}
-          </div>
-
-          <!-- 3) 자동 채움 / 수정 가능 메타데이터 (장르, 작가명, 총 회차, 최근화 조회수, 작품소개) -->
-          <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200/70 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-700">문피아 작품 정보 (자동 채움 · 수정 가능)</span>
-              <span class="text-[11px] text-slate-400">5개 항목</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-[11px] font-semibold text-slate-600 mb-1">장르</label>
-                <input id="input-genre" type="text" value="${escapeHtml(f.genre)}" class="w-full px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-semibold text-slate-600 mb-1">작가명</label>
-                <input id="input-author" type="text" value="${escapeHtml(f.author)}" placeholder="작가명" class="w-full px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-semibold text-slate-600 mb-1">총 회차</label>
-                <input id="input-episodes" type="number" min="1" value="${Number(f.totalEpisodes) || 1}" class="w-full px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-semibold text-slate-600 mb-1">최근화 조회수</label>
-                <input id="input-views" type="text" value="${escapeHtml(f.latestViews)}" placeholder="예: 85,200" class="w-full px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs" />
-              </div>
-            </div>
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-600 mb-1">작품소개</label>
-              <textarea id="input-synopsis" rows="2" placeholder="작품 줄거리 및 도입부 특징" class="w-full px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs leading-relaxed">${escapeHtml(f.synopsis)}</textarea>
-            </div>
-          </div>
-
-          <!-- 4) 별점 선택 (4가지 중 1개) -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">하차/정독 별점 (4가지 중 1개 선택)</label>
-            <div class="grid grid-cols-2 gap-2">
-              ${RATING_OPTIONS.map((opt) => {
-                const active = f.rating === opt.id;
-                return `
-                  <button
-                    type="button"
-                    data-rating-id="${opt.id}"
-                    class="rating-select-btn p-2.5 rounded-xl border text-left transition cursor-pointer ${
-                      active ? 'bg-slate-900 text-white border-slate-900 shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                    }"
-                  >
-                    <div class="text-xs font-bold">${opt.label}</div>
-                    <div class="text-[10px] mt-0.5 ${active ? 'text-slate-300' : 'text-slate-500'}">${opt.desc}</div>
-                  </button>
-                `;
-              }).join('')}
-            </div>
-          </div>
-
-          <!-- 5) 추가 표시 3가지 (중복 선택 가능) -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">추가 표시 (중복 선택 가능)</label>
-            <div class="grid grid-cols-3 gap-1.5">
-              ${EXTRA_BADGES.map((badge) => {
-                const selected = f.extras.includes(badge.id);
-                return `
-                  <button
-                    type="button"
-                    data-extra-id="${badge.id}"
-                    class="extra-toggle-btn py-2 px-2 rounded-xl border text-[11px] font-bold flex flex-col items-center justify-center gap-0.5 transition cursor-pointer ${
-                      selected ? badge.activeClass + ' shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                    }"
-                  >
-                    <span>${badge.emoji} ${selected ? '✓' : ''}</span>
-                    <span class="text-center leading-tight">${badge.label}</span>
-                  </button>
-                `;
-              }).join('')}
-            </div>
-          </div>
-
-          <!-- 6) 작품별 태그 (최대 5개 + 저장된 태그 풀 재사용) -->
-          <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200/70 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-slate-700">작품 태그 (${f.tags.length}/5)</label>
-              <span class="text-[11px] text-slate-500">저장된 태그 탭하여 추가</span>
-            </div>
-
-            <!-- 현재 선택된 태그 -->
-            <div class="flex flex-wrap gap-1.5 min-h-[28px]">
-              ${f.tags.length ? f.tags.map((t) => `
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-munpia-600 text-white text-xs font-semibold">
-                  #${escapeHtml(t)}
-                  <button type="button" data-remove-tag="${escapeHtml(t)}" class="remove-tag-btn hover:text-amber-200 cursor-pointer">✕</button>
-                </span>
-              `).join('') : `<span class="text-xs text-slate-400">선택된 태그가 없습니다.</span>`}
-            </div>
-
-            <!-- 새 태그 입력 및 태그 풀 추가 -->
-            <div class="flex gap-1.5">
-              <input
-                id="input-custom-tag"
-                type="text"
-                value="${escapeHtml(f.customTagInput)}"
-                placeholder="새 태그 입력 (예: 역클리셰)"
-                class="flex-1 min-w-0 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs"
-              />
-              <button id="btn-add-custom-tag" type="button" class="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold cursor-pointer">
-                추가·저장
-              </button>
-            </div>
-
-            <!-- 저장된 태그 풀 -->
-            <div class="flex flex-wrap gap-1.5 pt-1">
-              ${state.tagPool.map((poolTag) => {
-                const isSelected = f.tags.includes(poolTag);
-                return `
-                  <button
-                    type="button"
-                    data-pool-tag="${escapeHtml(poolTag)}"
-                    class="pool-tag-btn px-2 py-1 rounded-lg text-[11px] font-medium border transition cursor-pointer ${
-                      isSelected
-                        ? 'bg-munpia-100 text-munpia-800 border-munpia-300 font-bold'
-                        : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
-                    }"
-                  >
-                    ${isSelected ? '✓ ' : '+ '}#${escapeHtml(poolTag)}
-                  </button>
-                `;
-              }).join('')}
-            </div>
-          </div>
-
-          <!-- 등록 버튼 -->
-          <button
-            id="btn-submit-work"
-            type="button"
-            class="w-full py-3.5 rounded-2xl bg-munpia-600 hover:bg-munpia-700 active:scale-[0.99] text-white font-extrabold text-sm shadow-md transition cursor-pointer"
-          >
-            작품 등록하기
-          </button>
-        </section>
-
-        <!-- 최근 등록 작품 미리보기 -->
-        <section class="space-y-2.5">
-          <div class="flex items-center justify-between px-1">
-            <h3 class="text-sm font-bold text-slate-800">최근 등록한 작품</h3>
-            <button id="btn-go-all-categories" type="button" class="text-xs font-bold text-munpia-600 hover:underline cursor-pointer">
-              전체 카테고리 보기 →
-            </button>
-          </div>
-          ${state.works.slice(0, 3).map((w) => renderWorkCard(w, false)).join('')}
-        </section>
-      `;
-    }
-
-    // 탭 2: 카테고리 & 보관함 강조 뷰
-    function renderCategoriesTab() {
-      const cf = state.categoryFilter;
-      const vaultWorks = state.works.filter((w) => w.extras?.includes('vault'));
-
-      const filteredWorks = state.works.filter((w) => {
-        if (cf.searchQuery.trim()) {
-          const q = cf.searchQuery.trim().toLowerCase();
-          const hay = `${w.title} ${w.author} ${w.genre} ${(w.tags || []).join(' ')}`.toLowerCase();
-          if (!hay.includes(q)) return false;
-        }
-        if (cf.type === 'vault') return w.extras?.includes('vault');
-        if (cf.type === 'legend') return w.extras?.includes('legend');
-        if (cf.type === 'supernormal') return w.extras?.includes('supernormal');
-        if (cf.type === 'rating') return w.rating === cf.ratingId;
-        if (cf.type === 'source_today') return w.sources?.includes('today');
-        if (cf.type === 'source_new') return w.sources?.includes('new');
-        return true;
-      });
-
-      const filterBtnClass = (active) =>
-        active
-          ? 'px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold shrink-0 cursor-pointer'
-          : 'px-3 py-1.5 rounded-xl bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 text-xs font-semibold shrink-0 cursor-pointer';
-
-      return `
-        <!-- 보관함 (좋은소스) 강조 섹션 -->
-        <section class="vault-glow rounded-2xl p-4 space-y-2.5 animate-fade-up">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5">
-              <span class="text-lg">💎</span>
-              <div>
-                <h2 class="text-sm font-extrabold text-vault-900">보관함 (좋은소스) 하이라이트</h2>
-                <p class="text-[11px] text-amber-800">차기작 레퍼런스 및 아이디어 변형에 바로 쓸 수 있는 핵심 소스</p>
-              </div>
-            </div>
-            <span class="px-2.5 py-1 rounded-full bg-amber-500 text-white text-xs font-extrabold">
-              ${vaultWorks.length}편
-            </span>
-          </div>
-
-          ${vaultWorks.length ? `
-            <div class="flex gap-2 overflow-x-auto no-scrollbar pt-1">
-              ${vaultWorks.map((vw) => `
-                <div class="shrink-0 w-60 bg-white/95 rounded-xl p-2.5 border border-amber-300 shadow-2xs flex flex-col justify-between gap-2">
-                  <div>
-                    <div class="flex items-center justify-between gap-1">
-                      <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">${escapeHtml(vw.genre)}</span>
-                      <span class="text-[10px] text-slate-500">${Number(vw.totalEpisodes) || 0}화 · ${escapeHtml(vw.latestViews)}</span>
-                    </div>
-                    <div class="font-bold text-xs text-slate-900 mt-1 line-clamp-1">${escapeHtml(vw.title)}</div>
-                  </div>
-                  <button
-                    type="button"
-                    data-transform-work-id="${vw.id}"
-                    class="go-transform-btn w-full py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold transition cursor-pointer"
-                  >
-                    💡 아이디어 변형하기
-                  </button>
-                </div>
-              `).join('')}
-            </div>
-          ` : `
-            <p class="text-xs text-amber-900 bg-white/70 rounded-xl p-2.5">
-              아직 보관함(좋은소스)에 담긴 작품이 없습니다. 작품 등록 또는 카드에서 '보관함 (좋은소스)'를 체크해보세요!
-            </p>
-          `}
-        </section>
-
-        <!-- 카테고리 필터 컨트롤 -->
-        <section class="bg-white rounded-2xl p-3.5 border border-slate-200/80 space-y-3">
-          <input
-            id="input-category-search"
-            type="text"
-            value="${escapeHtml(cf.searchQuery)}"
-            placeholder="제목, 작가, 장르, #태그로 검색..."
-            class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-munpia-500"
-          />
-
-          <!-- 주요 카테고리 칩 -->
-          <div class="flex gap-1.5 overflow-x-auto no-scrollbar">
-            <button type="button" data-cat-type="all" class="cat-filter-btn ${filterBtnClass(cf.type === 'all')}">전체 (${state.works.length})</button>
-            <button type="button" data-cat-type="vault" class="cat-filter-btn ${filterBtnClass(cf.type === 'vault')}">💎 보관함</button>
-            <button type="button" data-cat-type="legend" class="cat-filter-btn ${filterBtnClass(cf.type === 'legend')}">🔥 레전드</button>
-            <button type="button" data-cat-type="supernormal" class="cat-filter-btn ${filterBtnClass(cf.type === 'supernormal')}">⚡ 슈퍼노멀</button>
-            <button type="button" data-cat-type="rating" class="cat-filter-btn ${filterBtnClass(cf.type === 'rating')}">⭐ 별점별</button>
-            <button type="button" data-cat-type="source_today" class="cat-filter-btn ${filterBtnClass(cf.type === 'source_today')}">투데이베스트</button>
-            <button type="button" data-cat-type="source_new" class="cat-filter-btn ${filterBtnClass(cf.type === 'source_new')}">신규베스트</button>
-          </div>
-
-          <!-- 별점 카테고리 선택 시 세부 별점 필터 -->
-          ${cf.type === 'rating' ? `
-            <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-100">
-              ${RATING_OPTIONS.map((r) => `
-                <button
-                  type="button"
-                  data-filter-rating-id="${r.id}"
-                  class="sub-rating-btn px-2.5 py-1.5 rounded-xl text-xs font-bold border text-left cursor-pointer ${
-                    cf.ratingId === r.id ? 'bg-munpia-600 text-white border-munpia-600' : 'bg-slate-50 text-slate-700 border-slate-200'
-                  }"
-                >
-                  ${r.label}
-                </button>
-              `).join('')}
-            </div>
-          ` : ''}
-        </section>
-
-        <!-- 필터링된 작품 목록 -->
-        <section class="space-y-2.5">
-          <div class="flex items-center justify-between px-1">
-            <span class="text-xs font-bold text-slate-600">검색·카테고리 결과 ${filteredWorks.length}편</span>
-          </div>
-          ${filteredWorks.length
-            ? filteredWorks.map((w) => renderWorkCard(w, true)).join('')
-            : `<div class="bg-white rounded-2xl p-6 text-center text-xs text-slate-500 border border-slate-200">조건에 맞는 작품이 없습니다.</div>`
-          }
-        </section>
-      `;
-    }
-
-    // 개별 작품 카드 렌더링 (문피아 앱 바로가기 + 빠른 상태 토글 + 삭제)
-    function renderWorkCard(w, showDelete) {
-      const ratingObj = RATING_OPTIONS.find((r) => r.id === w.rating) || RATING_OPTIONS[3];
-      const isVault = w.extras?.includes('vault');
-      const isHighlighted = state.highlightWorkId === w.id;
-
-      return `
-        <article
-          data-work-id="${w.id}"
-          class="rounded-2xl p-3.5 transition ${
-            isVault
-              ? 'bg-amber-50/70 border-2 border-amber-400 shadow-xs'
+        <article class="rounded-2xl p-3.5 transition animate-pop-in ${
+          isVault
+            ? 'vault-card-highlight'
+            : temp
+              ? 'bg-rose-50/40 border border-dashed border-rose-300'
               : 'bg-white border border-slate-200/80 shadow-2xs'
-          } ${isHighlighted ? 'ring-2 ring-munpia-500' : ''}"
-        >
+        }">
+          <!-- 상단 상태 및 베스트 구분 배지 -->
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0 flex-1">
               <div class="flex flex-wrap items-center gap-1 mb-1">
-                ${(w.sources || []).map((src) => `
-                  <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                    src === 'today' ? 'bg-munpia-100 text-munpia-800' : 'bg-indigo-100 text-indigo-800'
-                  }">
-                    ${src === 'today' ? '투데이 베스트' : '신규 베스트'}
+                ${temp ? `
+                  <span class="px-2 py-0.5 rounded-md bg-rose-600 text-white text-[10px] font-black">
+                    [임시등록]
                   </span>
-                `).join('')}
-                <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-bold">${escapeHtml(w.genre)}</span>
-                <span class="text-[10px] text-slate-400">· ${escapeHtml(w.createdAt)}</span>
+                ` : `
+                  <span class="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                    2차완료
+                  </span>
+                `}
+                ${(work.sources || []).map((srcId) => {
+                  const s = BEST_SOURCES.find((b) => b.id === srcId);
+                  return s ? `<span class="px-1.5 py-0.5 rounded-md border text-[10px] font-bold ${s.badgeClass}">${s.label}</span>` : '';
+                }).join('')}
+                ${isVault ? `
+                  <span class="px-2 py-0.5 rounded-md bg-amber-500 text-white text-[10px] font-black">
+                    💎 좋은소스
+                  </span>
+                ` : ''}
+                <span class="text-[10px] text-slate-400">· ${escapeHtml(work.createdAt || '')}</span>
               </div>
-              <h4 class="font-extrabold text-sm text-slate-900 leading-snug">${escapeHtml(w.title)}</h4>
-              <p class="text-[11px] text-slate-500 mt-0.5">
-                작가: <strong class="text-slate-700">${escapeHtml(w.author || '미상')}</strong> · 총 ${Number(w.totalEpisodes) || 0}화 · 최근화 조회 ${escapeHtml(w.latestViews || '-')}
+
+              <h4 class="font-extrabold text-sm text-slate-900 leading-snug break-words">
+                ${escapeHtml(work.title)}
+              </h4>
+
+              <p class="text-[11px] text-slate-600 mt-1">
+                장르: <strong class="text-slate-800">${escapeHtml(work.genre || '미입력')}</strong>
+                · 작가: <strong class="text-slate-800">${escapeHtml(work.author || '미입력')}</strong>
+                · ${Number(work.totalEpisodes) > 0 ? `${Number(work.totalEpisodes)}화` : '회차 미입력'}
+                · 조회 ${escapeHtml(work.latestViews || '미입력')}
               </p>
             </div>
-            <span class="shrink-0 px-2 py-1 rounded-xl border text-[11px] font-bold ${ratingObj.color}">
-              ${ratingObj.shortLabel}
-            </span>
-          </div>
 
-          ${w.synopsis ? `
-            <p class="mt-2 text-xs text-slate-600 bg-white/80 rounded-xl p-2 border border-slate-100 leading-relaxed">
-              ${escapeHtml(w.synopsis)}
-            </p>
-          ` : ''}
-
-          <!-- 추가 표시 뱃지 (원클릭 토글 가능) -->
-          <div class="mt-2.5 flex flex-wrap items-center gap-1.5">
-            ${EXTRA_BADGES.map((b) => {
-              const active = w.extras?.includes(b.id);
-              return `
-                <button
-                  type="button"
-                  data-card-extra-work="${w.id}"
-                  data-card-extra-id="${b.id}"
-                  class="card-extra-btn px-2 py-1 rounded-lg border text-[11px] font-bold transition cursor-pointer ${
-                    active ? b.chipClass : 'bg-slate-50 text-slate-400 border-slate-200 hover:text-slate-700'
-                  }"
-                >
-                  ${b.emoji} ${b.label}
-                </button>
-              `;
-            }).join('')}
-          </div>
-
-          <!-- 태그 목록 -->
-          ${(w.tags && w.tags.length) ? `
-            <div class="mt-2 flex flex-wrap gap-1">
-              ${w.tags.map((t) => `
-                <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-medium">#${escapeHtml(t)}</span>
-              `).join('')}
+            <!-- 3차 별점 배지 (2차 완료 시 표시) -->
+            <div class="shrink-0">
+              ${temp ? `
+                <span class="inline-block px-2 py-1 rounded-xl bg-white/90 border border-rose-200 text-rose-600 text-[10px] font-bold">
+                  2차 후 평가
+                </span>
+              ` : ratingObj ? `
+                <span class="inline-block px-2 py-1 rounded-xl border text-[11px] font-extrabold ${ratingObj.pill}">
+                  ${ratingObj.short}
+                </span>
+              ` : `
+                <span class="inline-block px-2 py-1 rounded-xl bg-slate-100 text-slate-600 text-[10px] font-bold">
+                  미평가
+                </span>
+              `}
             </div>
-          ` : ''}
+          </div>
 
-          <!-- 하단 액션: 문피아 앱 바로가기 + 보관함 변형 + 삭제 -->
-          <div class="mt-3 pt-2.5 border-t border-slate-200/60 flex items-center justify-between gap-2">
+          <!-- 추가 마킹 & 태그 -->
+          <div class="mt-2.5 flex flex-wrap items-center gap-1.5">
+            ${(work.extras || []).map((exId) => {
+              const ex = EXTRA_MARKS.find((m) => m.id === exId);
+              return ex ? `<span class="px-2 py-0.5 rounded-lg border text-[10px] font-extrabold ${ex.chip}">${ex.icon} ${ex.label}</span>` : '';
+            }).join('')}
+            ${(work.tags || []).map((t) => `
+              <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-semibold">#${escapeHtml(t)}</span>
+            `).join('')}
+          </div>
+
+          <!-- 하단 액션 버튼: 제목 복사 / 수정(1·2·3차) / 보관함 변형 / 삭제 -->
+          <div class="mt-3 pt-2.5 border-t border-slate-200/70 flex flex-wrap items-center gap-1.5">
             <button
               type="button"
-              data-munpia-title="${escapeHtml(w.title)}"
-              class="munpia-open-btn flex-1 py-2 px-3 rounded-xl bg-munpia-600 hover:bg-munpia-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+              data-copy-title="${escapeHtml(work.title)}"
+              class="copy-title-btn flex-1 min-w-[95px] py-2 px-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold transition cursor-pointer"
             >
-              <span>📱 문피아 앱/웹에서 보기</span>
+              📋 제목 복사
+            </button>
+
+            <button
+              type="button"
+              data-edit-work="${work.id}"
+              class="edit-work-btn flex-1 min-w-[95px] py-2 px-2.5 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 text-[11px] font-extrabold transition cursor-pointer"
+            >
+              ${temp ? '2차·3차 입력/수정' : '1·2·3차 수정'}
             </button>
 
             ${isVault ? `
               <button
                 type="button"
-                data-transform-work-id="${w.id}"
-                class="go-transform-btn py-2 px-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition cursor-pointer"
+                data-studio-work="${work.id}"
+                class="studio-jump-btn py-2 px-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-extrabold transition cursor-pointer"
               >
-                변형💡
+                💡 변형
               </button>
             ` : ''}
 
-            ${showDelete ? `
+            ${options.showDelete ? `
               <button
                 type="button"
-                data-delete-work-id="${w.id}"
-                class="delete-work-btn py-2 px-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition cursor-pointer"
-                title="삭제"
+                data-delete-work="${work.id}"
+                class="delete-work-btn py-2 px-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold transition cursor-pointer"
               >
                 삭제
               </button>
@@ -1195,251 +835,570 @@
       `;
     }
 
-    // 탭 3: 보관함(좋은소스) 변형 & 차기작 아이디어 생성기
-    function renderVaultStudioTab() {
-      const vaultWorks = state.works.filter((w) => w.extras?.includes('vault'));
-      const candidates = vaultWorks.length ? vaultWorks : state.works;
-      const plan = state.vaultStudio.generatedPlan;
+    // =========================================================================
+    // 7. 탭 1: 1차·2차 등록 + [임시등록] 관리 뷰
+    // =========================================================================
+    function renderRegisterTab() {
+      const f = appState.regForm;
+      const tempWorks = appState.works.filter(isTempWork);
+      const todayKey = toDateKey(new Date());
+      const todayRegisteredCount = appState.works.filter((w) => w.createdAt === todayKey).length;
 
       return `
-        <section class="bg-white rounded-2xl p-4 border border-slate-200/80 space-y-4 animate-fade-up">
+        <section class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-2xs space-y-4 animate-pop-in">
           <div class="flex items-center justify-between gap-2">
             <div>
-              <h2 class="text-base font-bold text-slate-900">💡 보관함 작품 변형 스튜디오</h2>
-              <p class="text-xs text-slate-500 mt-0.5">보관함(좋은소스) 작품에 변형 아이디어를 조합해 차기작 가제목·소개안을 구상합니다.</p>
+              <span class="text-[10px] font-extrabold text-brand-600 uppercase">STEP 1 & STEP 2</span>
+              <h2 class="text-base font-black text-slate-900">1차 등록 & 연속 2차 등록</h2>
             </div>
-            <button
-              id="btn-open-drafts-modal"
-              type="button"
-              class="shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold cursor-pointer"
-            >
-              저장안 (${state.savedDrafts.length})
-            </button>
+            <span class="px-2.5 py-1 rounded-full bg-brand-50 text-brand-700 text-[11px] font-extrabold">
+              오늘 ${todayRegisteredCount}편 등록
+            </span>
           </div>
 
-          ${!vaultWorks.length && state.works.length ? `
-            <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
-              현재 '보관함 (좋은소스)' 체크 작품이 없어 전체 등록 작품 중 선택해 테스트할 수 있습니다.
-            </div>
-          ` : ''}
-
-          <!-- 1) 기준 작품 선택 -->
+          <!-- 1차: 투데이/신규 베스트 수동 체크 -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">1. 기준 소스 작품 선택</label>
-            <select
-              id="select-vault-work"
-              class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-xs font-bold text-slate-800"
-            >
-              ${candidates.map((w) => `
-                <option value="${w.id}" ${w.id === state.vaultStudio.selectedWorkId ? 'selected' : ''}>
-                  ${w.extras?.includes('vault') ? '💎 ' : ''}${escapeHtml(w.title)} (${escapeHtml(w.genre)})
-                </option>
-              `).join('')}
-            </select>
-          </div>
-
-          <!-- 2) 변형 아이디어 복수 선택 -->
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <label class="text-xs font-bold text-slate-700">2. 변형 아이디어 추가 (1개 이상 선택)</label>
-              <button
-                id="btn-regenerate-idea"
-                type="button"
-                class="px-2.5 py-1 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold flex items-center gap-1 shadow-2xs transition cursor-pointer"
-              >
-                <span>🔄 아이디어 재구성</span>
-              </button>
-            </div>
+            <label class="block text-xs font-extrabold text-slate-700 mb-1.5">
+              1차 · 베스트 구분 (수동 체크)
+            </label>
             <div class="grid grid-cols-2 gap-2">
-              ${VARIATION_IDEAS.map((idea) => {
-                const active = state.vaultStudio.selectedIdeas.includes(idea.id);
+              ${BEST_SOURCES.map((src) => {
+                const checked = f.sources.includes(src.id);
                 return `
                   <button
                     type="button"
-                    data-idea-id="${idea.id}"
-                    class="idea-toggle-btn p-2.5 rounded-xl border text-left transition cursor-pointer ${
-                      active
-                        ? 'bg-amber-50 border-amber-500 text-amber-950 ring-1 ring-amber-400'
-                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                    data-reg-source="${src.id}"
+                    class="reg-source-btn py-2.5 px-3 rounded-2xl border text-xs font-extrabold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                      checked
+                        ? 'bg-brand-600 text-white border-brand-600 shadow-xs'
+                        : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                     }"
                   >
-                    <div class="text-xs font-bold flex items-center justify-between">
-                      <span>${idea.icon} ${idea.label}</span>
-                      <span>${active ? '✓' : '+'}</span>
-                    </div>
-                    <div class="text-[10px] text-slate-500 mt-0.5 line-clamp-1">${idea.hint}</div>
+                    <span>${checked ? '☑' : '☐'}</span>
+                    <span>${src.label}</span>
                   </button>
                 `;
               }).join('')}
             </div>
           </div>
 
-          <!-- 3) 생성된 가제목 및 작품소개 가안 -->
-          ${plan ? `
-            <div class="rounded-2xl bg-slate-900 text-white p-4 space-y-3.5">
+          <!-- 1차: 작품 제목 입력 -->
+          <div>
+            <label for="reg-title-input" class="block text-xs font-extrabold text-slate-700 mb-1.5">
+              1차 · 작품 제목
+            </label>
+            <input
+              id="reg-title-input"
+              type="text"
+              value="${escapeHtml(f.title)}"
+              placeholder="읽고 있는 문피아 작품 제목을 입력하세요"
+              class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-500"
+            />
+          </div>
+
+          <!-- 2차 등록 연속 입력 토글 -->
+          <div class="flex items-center justify-between bg-slate-50 rounded-2xl px-3.5 py-2.5 border border-slate-200/80">
+            <div>
+              <div class="text-xs font-extrabold text-slate-800">1차 등록 시 2차 정보 연속 입력</div>
+              <div class="text-[10px] text-slate-500">미입력 상태로 저장하면 [임시등록]으로 분류됩니다.</div>
+            </div>
+            <button
+              id="btn-toggle-stage2-mode"
+              type="button"
+              class="px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${
+                f.openStage2Now
+                  ? 'bg-brand-600 text-white'
+                  : 'bg-slate-200 text-slate-700'
+              }"
+            >
+              ${f.openStage2Now ? '2차 입력 열림' : '제목만 저장'}
+            </button>
+          </div>
+
+          <!-- 2차 등록 입력 필드 (장르, 작가명, 총 회차, 최근화 조회수) -->
+          ${f.openStage2Now ? `
+            <div class="bg-brand-50/50 rounded-2xl p-3.5 border border-brand-100 space-y-3">
               <div class="flex items-center justify-between">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400">GENERATED CONCEPT DRAFT</span>
-                <span class="text-[11px] text-slate-400">원본: ${escapeHtml(plan.sourceTitle)}</span>
+                <span class="text-xs font-extrabold text-brand-900">2차 · 작품 상세 정보</span>
+                <span class="text-[10px] font-bold text-brand-700">완료 시 3차 평가 활성화</span>
               </div>
 
-              <!-- 적용된 변형 조합 -->
-              <div class="space-y-1.5 bg-slate-800/80 rounded-xl p-2.5">
-                <div class="text-[11px] font-bold text-slate-300">적용된 변형 포인트</div>
-                ${plan.twistLines.map((line) => `
-                  <div class="text-xs text-amber-200">
-                    <strong class="text-white">[${escapeHtml(line.label)}]</strong> ${escapeHtml(line.text)}
-                  </div>
-                `).join('')}
-              </div>
-
-              <!-- 가제목 추천 3종 -->
-              <div>
-                <div class="text-xs font-bold text-slate-200 mb-1.5">흥미로운 가제목 후보</div>
-                <div class="space-y-1.5">
-                  ${plan.candidateTitles.map((candTitle, idx) => `
-                    <div class="flex items-center justify-between gap-2 bg-slate-800 rounded-xl px-3 py-2">
-                      <span class="text-xs font-bold text-white">가제 ${idx + 1}. ${escapeHtml(candTitle)}</span>
-                      <button
-                        type="button"
-                        data-copy-text="${escapeHtml(candTitle)}"
-                        class="copy-btn shrink-0 px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-[10px] font-semibold text-slate-200 cursor-pointer"
-                      >
-                        복사
-                      </button>
-                    </div>
-                  `).join('')}
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">장르</label>
+                  <select id="reg-genre-input" class="w-full px-2.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800">
+                    <option value="">선택 안 함 (임시등록)</option>
+                    ${GENRE_LIST.map((g) => `<option value="${g}" ${f.genre === g ? 'selected' : ''}>${g}</option>`).join('')}
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">작가명</label>
+                  <input
+                    id="reg-author-input"
+                    type="text"
+                    value="${escapeHtml(f.author)}"
+                    placeholder="예: 홍길동"
+                    class="w-full px-2.5 py-2 rounded-xl bg-white border border-slate-200 text-xs"
+                  />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">총 회차</label>
+                  <input
+                    id="reg-episodes-input"
+                    type="number"
+                    min="0"
+                    value="${escapeHtml(f.totalEpisodes)}"
+                    placeholder="예: 120"
+                    class="w-full px-2.5 py-2 rounded-xl bg-white border border-slate-200 text-xs"
+                  />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">최근화 조회수</label>
+                  <input
+                    id="reg-views-input"
+                    type="text"
+                    value="${escapeHtml(f.latestViews)}"
+                    placeholder="예: 54,300"
+                    class="w-full px-2.5 py-2 rounded-xl bg-white border border-slate-200 text-xs"
+                  />
                 </div>
               </div>
-
-              <!-- 매력적인 작품소개 가안 -->
-              <div>
-                <div class="flex items-center justify-between mb-1.5">
-                  <span class="text-xs font-bold text-slate-200">작품소개 가안</span>
-                  <button
-                    type="button"
-                    data-copy-text="${escapeHtml(plan.pitchSynopsis)}"
-                    class="copy-btn px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-[10px] font-semibold text-slate-200 cursor-pointer"
-                  >
-                    소개 복사
-                  </button>
-                </div>
-                <div class="bg-slate-800 rounded-xl p-3 text-xs text-slate-100 whitespace-pre-line leading-relaxed border border-slate-700">
-                  ${escapeHtml(plan.pitchSynopsis)}
-                </div>
-              </div>
-
-              <button
-                id="btn-save-draft"
-                type="button"
-                class="w-full py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-extrabold transition cursor-pointer"
-              >
-                📌 이 차기작 기획안 보관하기
-              </button>
             </div>
           ` : ''}
+
+          <!-- 등록 버튼 -->
+          <button
+            id="btn-save-work"
+            type="button"
+            class="w-full py-3.5 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-black text-sm shadow-md transition cursor-pointer"
+          >
+            ${f.openStage2Now ? '1·2차 정보 등록하기' : '1차 제목만 등록 ([임시등록])'}
+          </button>
+        </section>
+
+        <!-- [임시등록] 전용 섹션 -->
+        <section class="space-y-2.5">
+          <div class="flex items-center justify-between px-1">
+            <h3 class="text-sm font-black text-slate-900">
+              📝 [임시등록] 작품 목록 (${tempWorks.length}편)
+            </h3>
+            <span class="text-[11px] text-slate-500">2차 완료 시 3차 평가 가능</span>
+          </div>
+          ${tempWorks.length
+            ? tempWorks.map((w) => renderWorkCard(w, { showDelete: true })).join('')
+            : `<div class="bg-white rounded-2xl p-5 text-center text-xs text-slate-500 border border-slate-200">현재 [임시등록] 상태인 작품이 없습니다.</div>`
+          }
         </section>
       `;
     }
 
-    // 탭 4: 달력 및 월별 통계 뷰
-    function renderCalendarTab() {
-      const { year, month, selectedDate } = state.calendar;
-      const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
-      const monthWorks = state.works.filter((w) => (w.createdAt || '').startsWith(monthPrefix));
+    // =========================================================================
+    // 8. 탭 2: 카테고리 & 보관함 강조 뷰
+    // =========================================================================
+    function renderCategoriesTab() {
+      const cs = appState.catState;
+      const tempCount = appState.works.filter(isTempWork).length;
+      const vaultWorks = appState.works.filter((w) => w.extras?.includes('vault'));
+      const legendCount = appState.works.filter((w) => w.extras?.includes('legend')).length;
+      const supernormalCount = appState.works.filter((w) => w.extras?.includes('supernormal')).length;
 
-      // 날짜별 등록 수 맵
-      const countByDate = {};
-      monthWorks.forEach((w) => {
-        countByDate[w.createdAt] = (countByDate[w.createdAt] || 0) + 1;
+      const filtered = appState.works.filter((w) => {
+        if (cs.search.trim()) {
+          const q = cs.search.trim().toLowerCase();
+          const blob = `${w.title} ${w.author} ${w.genre} ${(w.tags || []).join(' ')}`.toLowerCase();
+          if (!blob.includes(q)) return false;
+        }
+        if (cs.filter === 'temp') return isTempWork(w);
+        if (cs.filter === 'vault') return w.extras?.includes('vault');
+        if (cs.filter === 'legend') return w.extras?.includes('legend');
+        if (cs.filter === 'supernormal') return w.extras?.includes('supernormal');
+        if (cs.filter === 'rating') return !isTempWork(w) && w.rating === cs.ratingFilter;
+        if (cs.filter === 'tag') return cs.tagFilter ? (w.tags || []).includes(cs.tagFilter) : true;
+        return true;
       });
 
-      // 월별 통계 계산
-      const totalMonth = monthWorks.length;
-      const todayBestCount = monthWorks.filter((w) => w.sources?.includes('today')).length;
-      const newBestCount = monthWorks.filter((w) => w.sources?.includes('new')).length;
-      const vaultMonthCount = monthWorks.filter((w) => w.extras?.includes('vault')).length;
-      const read16Count = monthWorks.filter((w) => w.rating === 'read_16_plus').length;
+      const chipCls = (active) =>
+        active
+          ? 'px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-extrabold shrink-0 cursor-pointer'
+          : 'px-3 py-1.5 rounded-xl bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 text-xs font-bold shrink-0 cursor-pointer';
 
-      // 최다 등록일 계산
-      let peakDateText = '기록 없음';
-      const entries = Object.entries(countByDate);
-      if (entries.length) {
-        entries.sort((a, b) => b[1] - a[1]);
-        peakDateText = `${entries[0][0]} (${entries[0][1]}편)`;
+      return `
+        <!-- 보관함 (좋은소스) 특별 강조 영역 -->
+        <section class="vault-card-highlight rounded-3xl p-4 space-y-2.5 animate-pop-in">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-black">
+                💎 SPECIAL VAULT
+              </div>
+              <h2 class="text-sm font-black text-vault-900 mt-1">
+                보관함 (좋은소스) · ${vaultWorks.length}편
+              </h2>
+            </div>
+            <button
+              type="button"
+              id="btn-open-studio-from-cat"
+              class="px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold shadow-xs transition cursor-pointer"
+            >
+              변형 스튜디오 →
+            </button>
+          </div>
+
+          ${vaultWorks.length ? `
+            <div class="flex gap-2 overflow-x-auto no-scrollbar pt-0.5">
+              ${vaultWorks.map((vw) => `
+                <div class="shrink-0 w-56 bg-white/95 rounded-2xl p-2.5 border border-amber-300 flex flex-col justify-between gap-2">
+                  <div>
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">${escapeHtml(vw.genre || '미입력')}</span>
+                    <div class="text-xs font-extrabold text-slate-900 mt-1 truncate">${escapeHtml(vw.title)}</div>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <button type="button" data-copy-title="${escapeHtml(vw.title)}" class="copy-title-btn flex-1 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] font-bold cursor-pointer">
+                      제목 복사
+                    </button>
+                    <button type="button" data-studio-work="${vw.id}" class="studio-jump-btn flex-1 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-extrabold cursor-pointer">
+                      아이디어 변형
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : `
+            <p class="text-xs text-vault-900 bg-white/75 rounded-2xl p-2.5 font-medium">
+              아직 보관함(좋은소스)으로 표시된 작품이 없습니다. 작품 수정이나 3차 평가에서 '보관함 (좋은소스)'를 체크해보세요.
+            </p>
+          `}
+        </section>
+
+        <!-- 카테고리 필터 박스 -->
+        <section class="bg-white rounded-3xl p-3.5 border border-slate-200/80 space-y-3">
+          <input
+            id="cat-search-input"
+            type="text"
+            value="${escapeHtml(cs.search)}"
+            placeholder="제목, 작가, 장르, 태그 검색..."
+            class="w-full px-3.5 py-2 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-500"
+          />
+
+          <div class="flex gap-1.5 overflow-x-auto no-scrollbar">
+            <button type="button" data-cat-filter="all" class="cat-filter-chip ${chipCls(cs.filter === 'all')}">전체 (${appState.works.length})</button>
+            <button type="button" data-cat-filter="temp" class="cat-filter-chip ${chipCls(cs.filter === 'temp')}">📝 임시등록 (${tempCount})</button>
+            <button type="button" data-cat-filter="vault" class="cat-filter-chip ${chipCls(cs.filter === 'vault')}">💎 보관함 (${vaultWorks.length})</button>
+            <button type="button" data-cat-filter="legend" class="cat-filter-chip ${chipCls(cs.filter === 'legend')}">🔥 레전드 (${legendCount})</button>
+            <button type="button" data-cat-filter="supernormal" class="cat-filter-chip ${chipCls(cs.filter === 'supernormal')}">⚡ 슈퍼노멀 (${supernormalCount})</button>
+            <button type="button" data-cat-filter="rating" class="cat-filter-chip ${chipCls(cs.filter === 'rating')}">⭐ 별점별</button>
+            <button type="button" data-cat-filter="tag" class="cat-filter-chip ${chipCls(cs.filter === 'tag')}">🏷️ 태그별</button>
+          </div>
+
+          ${cs.filter === 'rating' ? `
+            <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-100">
+              ${RATING_CHOICES.map((r) => `
+                <button
+                  type="button"
+                  data-rating-filter="${r.id}"
+                  class="rating-filter-btn px-2.5 py-2 rounded-xl border text-left text-[11px] font-bold cursor-pointer ${
+                    cs.ratingFilter === r.id ? 'bg-brand-600 text-white border-brand-600' : 'bg-slate-50 text-slate-700 border-slate-200'
+                  }"
+                >
+                  ${r.label}
+                </button>
+              `).join('')}
+            </div>
+          ` : ''}
+
+          ${cs.filter === 'tag' ? `
+            <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-100">
+              ${appState.tagPool.map((t) => `
+                <button
+                  type="button"
+                  data-tag-filter="${escapeHtml(t)}"
+                  class="tag-filter-btn px-2.5 py-1 rounded-full border text-[11px] font-bold cursor-pointer ${
+                    cs.tagFilter === t ? 'bg-brand-600 text-white border-brand-600' : 'bg-slate-50 text-slate-700 border-slate-200'
+                  }"
+                >
+                  #${escapeHtml(t)}
+                </button>
+              `).join('')}
+            </div>
+          ` : ''}
+        </section>
+
+        <!-- 필터 결과 목록 -->
+        <section class="space-y-2.5">
+          <div class="text-xs font-bold text-slate-500 px-1">
+            표시 중인 작품 ${filtered.length}편
+          </div>
+          ${filtered.length
+            ? filtered.map((w) => renderWorkCard(w, { showDelete: true })).join('')
+            : `<div class="bg-white rounded-2xl p-6 text-center text-xs text-slate-500 border border-slate-200">선택한 조건에 해당하는 작품이 없습니다.</div>`
+          }
+        </section>
+      `;
+    }
+
+    // =========================================================================
+    // 9. 탭 3: 보관함 아이디어 변형 & 가제목 3종 자동 생성 스튜디오
+    // =========================================================================
+    function renderStudioTab() {
+      const vaultList = appState.works.filter((w) => w.extras?.includes('vault'));
+      const selectorPool = vaultList.length ? vaultList : appState.works;
+      const selectedWork = getSelectedStudioWork();
+
+      return `
+        <section class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-2xs space-y-4 animate-pop-in">
+          <div>
+            <span class="text-[10px] font-extrabold text-amber-600 uppercase">NEXT-WORK IDEA ENGINE</span>
+            <h2 class="text-base font-black text-slate-900">보관함 아이디어 변형 & 가제목 생성</h2>
+            <p class="text-xs text-slate-500 mt-0.5">보관함 작품을 골라 변형 축을 누르고 아이디어·가제목을 재구성해보세요.</p>
+          </div>
+
+          ${!vaultList.length && appState.works.length ? `
+            <div class="p-2.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 font-medium">
+              '보관함 (좋은소스)' 체크 작품이 없어 전체 등록 작품 중 선택해 테스트할 수 있습니다.
+            </div>
+          ` : ''}
+
+          <!-- 보관함 작품 선택 -->
+          <div>
+            <label for="studio-work-select" class="block text-xs font-extrabold text-slate-700 mb-1.5">
+              1. 보관함 작품 선택
+            </label>
+            <select id="studio-work-select" class="w-full px-3 py-2.5 rounded-2xl border border-slate-300 bg-slate-50 text-xs font-extrabold text-slate-900">
+              ${selectorPool.map((w) => `
+                <option value="${w.id}" ${selectedWork && w.id === selectedWork.id ? 'selected' : ''}>
+                  ${w.extras?.includes('vault') ? '💎 ' : ''}${escapeHtml(w.title)} (${escapeHtml(w.genre || '미입력')})
+                </option>
+              `).join('')}
+            </select>
+          </div>
+
+          <!-- 변형 축 버튼 (1개 이상 중복 선택 가능) -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-extrabold text-slate-700">2. 변형 방식 선택 (복수 선택 가능)</label>
+              <button
+                type="button"
+                id="btn-rebuild-ideas"
+                class="px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-extrabold shadow-2xs transition cursor-pointer"
+              >
+                🔄 아이디어 재구성
+              </button>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              ${TWIST_AXES.map((ax) => {
+                const active = appState.studioState.selectedAxes.includes(ax.id);
+                return `
+                  <button
+                    type="button"
+                    data-twist-axis="${ax.id}"
+                    class="twist-axis-btn p-2.5 rounded-2xl border text-left transition cursor-pointer ${
+                      active
+                        ? 'bg-amber-50 border-amber-500 text-amber-950 ring-1 ring-amber-400'
+                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                    }"
+                  >
+                    <div class="flex items-center justify-between text-xs font-extrabold">
+                      <span>${ax.icon} ${ax.label}</span>
+                      <span>${active ? '✓' : '+'}</span>
+                    </div>
+                    <div class="text-[10px] text-slate-500 mt-0.5 line-clamp-1">${ax.desc}</div>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- 재구성된 변형 아이디어 카드 -->
+          <div class="rounded-2xl bg-slate-900 text-white p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-amber-300">✨ 조합된 변형 아이디어</span>
+              <span class="text-[10px] text-slate-400">원작: ${escapeHtml(selectedWork?.title || '-')}</span>
+            </div>
+            <div class="space-y-1.5">
+              ${appState.studioState.generatedTwists.map((item) => `
+                <div class="bg-slate-800 rounded-xl px-3 py-2 text-xs leading-relaxed">
+                  <span class="font-extrabold text-amber-300">[${item.icon} ${escapeHtml(item.label)}]</span>
+                  <span class="text-slate-100 ml-1">${escapeHtml(item.ideaText)}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- 가제목 3종 자동 생성 & 다시 구상 -->
+          <div class="rounded-2xl bg-amber-50/80 border border-amber-200 p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <h3 class="text-xs font-black text-slate-900">3. 자동 구상 가제목 3가지</h3>
+                <p class="text-[10px] text-slate-600">선택한 변형 축과 원작 키워드를 접목했습니다.</p>
+              </div>
+              <button
+                type="button"
+                id="btn-rebuild-titles"
+                class="shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-extrabold transition cursor-pointer"
+              >
+                🎲 가제목 다시 구상
+              </button>
+            </div>
+
+            <div class="space-y-2">
+              ${appState.studioState.generatedTitles.map((cand, idx) => `
+                <div class="bg-white rounded-xl p-2.5 border border-amber-200 flex items-center justify-between gap-2">
+                  <div class="min-w-0 flex-1">
+                    <span class="text-[10px] font-black text-amber-700">가제 #${idx + 1}</span>
+                    <div class="text-xs font-extrabold text-slate-900 break-words">${escapeHtml(cand)}</div>
+                  </div>
+                  <div class="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      data-copy-title="${escapeHtml(cand)}"
+                      class="copy-title-btn px-2 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold cursor-pointer"
+                    >
+                      복사
+                    </button>
+                    <button
+                      type="button"
+                      data-save-idea-title="${escapeHtml(cand)}"
+                      class="save-idea-btn px-2 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-extrabold cursor-pointer"
+                    >
+                      저장
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </section>
+
+        <!-- 저장된 차기작 아이디어 메모 -->
+        <section class="bg-white rounded-3xl p-4 border border-slate-200/80 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-black text-slate-900">📌 저장된 가제목 & 변형 메모 (${appState.savedIdeas.length})</h3>
+          </div>
+          ${appState.savedIdeas.length ? appState.savedIdeas.map((item) => `
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="text-xs font-extrabold text-slate-900 break-words">${escapeHtml(item.title)}</div>
+                <div class="text-[10px] text-slate-500 mt-0.5">
+                  원작: ${escapeHtml(item.sourceTitle)} · 변형: ${escapeHtml(item.axesText)} · ${escapeHtml(item.savedAt)}
+                </div>
+              </div>
+              <button
+                type="button"
+                data-del-idea="${item.id}"
+                class="del-idea-btn shrink-0 px-2 py-1 rounded-lg bg-rose-50 text-rose-600 text-[10px] font-bold cursor-pointer"
+              >
+                삭제
+              </button>
+            </div>
+          `).join('') : `
+            <p class="text-xs text-slate-400 text-center py-3">아직 저장된 가제목 아이디어가 없습니다.</p>
+          `}
+        </section>
+      `;
+    }
+
+    // =========================================================================
+    // 10. 탭 4: [달력] 일별 인풋 수 및 월별 통계 뷰
+    // =========================================================================
+    function renderCalendarTab() {
+      const { year, month, selectedDate } = appState.calState;
+      const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+      const monthWorks = appState.works.filter((w) => (w.createdAt || '').startsWith(monthPrefix));
+
+      const dayCounts = {};
+      monthWorks.forEach((w) => {
+        if (w.createdAt) {
+          dayCounts[w.createdAt] = (dayCounts[w.createdAt] || 0) + 1;
+        }
+      });
+
+      const totalInMonth = monthWorks.length;
+      const firstWeekday = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const avgPerDay = (totalInMonth / Math.max(1, daysInMonth)).toFixed(2);
+
+      let bestDayLabel = '기록 없음';
+      const sortedDays = Object.entries(dayCounts).sort((a, b) => b[1] - a[1]);
+      if (sortedDays.length) {
+        bestDayLabel = `${sortedDays[0][0].slice(5)} (${sortedDays[0][1]}편)`;
       }
 
-      // 달력 그리드 계산
-      const firstDayOfWeek = new Date(year, month, 1).getDay(); // 0(일)~6(토)
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const todayStr = formatDateKey(new Date());
-
+      const todayKey = toDateKey(new Date());
       const cells = [];
-      for (let i = 0; i < firstDayOfWeek; i++) {
+
+      for (let i = 0; i < firstWeekday; i++) {
         cells.push(`<div class="h-14 rounded-xl bg-slate-50/50"></div>`);
       }
 
-      for (let day = 1; day <= daysInMonth; day++) {
-        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const cnt = countByDate[dateKey] || 0;
-        const isSelected = dateKey === selectedDate;
-        const isToday = dateKey === todayStr;
+      for (let d = 1; d <= daysInMonth; d++) {
+        const key = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const cnt = dayCounts[key] || 0;
+        const isSelected = key === selectedDate;
+        const isToday = key === todayKey;
 
         cells.push(`
           <button
             type="button"
-            data-cal-date="${dateKey}"
+            data-cal-select="${key}"
             class="cal-day-btn h-14 rounded-xl border p-1 flex flex-col items-center justify-between transition cursor-pointer ${
               isSelected
-                ? 'bg-munpia-600 text-white border-munpia-600 shadow-xs'
+                ? 'bg-brand-600 text-white border-brand-600 shadow-xs'
                 : cnt > 0
-                  ? 'bg-munpia-50/70 border-munpia-200 text-slate-900 hover:bg-munpia-100/70'
+                  ? 'bg-blue-50/70 border-blue-200 text-slate-900 hover:bg-blue-100/70'
                   : 'bg-white border-slate-100 text-slate-600 hover:bg-slate-50'
             }"
           >
-            <span class="text-[11px] font-bold ${isToday && !isSelected ? 'text-munpia-600 underline' : ''}">${day}</span>
+            <span class="text-[11px] font-bold ${isToday && !isSelected ? 'text-brand-600 underline' : ''}">${d}</span>
             ${cnt > 0 ? `
-              <span class="px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
-                isSelected ? 'bg-amber-400 text-slate-950' : 'bg-munpia-600 text-white'
+              <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black ${
+                isSelected ? 'bg-amber-400 text-slate-950' : 'bg-brand-600 text-white'
               }">
                 ${cnt}편
               </span>
             ` : `
-              <span class="text-[10px] ${isSelected ? 'text-munpia-200' : 'text-slate-300'}">-</span>
+              <span class="text-[10px] ${isSelected ? 'text-blue-200' : 'text-slate-300'}">0</span>
             `}
           </button>
         `);
       }
 
-      const selectedDayWorks = state.works.filter((w) => w.createdAt === selectedDate);
+      const selectedDayList = appState.works.filter((w) => w.createdAt === selectedDate);
 
       return `
-        <!-- 월별 통계 카드 -->
-        <section class="bg-white rounded-2xl p-4 border border-slate-200/80 space-y-3 animate-fade-up">
+        <!-- 월별 통계 요약 -->
+        <section class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-2xs space-y-3 animate-pop-in">
           <div class="flex items-center justify-between">
-            <h2 class="text-base font-bold text-slate-900">📊 ${year}년 ${month + 1}월 등록 통계</h2>
-            <span class="text-xs font-bold text-munpia-600">총 ${totalMonth}편</span>
+            <h2 class="text-base font-black text-slate-900">📅 ${year}년 ${month + 1}월 인풋 통계</h2>
+            <span class="px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-700 text-xs font-extrabold">
+              월 ${totalInMonth}편
+            </span>
           </div>
 
-          <div class="grid grid-cols-2 gap-2">
-            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/60">
-              <div class="text-[11px] text-slate-500">월간 등록 편수</div>
-              <div class="text-lg font-extrabold text-slate-900 mt-0.5">${totalMonth}편</div>
-              <div class="text-[10px] text-slate-500 mt-0.5">최다: ${peakDateText}</div>
+          <div class="grid grid-cols-3 gap-2">
+            <div class="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/70 text-center">
+              <div class="text-[10px] text-slate-500 font-bold">월 총 등록</div>
+              <div class="text-base font-black text-slate-900 mt-0.5">${totalInMonth}편</div>
             </div>
-            <div class="p-3 rounded-xl bg-amber-50/80 border border-amber-200/80">
-              <div class="text-[11px] text-amber-800">보관함 적립 / 16화+ 정독</div>
-              <div class="text-lg font-extrabold text-amber-900 mt-0.5">💎 ${vaultMonthCount} · ⭐ ${read16Count}</div>
-              <div class="text-[10px] text-amber-800 mt-0.5">투데이 ${todayBestCount} · 신규 ${newBestCount}</div>
+            <div class="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/70 text-center">
+              <div class="text-[10px] text-slate-500 font-bold">일평균 인풋</div>
+              <div class="text-base font-black text-brand-700 mt-0.5">${avgPerDay}</div>
+            </div>
+            <div class="p-2.5 rounded-2xl bg-amber-50 border border-amber-200 text-center">
+              <div class="text-[10px] text-amber-800 font-bold">최다 등록일</div>
+              <div class="text-xs font-black text-amber-950 mt-1 truncate">${bestDayLabel}</div>
             </div>
           </div>
         </section>
 
-        <!-- 달력 뷰 -->
-        <section class="bg-white rounded-2xl p-4 border border-slate-200/80 space-y-3">
+        <!-- 월별 달력 -->
+        <section class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-2xs space-y-3">
           <div class="flex items-center justify-between">
-            <button id="btn-prev-month" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold cursor-pointer">◀ 이전</button>
-            <div class="text-sm font-extrabold text-slate-900">${year}년 ${month + 1}월</div>
-            <button id="btn-next-month" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold cursor-pointer">다음 ▶</button>
+            <button type="button" id="btn-cal-prev" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-extrabold cursor-pointer">
+              ◀ 이전달
+            </button>
+            <div class="text-sm font-black text-slate-900">${year}년 ${month + 1}월</div>
+            <button type="button" id="btn-cal-next" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-extrabold cursor-pointer">
+              다음달 ▶
+            </button>
           </div>
 
           <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-bold text-slate-400">
@@ -1457,468 +1416,832 @@
           </div>
         </section>
 
-        <!-- 선택 일자 등록 작품 목록 -->
+        <!-- 선택 일자 등록 작품 -->
         <section class="space-y-2.5">
-          <div class="flex items-center justify-between px-1">
-            <h3 class="text-xs font-bold text-slate-700">${selectedDate} 등록 작품 (${selectedDayWorks.length}편)</h3>
+          <div class="text-xs font-black text-slate-700 px-1">
+            ${selectedDate} 등록 작품 (${selectedDayList.length}편)
           </div>
-          ${selectedDayWorks.length
-            ? selectedDayWorks.map((w) => renderWorkCard(w, false)).join('')
+          ${selectedDayList.length
+            ? selectedDayList.map((w) => renderWorkCard(w, { showDelete: true })).join('')
             : `<div class="bg-white rounded-2xl p-5 text-center text-xs text-slate-400 border border-slate-200">선택한 날짜에 등록된 작품이 없습니다.</div>`
           }
         </section>
       `;
     }
 
-    function renderAll() {
-      renderHeaderSummary();
-      renderNav();
+    // =========================================================================
+    // 11. 탭 5: [메타데이터] 취향 분석 & 데이터 백업/복구 뷰
+    // =========================================================================
+    function renderMetadataTab() {
+      const evaluatedWorks = appState.works.filter((w) => !isTempWork(w) && w.rating);
 
-      const mainEl = document.getElementById('main-content');
-      if (state.activeTab === 'register') {
-        mainEl.innerHTML = renderRegisterTab();
-      } else if (state.activeTab === 'categories') {
-        mainEl.innerHTML = renderCategoriesTab();
-      } else if (state.activeTab === 'vault') {
-        generateIdeaPlan();
-        mainEl.innerHTML = renderVaultStudioTab();
-      } else if (state.activeTab === 'calendar') {
-        mainEl.innerHTML = renderCalendarTab();
-      }
+      // 장르별 집계
+      const genreStats = {};
+      evaluatedWorks.forEach((w) => {
+        const g = w.genre || '기타';
+        if (!genreStats[g]) {
+          genreStats[g] = { count: 0, read16: 0, scoreSum: 0 };
+        }
+        const rObj = RATING_CHOICES.find((r) => r.id === w.rating);
+        genreStats[g].count += 1;
+        if (w.rating === 'read_16_plus') genreStats[g].read16 += 1;
+        genreStats[g].scoreSum += rObj ? rObj.score : 2;
+      });
 
-      bindDynamicEvents();
+      const genreRows = Object.entries(genreStats)
+        .map(([genre, st]) => ({
+          genre,
+          count: st.count,
+          read16: st.read16,
+          avgScore: (st.scoreSum / Math.max(1, st.count)).toFixed(1),
+        }))
+        .sort((a, b) => Number(b.avgScore) - Number(a.avgScore) || b.count - a.count);
+
+      // 태그 빈도 집계
+      const tagFreq = {};
+      appState.works.forEach((w) => {
+        (w.tags || []).forEach((t) => {
+          tagFreq[t] = (tagFreq[t] || 0) + 1;
+        });
+      });
+      const topTags = Object.entries(tagFreq)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 8);
+      const maxTagCount = topTags.length ? topTags[0][1] : 1;
+
+      const topGenreText = genreRows.length
+        ? `${genreRows[0].genre} (평균 ${genreRows[0].avgScore}점, 16화+ 정독 ${genreRows[0].read16}편)`
+        : '평가된 작품이 아직 없습니다.';
+
+      return `
+        <!-- 취향 자동 분석 요약 -->
+        <section class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-2xs space-y-3 animate-pop-in">
+          <div>
+            <span class="text-[10px] font-extrabold text-brand-600 uppercase">TASTE METADATA</span>
+            <h2 class="text-base font-black text-slate-900">📈 취향 메타데이터 분석</h2>
+          </div>
+
+          <div class="p-3 rounded-2xl bg-brand-50 border border-brand-100">
+            <div class="text-[11px] font-bold text-brand-700">현재 선호 장르 하이라이트</div>
+            <div class="text-xs font-black text-slate-900 mt-0.5">${escapeHtml(topGenreText)}</div>
+          </div>
+
+          <!-- 장르별 별점 평가 분포 -->
+          <div class="space-y-2">
+            <h3 class="text-xs font-extrabold text-slate-700">장르별 별점 평가 현황</h3>
+            ${genreRows.length ? genreRows.map((row) => {
+              const pct = Math.min(100, Math.round((Number(row.avgScore) / 4) * 100));
+              return `
+                <div class="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800">${escapeHtml(row.genre)} (${row.count}편)</span>
+                    <span class="font-bold text-brand-700">평균 ${row.avgScore} / 4.0 · 정독 ${row.read16}편</span>
+                  </div>
+                  <div class="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
+                    <div class="h-full rounded-full bg-brand-600" style="width: ${pct}%"></div>
+                  </div>
+                </div>
+              `;
+            }).join('') : `
+              <p class="text-xs text-slate-400 py-2">2차 및 3차 평가를 마친 작품이 생기면 장르별 분포가 표시됩니다.</p>
+            `}
+          </div>
+
+          <!-- 상위 태그 분석 -->
+          <div class="space-y-2 pt-1">
+            <h3 class="text-xs font-extrabold text-slate-700">자주 기록한 핵심 태그</h3>
+            ${topTags.length ? topTags.map(([tag, cnt]) => {
+              const widthPct = Math.max(14, Math.round((cnt / maxTagCount) * 100));
+              return `
+                <div class="space-y-1">
+                  <div class="flex items-center justify-between text-[11px]">
+                    <span class="font-bold text-slate-700">#${escapeHtml(tag)}</span>
+                    <span class="font-extrabold text-slate-500">${cnt}회</span>
+                  </div>
+                  <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div class="h-full rounded-full bg-amber-500" style="width: ${widthPct}%"></div>
+                  </div>
+                </div>
+              `;
+            }).join('') : `
+              <p class="text-xs text-slate-400">등록된 태그가 없습니다.</p>
+            `}
+          </div>
+        </section>
+
+        <!-- 데이터 백업 및 복구 섹션 -->
+        <section class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-2xs space-y-3">
+          <div>
+            <h3 class="text-sm font-black text-slate-900">💾 데이터 백업 및 복구 (JSON)</h3>
+            <p class="text-xs text-slate-500 mt-0.5">모든 작품, 태그 풀, 저장된 가제목 아이디어를 내보내거나 복구합니다.</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              id="btn-export-json"
+              class="py-2.5 px-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold transition cursor-pointer"
+            >
+              ⬇️ JSON 파일 다운로드
+            </button>
+            <label
+              for="input-import-file"
+              class="py-2.5 px-3 rounded-2xl bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 text-xs font-extrabold text-center transition cursor-pointer"
+            >
+              ⬆️ JSON 파일 선택
+            </label>
+            <input id="input-import-file" type="file" accept="application/json,.json" class="hidden" />
+          </div>
+
+          <div>
+            <label for="backup-json-textarea" class="block text-[11px] font-bold text-slate-600 mb-1">
+              백업 JSON 직접 확인 / 붙여넣기 복구
+            </label>
+            <textarea
+              id="backup-json-textarea"
+              rows="4"
+              placeholder='여기에 백업된 JSON 문자열을 붙여넣어 복구할 수 있습니다.'
+              class="w-full p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-[11px] font-mono leading-relaxed"
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              id="btn-restore-overwrite"
+              class="py-2.5 px-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold transition cursor-pointer"
+            >
+              덮어쓰기 복구
+            </button>
+            <button
+              type="button"
+              id="btn-restore-merge"
+              class="py-2.5 px-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition cursor-pointer"
+            >
+              기존 데이터와 병합
+            </button>
+          </div>
+        </section>
+      `;
     }
 
     // =========================================================================
-    // 8. 이벤트 바인딩
+    // 12. 1·2·3차 전체 수정 모달 렌더링
     // =========================================================================
-    function syncFormInputsFromDom() {
-      const titleEl = document.getElementById('input-title');
-      const genreEl = document.getElementById('input-genre');
-      const authorEl = document.getElementById('input-author');
-      const epEl = document.getElementById('input-episodes');
-      const viewsEl = document.getElementById('input-views');
-      const synEl = document.getElementById('input-synopsis');
-      const tagInpEl = document.getElementById('input-custom-tag');
+    function openEditWorkModal(workId) {
+      const work = appState.works.find((w) => w.id === workId);
+      if (!work) return;
+      appState.editingWorkId = workId;
 
-      if (titleEl) state.form.title = titleEl.value;
-      if (genreEl) state.form.genre = genreEl.value;
-      if (authorEl) state.form.author = authorEl.value;
-      if (epEl) state.form.totalEpisodes = Number(epEl.value) || 1;
-      if (viewsEl) state.form.latestViews = viewsEl.value;
-      if (synEl) state.form.synopsis = synEl.value;
-      if (tagInpEl) state.form.customTagInput = tagInpEl.value;
+      const modal = document.getElementById('edit-work-modal');
+      const panel = document.getElementById('edit-work-modal-panel');
+      const tempNow = isTempWork(work);
+
+      panel.innerHTML = `
+        <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+          <div>
+            <span class="text-[10px] font-extrabold text-brand-600">단계별 정보 수정</span>
+            <h3 class="text-base font-black text-slate-900">작품 1·2·3차 수정</h3>
+          </div>
+          <button type="button" id="btn-close-edit-modal" class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer">
+            ✕
+          </button>
+        </div>
+
+        <form id="edit-work-form" class="mt-3 space-y-3.5">
+          <!-- 1차 수정 -->
+          <div class="space-y-2">
+            <div class="text-xs font-extrabold text-slate-800">1차 · 베스트 구분 및 제목</div>
+            <div class="grid grid-cols-2 gap-2">
+              ${BEST_SOURCES.map((src) => {
+                const checked = (work.sources || []).includes(src.id);
+                return `
+                  <label class="flex items-center gap-1.5 p-2 rounded-xl border text-xs font-bold cursor-pointer ${
+                    checked ? 'bg-brand-50 border-brand-300 text-brand-900' : 'bg-slate-50 border-slate-200 text-slate-600'
+                  }">
+                    <input type="checkbox" name="editSources" value="${src.id}" ${checked ? 'checked' : ''} class="accent-brand-600" />
+                    <span>${src.label}</span>
+                  </label>
+                `;
+              }).join('')}
+            </div>
+            <input
+              type="text"
+              name="editTitle"
+              value="${escapeHtml(work.title)}"
+              required
+              class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold"
+            />
+          </div>
+
+          <!-- 2차 수정 -->
+          <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-slate-800">2차 · 작품 정보</span>
+              <span class="text-[10px] font-bold ${tempNow ? 'text-rose-600' : 'text-emerald-700'}">
+                ${tempNow ? '미완료([임시등록])' : '2차 완료'}
+              </span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 mb-1">장르</label>
+                <select name="editGenre" class="w-full px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold">
+                  <option value="">미입력</option>
+                  ${GENRE_LIST.map((g) => `<option value="${g}" ${work.genre === g ? 'selected' : ''}>${g}</option>`).join('')}
+                  ${work.genre && !GENRE_LIST.includes(work.genre) ? `<option value="${escapeHtml(work.genre)}" selected>${escapeHtml(work.genre)}</option>` : ''}
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 mb-1">작가명</label>
+                <input type="text" name="editAuthor" value="${escapeHtml(work.author || '')}" class="w-full px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs" />
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 mb-1">총 회차</label>
+                <input type="number" name="editEpisodes" min="0" value="${Number(work.totalEpisodes) || 0}" class="w-full px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs" />
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 mb-1">최근화 조회수</label>
+                <input type="text" name="editViews" value="${escapeHtml(work.latestViews || '')}" class="w-full px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 3차 수정: 별점, 추가표시, 태그 -->
+          <div class="p-3 rounded-2xl bg-amber-50/50 border border-amber-200/80 space-y-2.5">
+            <div class="text-xs font-extrabold text-slate-800">3차 · 별점 / 마킹 / 태그</div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-600 mb-1">별점 (단일 선택)</label>
+              <div class="grid grid-cols-1 gap-1.5">
+                ${RATING_CHOICES.map((r) => `
+                  <label class="flex items-center gap-2 p-2 rounded-xl bg-white border text-xs font-bold cursor-pointer ${
+                    work.rating === r.id ? 'border-brand-500 text-brand-900' : 'border-slate-200 text-slate-700'
+                  }">
+                    <input type="radio" name="editRating" value="${r.id}" ${work.rating === r.id ? 'checked' : ''} class="accent-brand-600" />
+                    <span>${r.label}</span>
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-600 mb-1">추가 표시 (중복 선택 가능)</label>
+              <div class="grid grid-cols-3 gap-1.5">
+                ${EXTRA_MARKS.map((m) => {
+                  const checked = (work.extras || []).includes(m.id);
+                  return `
+                    <label class="flex flex-col items-center justify-center p-2 rounded-xl border text-[10px] font-extrabold text-center cursor-pointer ${
+                      checked ? m.chip : 'bg-white border-slate-200 text-slate-600'
+                    }">
+                      <input type="checkbox" name="editExtras" value="${m.id}" ${checked ? 'checked' : ''} class="sr-only" />
+                      <span>${m.icon} ${checked ? '✓' : ''}</span>
+                      <span class="mt-0.5">${m.label}</span>
+                    </label>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-600 mb-1">태그 (쉼표로 구분, 약 5개 권장)</label>
+              <input
+                type="text"
+                name="editTags"
+                value="${escapeHtml((work.tags || []).join(', '))}"
+                placeholder="예: 회귀, 사이다, 먼치킨"
+                class="w-full px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs"
+              />
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 pt-1">
+            <button
+              type="button"
+              id="btn-modal-delete-work"
+              class="px-3.5 py-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-extrabold cursor-pointer"
+            >
+              작품 삭제
+            </button>
+            <button
+              type="submit"
+              class="flex-1 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-black cursor-pointer"
+            >
+              변경사항 저장
+            </button>
+          </div>
+        </form>
+      `;
+
+      modal.classList.remove('hidden');
+
+      document.getElementById('btn-close-edit-modal')?.addEventListener('click', closeEditWorkModal);
+
+      document.getElementById('btn-modal-delete-work')?.addEventListener('click', () => {
+        appState.works = appState.works.filter((w) => w.id !== workId);
+        saveToStorage();
+        syncStudioSelection();
+        closeEditWorkModal();
+        renderApp();
+        showToast('작품이 삭제되었습니다.', 'info');
+      });
+
+      document.getElementById('edit-work-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const nextTitle = String(fd.get('editTitle') || '').trim();
+        if (!nextTitle) {
+          showToast('작품 제목은 비워둘 수 없습니다.', 'error');
+          return;
+        }
+
+        // 다른 작품과 제목 중복 검사
+        const clash = appState.works.find(
+          (other) => other.id !== workId && normalizeTitle(other.title) === normalizeTitle(nextTitle)
+        );
+        if (clash) {
+          showToast('이미 등록된 작품 제목과 중복됩니다.', 'warning');
+          return;
+        }
+
+        const chosenSources = fd.getAll('editSources').map(String);
+        const finalSources = chosenSources.length ? chosenSources : ['today'];
+        const chosenExtras = fd.getAll('editExtras').map(String);
+        const chosenRating = fd.get('editRating') ? String(fd.get('editRating')) : work.rating;
+
+        const parsedTags = String(fd.get('editTags') || '')
+          .split(',')
+          .map((t) => t.replace(/^#+/, '').trim())
+          .filter(Boolean)
+          .slice(0, 5);
+
+        parsedTags.forEach((tag) => {
+          if (!appState.tagPool.includes(tag)) {
+            appState.tagPool.unshift(tag);
+          }
+        });
+
+        appState.works = appState.works.map((w) => {
+          if (w.id !== workId) return w;
+          return {
+            ...w,
+            title: nextTitle,
+            sources: finalSources,
+            genre: String(fd.get('editGenre') || '').trim(),
+            author: String(fd.get('editAuthor') || '').trim(),
+            totalEpisodes: Number(fd.get('editEpisodes') || 0),
+            latestViews: String(fd.get('editViews') || '').trim(),
+            rating: chosenRating,
+            extras: chosenExtras,
+            tags: parsedTags,
+          };
+        });
+
+        saveToStorage();
+        syncStudioSelection();
+        rebuildStudioTwists();
+        rebuildStudioTitles();
+        closeEditWorkModal();
+        renderApp();
+        showToast('작품 정보가 저장되었습니다.', 'success');
+      });
     }
 
-    function bindDynamicEvents() {
-      // 베스트 구분 토글
-      document.querySelectorAll('.source-toggle-btn').forEach((btn) => {
+    function closeEditWorkModal() {
+      appState.editingWorkId = null;
+      document.getElementById('edit-work-modal').classList.add('hidden');
+    }
+
+    function openDuplicateModal(existingWork) {
+      appState.duplicateTargetId = existingWork.id;
+      document.getElementById('duplicate-modal-desc').textContent =
+        `"${existingWork.title}" 작품은 이미 목록에 등록되어 있습니다. 기존 기록을 확인하거나 수정해보세요.`;
+      document.getElementById('duplicate-modal').classList.remove('hidden');
+    }
+
+    function closeDuplicateModal() {
+      appState.duplicateTargetId = null;
+      document.getElementById('duplicate-modal').classList.add('hidden');
+    }
+
+    // =========================================================================
+    // 13. 전체 화면 렌더링 및 동적 이벤트 바인딩
+    // =========================================================================
+    function syncRegFormFromDom() {
+      const titleEl = document.getElementById('reg-title-input');
+      const genreEl = document.getElementById('reg-genre-input');
+      const authorEl = document.getElementById('reg-author-input');
+      const epEl = document.getElementById('reg-episodes-input');
+      const viewsEl = document.getElementById('reg-views-input');
+
+      if (titleEl) appState.regForm.title = titleEl.value;
+      if (genreEl) appState.regForm.genre = genreEl.value;
+      if (authorEl) appState.regForm.author = authorEl.value;
+      if (epEl) appState.regForm.totalEpisodes = epEl.value;
+      if (viewsEl) appState.regForm.latestViews = viewsEl.value;
+    }
+
+    function bindViewEvents() {
+      // 공통: 제목 복사 버튼
+      document.querySelectorAll('.copy-title-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          syncFormInputsFromDom();
-          const src = btn.getAttribute('data-source');
-          const list = state.form.sources;
-          if (list.includes(src)) {
-            if (list.length > 1) {
-              state.form.sources = list.filter((x) => x !== src);
+          copyTitleToClipboard(btn.getAttribute('data-copy-title') || '');
+        });
+      });
+
+      // 공통: 1·2·3차 수정 모달 열기
+      document.querySelectorAll('.edit-work-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          openEditWorkModal(btn.getAttribute('data-edit-work'));
+        });
+      });
+
+      // 공통: 보관함 변형 스튜디오로 이동
+      document.querySelectorAll('.studio-jump-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          appState.studioState.selectedWorkId = btn.getAttribute('data-studio-work');
+          appState.studioState.ideaSeed += 1;
+          appState.studioState.titleSeed += 1;
+          appState.activeTab = 'studio';
+          rebuildStudioTwists();
+          rebuildStudioTitles();
+          renderApp();
+        });
+      });
+
+      // 공통: 작품 삭제
+      document.querySelectorAll('.delete-work-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-delete-work');
+          appState.works = appState.works.filter((w) => w.id !== id);
+          saveToStorage();
+          syncStudioSelection();
+          renderApp();
+          showToast('작품이 삭제되었습니다.', 'info');
+        });
+      });
+
+      // --- 탭 1 이벤트 ---
+      document.querySelectorAll('.reg-source-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          syncRegFormFromDom();
+          const src = btn.getAttribute('data-reg-source');
+          const cur = appState.regForm.sources;
+          if (cur.includes(src)) {
+            if (cur.length > 1) {
+              appState.regForm.sources = cur.filter((x) => x !== src);
             } else {
-              showToast('최소 1개 이상의 베스트 구분을 선택해야 합니다.', 'warning');
+              showToast('투데이/신규 베스트 중 최소 1개는 체크해야 합니다.', 'warning');
             }
           } else {
-            state.form.sources = [...list, src];
+            appState.regForm.sources = [...cur, src];
           }
-          renderAll();
+          renderApp();
         });
       });
 
-      // 샘플 제목 칩 클릭 시 제목 입력 및 자동 정보 채움
-      document.querySelectorAll('.sample-title-chip').forEach((chip) => {
-        chip.addEventListener('click', () => {
-          state.form.title = chip.getAttribute('data-sample-title') || '';
-          renderAll();
-          applyAutoMetadataToForm();
-        });
+      document.getElementById('btn-toggle-stage2-mode')?.addEventListener('click', () => {
+        syncRegFormFromDom();
+        appState.regForm.openStage2Now = !appState.regForm.openStage2Now;
+        renderApp();
       });
 
-      // 자동입력 버튼
-      document.getElementById('btn-auto-fill')?.addEventListener('click', () => {
-        syncFormInputsFromDom();
-        applyAutoMetadataToForm();
-      });
-
-      // 별점 4종 중 1개 선택
-      document.querySelectorAll('.rating-select-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          syncFormInputsFromDom();
-          state.form.rating = btn.getAttribute('data-rating-id');
-          renderAll();
-        });
-      });
-
-      // 추가 3종 중복 선택 토글
-      document.querySelectorAll('.extra-toggle-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          syncFormInputsFromDom();
-          const id = btn.getAttribute('data-extra-id');
-          if (state.form.extras.includes(id)) {
-            state.form.extras = state.form.extras.filter((x) => x !== id);
-          } else {
-            state.form.extras = [...state.form.extras, id];
-          }
-          renderAll();
-        });
-      });
-
-      // 태그 제거
-      document.querySelectorAll('.remove-tag-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          syncFormInputsFromDom();
-          const target = btn.getAttribute('data-remove-tag');
-          state.form.tags = state.form.tags.filter((t) => t !== target);
-          renderAll();
-        });
-      });
-
-      // 커스텀 태그 추가 & 태그 풀 저장
-      document.getElementById('btn-add-custom-tag')?.addEventListener('click', () => {
-        syncFormInputsFromDom();
-        const rawTag = state.form.customTagInput.replace(/^#+/, '').trim();
-        if (!rawTag) {
-          showToast('추가할 태그를 입력해주세요.', 'warning');
-          return;
-        }
-        if (state.form.tags.length >= 5 && !state.form.tags.includes(rawTag)) {
-          showToast('작품당 태그는 최대 5개까지 설정할 수 있습니다.', 'warning');
-          return;
-        }
-        if (!state.tagPool.includes(rawTag)) {
-          state.tagPool = [rawTag, ...state.tagPool];
-        }
-        if (!state.form.tags.includes(rawTag)) {
-          state.form.tags = [...state.form.tags, rawTag];
-        }
-        state.form.customTagInput = '';
-        persistState();
-        renderAll();
-        showToast(`#${rawTag} 태그가 저장 및 적용되었습니다.`, 'success');
-      });
-
-      // 저장된 태그 풀 원클릭 추가/해제
-      document.querySelectorAll('.pool-tag-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          syncFormInputsFromDom();
-          const poolTag = btn.getAttribute('data-pool-tag');
-          if (state.form.tags.includes(poolTag)) {
-            state.form.tags = state.form.tags.filter((t) => t !== poolTag);
-          } else {
-            if (state.form.tags.length >= 5) {
-              showToast('작품당 태그는 최대 5개까지 설정할 수 있습니다.', 'warning');
-              return;
-            }
-            state.form.tags = [...state.form.tags, poolTag];
-          }
-          renderAll();
-        });
-      });
-
-      // 작품 등록 제출
-      document.getElementById('btn-submit-work')?.addEventListener('click', () => {
-        syncFormInputsFromDom();
-        const cleanTitle = state.form.title.trim();
-        if (!cleanTitle) {
+      document.getElementById('btn-save-work')?.addEventListener('click', () => {
+        syncRegFormFromDom();
+        const title = appState.regForm.title.trim();
+        if (!title) {
           showToast('작품 제목을 입력해주세요.', 'error');
           return;
         }
 
-        // 중복 체크
-        const existing = state.works.find((w) => normalizeTitle(w.title) === normalizeTitle(cleanTitle));
+        const existing = appState.works.find(
+          (w) => normalizeTitle(w.title) === normalizeTitle(title)
+        );
         if (existing) {
-          showToast('이미 등록된 작품입니다', 'warning', '확인하기', () => {
-            state.activeTab = 'categories';
-            state.categoryFilter.type = 'all';
-            state.highlightWorkId = existing.id;
-            renderAll();
-          });
+          openDuplicateModal(existing);
           return;
         }
 
         const newWork = {
           id: 'w-' + Date.now(),
-          title: cleanTitle,
-          sources: [...state.form.sources],
-          genre: (state.form.genre || '판타지').trim(),
-          author: (state.form.author || '작가 미상').trim(),
-          synopsis: (state.form.synopsis || '').trim(),
-          totalEpisodes: Number(state.form.totalEpisodes) || 1,
-          latestViews: (state.form.latestViews || '0').trim(),
-          rating: state.form.rating,
-          extras: [...state.form.extras],
-          tags: state.form.tags.slice(0, 5),
-          createdAt: formatDateKey(new Date()),
+          title,
+          sources: [...appState.regForm.sources],
+          genre: appState.regForm.openStage2Now ? String(appState.regForm.genre || '').trim() : '',
+          author: appState.regForm.openStage2Now ? String(appState.regForm.author || '').trim() : '',
+          totalEpisodes: appState.regForm.openStage2Now ? Number(appState.regForm.totalEpisodes || 0) : 0,
+          latestViews: appState.regForm.openStage2Now ? String(appState.regForm.latestViews || '').trim() : '',
+          rating: 'read_16_plus',
+          extras: [],
+          tags: [],
+          createdAt: toDateKey(new Date()),
         };
 
-        state.works = [newWork, ...state.works];
-        state.highlightWorkId = newWork.id;
-        if (newWork.extras.includes('vault')) {
-          state.vaultStudio.selectedWorkId = newWork.id;
-        }
+        appState.works = [newWork, ...appState.works];
+        appState.regForm.title = '';
+        appState.regForm.author = '';
+        appState.regForm.totalEpisodes = '';
+        appState.regForm.latestViews = '';
 
-        // 폼 초기화
-        state.form.title = '';
-        state.form.author = '';
-        state.form.synopsis = '';
-        state.form.autoFilledNotice = '';
-        state.form.tags = [];
+        saveToStorage();
+        renderApp();
 
-        persistState();
-        renderAll();
-        showToast(`"${newWork.title}" 작품이 등록되었습니다!`, 'success');
-      });
-
-      document.getElementById('btn-go-all-categories')?.addEventListener('click', () => {
-        state.activeTab = 'categories';
-        renderAll();
-      });
-
-      // 카테고리 검색 및 필터
-      document.getElementById('input-category-search')?.addEventListener('input', (e) => {
-        state.categoryFilter.searchQuery = e.target.value;
-        const mainEl = document.getElementById('main-content');
-        mainEl.innerHTML = renderCategoriesTab();
-        bindDynamicEvents();
-        const reInput = document.getElementById('input-category-search');
-        if (reInput) {
-          reInput.focus();
-          reInput.setSelectionRange(reInput.value.length, reInput.value.length);
+        if (isTempWork(newWork)) {
+          showToast(`"${newWork.title}"이(가) [임시등록]으로 저장되었습니다.`, 'warning');
+        } else {
+          showToast(`"${newWork.title}" 1·2차 등록 완료! 수정 버튼에서 3차 평가를 진행하세요.`, 'success');
         }
       });
 
-      document.querySelectorAll('.cat-filter-btn').forEach((btn) => {
+      // --- 탭 2 이벤트 ---
+      document.getElementById('btn-open-studio-from-cat')?.addEventListener('click', () => {
+        appState.activeTab = 'studio';
+        syncStudioSelection();
+        rebuildStudioTwists();
+        rebuildStudioTitles();
+        renderApp();
+      });
+
+      document.getElementById('cat-search-input')?.addEventListener('input', (e) => {
+        appState.catState.search = e.target.value;
+        document.getElementById('main-view').innerHTML = renderCategoriesTab();
+        bindViewEvents();
+        const re = document.getElementById('cat-search-input');
+        if (re) {
+          re.focus();
+          re.setSelectionRange(re.value.length, re.value.length);
+        }
+      });
+
+      document.querySelectorAll('.cat-filter-chip').forEach((btn) => {
         btn.addEventListener('click', () => {
-          state.categoryFilter.type = btn.getAttribute('data-cat-type');
-          renderAll();
+          appState.catState.filter = btn.getAttribute('data-cat-filter');
+          renderApp();
         });
       });
 
-      document.querySelectorAll('.sub-rating-btn').forEach((btn) => {
+      document.querySelectorAll('.rating-filter-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          state.categoryFilter.ratingId = btn.getAttribute('data-filter-rating-id');
-          renderAll();
+          appState.catState.ratingFilter = btn.getAttribute('data-rating-filter');
+          renderApp();
         });
       });
 
-      // 카드 내 추가 뱃지 원클릭 토글
-      document.querySelectorAll('.card-extra-btn').forEach((btn) => {
+      document.querySelectorAll('.tag-filter-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-card-extra-work');
-          const extraId = btn.getAttribute('data-card-extra-id');
-          state.works = state.works.map((w) => {
-            if (w.id !== workId) return w;
-            const current = Array.isArray(w.extras) ? w.extras : [];
-            const nextExtras = current.includes(extraId)
-              ? current.filter((x) => x !== extraId)
-              : [...current, extraId];
-            return { ...w, extras: nextExtras };
-          });
-          persistState();
-          renderAll();
+          const t = btn.getAttribute('data-tag-filter');
+          appState.catState.tagFilter = appState.catState.tagFilter === t ? '' : t;
+          renderApp();
         });
       });
 
-      // 문피아 앱 바로가기 버튼
-      document.querySelectorAll('.munpia-open-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const t = btn.getAttribute('data-munpia-title') || '';
-          openMunpiaApp(t);
-        });
+      // --- 탭 3 이벤트 ---
+      document.getElementById('studio-work-select')?.addEventListener('change', (e) => {
+        appState.studioState.selectedWorkId = e.target.value;
+        appState.studioState.ideaSeed += 1;
+        appState.studioState.titleSeed += 1;
+        rebuildStudioTwists();
+        rebuildStudioTitles();
+        renderApp();
       });
 
-      // 보관함 변형 탭 이동
-      document.querySelectorAll('.go-transform-btn').forEach((btn) => {
+      document.querySelectorAll('.twist-axis-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-transform-work-id');
-          state.vaultStudio.selectedWorkId = workId;
-          state.vaultStudio.seed += 1;
-          state.activeTab = 'vault';
-          renderAll();
-        });
-      });
-
-      // 작품 삭제
-      document.querySelectorAll('.delete-work-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const id = btn.getAttribute('data-delete-work-id');
-          state.works = state.works.filter((w) => w.id !== id);
-          persistState();
-          renderAll();
-          showToast('작품이 삭제되었습니다.', 'info');
-        });
-      });
-
-      // 보관함 변형 스튜디오 이벤트
-      document.getElementById('select-vault-work')?.addEventListener('change', (e) => {
-        state.vaultStudio.selectedWorkId = e.target.value;
-        state.vaultStudio.seed += 1;
-        renderAll();
-      });
-
-      document.querySelectorAll('.idea-toggle-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ideaId = btn.getAttribute('data-idea-id');
-          const cur = state.vaultStudio.selectedIdeas;
-          if (cur.includes(ideaId)) {
+          const axId = btn.getAttribute('data-twist-axis');
+          const cur = appState.studioState.selectedAxes;
+          if (cur.includes(axId)) {
             if (cur.length > 1) {
-              state.vaultStudio.selectedIdeas = cur.filter((x) => x !== ideaId);
+              appState.studioState.selectedAxes = cur.filter((x) => x !== axId);
             } else {
-              showToast('최소 1개 이상의 변형 아이디어를 선택해주세요.', 'warning');
+              showToast('최소 1개 이상의 변형 축을 선택해야 합니다.', 'warning');
+              return;
             }
           } else {
-            state.vaultStudio.selectedIdeas = [...cur, ideaId];
+            appState.studioState.selectedAxes = [...cur, axId];
           }
-          renderAll();
+          rebuildStudioTwists();
+          rebuildStudioTitles();
+          renderApp();
         });
       });
 
-      document.getElementById('btn-regenerate-idea')?.addEventListener('click', () => {
-        state.vaultStudio.seed += 1;
-        renderAll();
-        showToast('새로운 변형 조합과 가제목·소개안을 재구성했습니다.', 'success');
+      document.getElementById('btn-rebuild-ideas')?.addEventListener('click', () => {
+        appState.studioState.ideaSeed += 1;
+        rebuildStudioTwists();
+        rebuildStudioTitles();
+        renderApp();
+        showToast('변형 아이디어를 새롭게 재구성했습니다.', 'success');
       });
 
-      document.querySelectorAll('.copy-btn').forEach((btn) => {
+      document.getElementById('btn-rebuild-titles')?.addEventListener('click', () => {
+        appState.studioState.titleSeed += 1;
+        rebuildStudioTitles();
+        renderApp();
+        showToast('가제목 3종을 다시 구상했습니다.', 'success');
+      });
+
+      document.querySelectorAll('.save-idea-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const text = btn.getAttribute('data-copy-text') || '';
-          copyToClipboard(text);
+          const candTitle = btn.getAttribute('data-save-idea-title') || '';
+          const srcWork = getSelectedStudioWork();
+          appState.savedIdeas = [
+            {
+              id: 'idea-' + Date.now(),
+              title: candTitle,
+              sourceTitle: srcWork?.title || '원작 미상',
+              axesText: appState.studioState.generatedTwists.map((t) => t.label).join(' + '),
+              savedAt: toDateKey(new Date()),
+            },
+            ...appState.savedIdeas,
+          ];
+          saveToStorage();
+          renderApp();
+          showToast('가제목 아이디어가 저장되었습니다.', 'success');
         });
       });
 
-      document.getElementById('btn-save-draft')?.addEventListener('click', () => {
-        const plan = state.vaultStudio.generatedPlan;
-        if (!plan) return;
-        state.savedDrafts = [
-          {
-            id: 'd-' + Date.now(),
-            savedAt: formatDateKey(new Date()),
-            sourceTitle: plan.sourceTitle,
-            title: plan.candidateTitles[0],
-            synopsis: plan.pitchSynopsis,
-          },
-          ...state.savedDrafts,
-        ];
-        persistState();
-        renderAll();
-        showToast('차기작 기획안이 저장되었습니다.', 'success');
+      document.querySelectorAll('.del-idea-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-del-idea');
+          appState.savedIdeas = appState.savedIdeas.filter((x) => x.id !== id);
+          saveToStorage();
+          renderApp();
+        });
       });
 
-      document.getElementById('btn-open-drafts-modal')?.addEventListener('click', openDraftsModal);
-
-      // 달력 이벤트
-      document.getElementById('btn-prev-month')?.addEventListener('click', () => {
-        if (state.calendar.month === 0) {
-          state.calendar.year -= 1;
-          state.calendar.month = 11;
+      // --- 탭 4 이벤트 ---
+      document.getElementById('btn-cal-prev')?.addEventListener('click', () => {
+        if (appState.calState.month === 0) {
+          appState.calState.year -= 1;
+          appState.calState.month = 11;
         } else {
-          state.calendar.month -= 1;
+          appState.calState.month -= 1;
         }
-        renderAll();
+        renderApp();
       });
 
-      document.getElementById('btn-next-month')?.addEventListener('click', () => {
-        if (state.calendar.month === 11) {
-          state.calendar.year += 1;
-          state.calendar.month = 0;
+      document.getElementById('btn-cal-next')?.addEventListener('click', () => {
+        if (appState.calState.month === 11) {
+          appState.calState.year += 1;
+          appState.calState.month = 0;
         } else {
-          state.calendar.month += 1;
+          appState.calState.month += 1;
         }
-        renderAll();
+        renderApp();
       });
 
       document.querySelectorAll('.cal-day-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          state.calendar.selectedDate = btn.getAttribute('data-cal-date');
-          renderAll();
+          appState.calState.selectedDate = btn.getAttribute('data-cal-select');
+          renderApp();
         });
+      });
+
+      // --- 탭 5 백업/복구 이벤트 ---
+      document.getElementById('btn-export-json')?.addEventListener('click', () => {
+        const payload = {
+          exportedAt: new Date().toISOString(),
+          works: appState.works,
+          tagPool: appState.tagPool,
+          savedIdeas: appState.savedIdeas,
+        };
+        const jsonStr = JSON.stringify(payload, null, 2);
+        const ta = document.getElementById('backup-json-textarea');
+        if (ta) ta.value = jsonStr;
+
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `munpia-trend-backup-${toDateKey(new Date())}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('백업 JSON 파일을 다운로드했습니다.', 'success');
+      });
+
+      document.getElementById('input-import-file')?.addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          const ta = document.getElementById('backup-json-textarea');
+          if (ta) ta.value = String(reader.result || '');
+          showToast('JSON 파일을 불러왔습니다. 덮어쓰기 또는 병합을 선택하세요.', 'info');
+        };
+        reader.readAsText(file);
+      });
+
+      document.getElementById('btn-restore-overwrite')?.addEventListener('click', () => {
+        applyJsonRestore('overwrite');
+      });
+
+      document.getElementById('btn-restore-merge')?.addEventListener('click', () => {
+        applyJsonRestore('merge');
       });
     }
 
-    function openDraftsModal() {
-      const modal = document.getElementById('draft-modal');
-      const listEl = document.getElementById('saved-drafts-list');
-
-      if (!state.savedDrafts.length) {
-        listEl.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">저장된 차기작 기획안이 없습니다.</p>`;
-      } else {
-        listEl.innerHTML = state.savedDrafts.map((d) => `
-          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-            <div class="flex items-center justify-between text-[11px] text-slate-500">
-              <span>원본: ${escapeHtml(d.sourceTitle)}</span>
-              <span>${escapeHtml(d.savedAt)}</span>
-            </div>
-            <div class="text-xs font-extrabold text-slate-900">${escapeHtml(d.title)}</div>
-            <p class="text-xs text-slate-600 whitespace-pre-line leading-relaxed">${escapeHtml(d.synopsis)}</p>
-          </div>
-        `).join('');
+    function applyJsonRestore(mode) {
+      const rawText = (document.getElementById('backup-json-textarea')?.value || '').trim();
+      if (!rawText) {
+        showToast('복구할 JSON 데이터가 비어 있습니다.', 'warning');
+        return;
       }
-      modal.classList.remove('hidden');
-    }
 
-    function copyToClipboard(text) {
-      if (!text) return;
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
       try {
-        document.execCommand('copy');
-        showToast('클립보드에 복사되었습니다.', 'success');
+        const parsed = JSON.parse(rawText);
+        const incomingWorks = Array.isArray(parsed) ? parsed : parsed.works;
+        if (!Array.isArray(incomingWorks)) {
+          throw new Error('works 배열 누락');
+        }
+
+        const incomingTags = Array.isArray(parsed.tagPool) ? parsed.tagPool : [];
+        const incomingIdeas = Array.isArray(parsed.savedIdeas) ? parsed.savedIdeas : [];
+
+        if (mode === 'overwrite') {
+          appState.works = incomingWorks;
+          appState.tagPool = [...new Set([...incomingTags, ...DEFAULT_TAGS])];
+          appState.savedIdeas = incomingIdeas;
+        } else {
+          // 기존 데이터 유지 + 제목 기준 미중복 작품 병합
+          const existingNormSet = new Set(appState.works.map((w) => normalizeTitle(w.title)));
+          const additions = incomingWorks.filter((w) => w.title && !existingNormSet.has(normalizeTitle(w.title)));
+          appState.works = [...additions, ...appState.works];
+          appState.tagPool = [...new Set([...appState.tagPool, ...incomingTags])];
+          appState.savedIdeas = [...incomingIdeas, ...appState.savedIdeas];
+        }
+
+        saveToStorage();
+        syncStudioSelection();
+        rebuildStudioTwists();
+        rebuildStudioTitles();
+        renderApp();
+        showToast(mode === 'overwrite' ? '덮어쓰기 복구가 완료되었습니다.' : '기존 데이터와 병합되었습니다.', 'success');
       } catch (err) {
-        showToast('복사에 실패했습니다.', 'error');
-      } finally {
-        ta.remove();
+        console.error('JSON 복구 오류:', err);
+        showToast('올바른 백업 JSON 형식이 아닙니다.', 'error');
       }
     }
 
-    function escapeHtml(str) {
-      return String(str || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+    function renderApp() {
+      renderHeaderAndNav();
+
+      const mainEl = document.getElementById('main-view');
+      if (appState.activeTab === 'register') {
+        mainEl.innerHTML = renderRegisterTab();
+      } else if (appState.activeTab === 'categories') {
+        mainEl.innerHTML = renderCategoriesTab();
+      } else if (appState.activeTab === 'studio') {
+        syncStudioSelection();
+        rebuildStudioTwists();
+        rebuildStudioTitles();
+        mainEl.innerHTML = renderStudioTab();
+      } else if (appState.activeTab === 'calendar') {
+        mainEl.innerHTML = renderCalendarTab();
+      } else if (appState.activeTab === 'metadata') {
+        mainEl.innerHTML = renderMetadataTab();
+      }
+
+      bindViewEvents();
     }
 
     // =========================================================================
-    // 9. 초기 바인딩 및 부트스트랩
+    // 14. 정적 바인딩 및 초기 실행
     // =========================================================================
-    document.querySelectorAll('.nav-btn').forEach((btn) => {
+    document.querySelectorAll('.bottom-nav-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
-        state.activeTab = btn.getAttribute('data-tab');
-        renderAll();
+        appState.activeTab = btn.getAttribute('data-nav');
+        renderApp();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     });
 
-    document.getElementById('btn-reset-demo')?.addEventListener('click', () => {
-      state.works = buildInitialWorks();
-      state.tagPool = [...DEFAULT_TAG_POOL];
-      state.savedDrafts = [];
-      persistState();
-      renderAll();
+    document.getElementById('btn-restore-seed')?.addEventListener('click', () => {
+      appState.works = createSeedWorks();
+      appState.tagPool = [...DEFAULT_TAGS];
+      appState.savedIdeas = [];
+      saveToStorage();
+      syncStudioSelection();
+      rebuildStudioTwists();
+      rebuildStudioTitles();
+      renderApp();
       showToast('초기 샘플 데이터로 복원되었습니다.', 'info');
     });
 
-    document.getElementById('btn-close-draft-modal')?.addEventListener('click', () => {
-      document.getElementById('draft-modal').classList.add('hidden');
+    document.getElementById('btn-dup-close')?.addEventListener('click', closeDuplicateModal);
+    document.getElementById('btn-dup-edit')?.addEventListener('click', () => {
+      const targetId = appState.duplicateTargetId;
+      closeDuplicateModal();
+      if (targetId) openEditWorkModal(targetId);
     });
 
-    document.getElementById('draft-modal')?.addEventListener('click', (e) => {
-      if (e.target.id === 'draft-modal') {
-        e.currentTarget.classList.add('hidden');
-      }
+    document.getElementById('edit-work-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'edit-work-modal') closeEditWorkModal();
     });
 
-    loadState();
-    renderAll();
+    document.getElementById('duplicate-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'duplicate-modal') closeDuplicateModal();
+    });
+
+    loadFromStorage();
+    renderApp();
   </script>
 </body>
 </html>
