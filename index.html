@@ -25,13 +25,9 @@
               700: '#9a3412',
               900: '#431407',
             },
-            slateink: {
-              850: '#172033',
-              950: '#090d16',
-            }
-          }
-        }
-      }
+          },
+        },
+      },
     };
   </script>
   <style>
@@ -41,20 +37,20 @@
     }
     body {
       margin: 0;
+      min-height: 100vh;
       background: radial-gradient(circle at top, #1e293b 0%, #090d16 100%);
       color: #0f172a;
       font-family: 'Noto Sans KR', 'Inter', sans-serif;
-      min-height: 100vh;
     }
-    .mobile-app-frame {
+    .mobile-shell {
       width: 100%;
-      max-width: 500px;
+      max-width: 480px;
       min-height: 100vh;
       margin: 0 auto;
       background-color: #f8fafc;
       position: relative;
       box-shadow: 0 28px 70px -15px rgba(0, 0, 0, 0.65);
-      padding-bottom: 92px;
+      padding-bottom: 88px;
       overflow-x: hidden;
     }
     .no-scrollbar::-webkit-scrollbar {
@@ -77,17 +73,17 @@
     .animate-pop-in {
       animation: popIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    @keyframes floatBounce {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-5px); }
+    @keyframes floatChar {
+      0%, 100% { transform: translateY(0px) rotate(-1deg); }
+      50% { transform: translateY(-5px) rotate(1deg); }
     }
-    .animate-float {
-      animation: floatBounce 1.8s ease-in-out infinite;
+    .animate-float-char {
+      animation: floatChar 1.9s ease-in-out infinite;
     }
   </style>
 </head>
 <body>
-  <div id="chef-note-app" class="mobile-app-frame flex flex-col">
+  <div id="app" class="mobile-shell flex flex-col">
     <!-- 상단 앱 헤더 -->
     <header class="sticky top-0 z-30 bg-slate-950 text-white px-4 pt-3.5 pb-3 shadow-lg rounded-b-3xl border-b border-slate-800">
       <div class="flex items-center justify-between gap-2">
@@ -97,14 +93,16 @@
           </div>
           <div class="min-w-0">
             <div class="flex items-center gap-1.5">
-              <span class="text-[10px] font-extrabold tracking-widest uppercase text-amber-400">MUNPIA TREND STUDIO</span>
-              <span class="px-1.5 py-0.2 rounded bg-slate-800 text-[10px] text-slate-300 font-semibold">차기작 구상</span>
+              <span class="text-[10px] font-extrabold tracking-widest uppercase text-amber-400">MUNPIA TREND LAB</span>
+              <span class="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300 font-semibold">차기작 구상</span>
             </div>
-            <h1 class="text-base sm:text-lg font-extrabold tracking-tight truncate">쉐프 노트 <span class="text-xs font-medium text-slate-400">Chef Note</span></h1>
+            <h1 class="text-base sm:text-lg font-extrabold tracking-tight truncate">
+              쉐프 노트 <span class="text-xs font-medium text-slate-400">Chef Note</span>
+            </h1>
           </div>
         </div>
         <button
-          id="btn-load-sample"
+          id="btn-reset-sample"
           type="button"
           class="shrink-0 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-bold transition cursor-pointer"
         >
@@ -112,31 +110,27 @@
         </button>
       </div>
 
-      <!-- 7개 카테고리 스크롤 탭 (상단 퀵 네비게이션 + 하단 고정바 동기화) -->
-      <div id="top-category-strip" class="mt-3 flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
-        <!-- JS 렌더링 -->
-      </div>
+      <!-- 상단 6개 카테고리 퀵 스크롤 탭 -->
+      <div id="top-cat-tabs" class="mt-3 flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5"></div>
     </header>
 
-    <!-- 안내 / 중복 캐릭터 알림 영역 -->
-    <div id="toast-area" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[468px] pointer-events-none flex flex-col gap-2"></div>
+    <!-- 토스트 / 중복 캐릭터 알림 영역 -->
+    <div id="toast-container" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[452px] pointer-events-none flex flex-col gap-2"></div>
 
     <!-- 메인 뷰 영역 -->
-    <main id="main-view" class="flex-1 px-3.5 pt-3.5 space-y-4"></main>
+    <main id="main-content" class="flex-1 px-3.5 pt-3.5 space-y-4"></main>
 
-    <!-- 하단 모바일 7카테고리 내비게이션 바 -->
-    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-full max-w-[500px] bg-white/95 backdrop-blur border-t border-slate-200 px-1.5 py-1.5 shadow-[0_-10px_28px_rgba(15,23,42,0.12)] rounded-t-3xl">
-      <div id="bottom-nav-grid" class="grid grid-cols-7 gap-0.5">
-        <!-- JS 렌더링 -->
-      </div>
+    <!-- 하단 모바일 6개 카테고리 내비게이션 바 -->
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-full max-w-[480px] bg-white/95 backdrop-blur border-t border-slate-200 px-1.5 py-1.5 shadow-[0_-10px_28px_rgba(15,23,42,0.12)] rounded-t-3xl">
+      <div id="bottom-nav-grid" class="grid grid-cols-6 gap-1"></div>
     </nav>
 
-    <!-- 전체 항목 수정 모달 (팬트리 / 조리실 / 미슐랭 공용) -->
+    <!-- 전체 항목 수정 모달 (팬트리 / 미슐랭 공용) -->
     <div id="edit-modal" class="fixed inset-0 z-50 hidden bg-slate-950/65 backdrop-blur-xs flex items-end sm:items-center justify-center p-2.5">
-      <div class="bg-white w-full max-w-[480px] rounded-3xl p-4 shadow-2xl max-h-[88vh] overflow-y-auto animate-pop-in">
+      <div class="bg-white w-full max-w-[464px] rounded-3xl p-4 shadow-2xl max-h-[88vh] overflow-y-auto animate-pop-in">
         <div class="flex items-center justify-between pb-3 border-b border-slate-100 sticky top-0 bg-white z-10">
           <div>
-            <span class="text-[10px] font-extrabold text-chef-600 uppercase">FULL WORK EDITOR</span>
+            <span class="text-[10px] font-extrabold text-chef-600 uppercase">WORK FULL EDITOR</span>
             <h3 id="edit-modal-title" class="text-sm font-extrabold text-slate-900">작품 상세 수정</h3>
           </div>
           <button id="btn-close-edit-modal" type="button" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs cursor-pointer">✕</button>
@@ -148,18 +142,18 @@
 
   <script>
     // =========================================================================
-    // 1. 카테고리 및 도메인 상수 정의 (7개 카테고리 + 상세taxonomy)
+    // 1. 상수 및 도메인 데이터 정의 (6대 카테고리 + 7대 요리 요소 전체)
     // =========================================================================
-    const STORAGE_KEY = 'chef_note_munpia_v1';
+    const STORAGE_KEY = 'chef_note_v2_6cat';
+    const PANTRY_FILTER_KEY = 'chef_note_pantry_filter_v2';
 
     const CATEGORIES = [
-      { id: 'register', name: '제품 등록', icon: '📝', badgeBg: 'bg-orange-500' },
-      { id: 'prep', name: '조리실', icon: '🔪', badgeBg: 'bg-rose-500' },
-      { id: 'cook', name: '요리하기', icon: '🍳', badgeBg: 'bg-amber-600' },
-      { id: 'recipe', name: '레시피분석', icon: '🧪', badgeBg: 'bg-violet-600' },
-      { id: 'michelin', name: '미슐랭', icon: '🏅', badgeBg: 'bg-yellow-500' },
-      { id: 'pantry', name: '팬트리', icon: '🗄️', badgeBg: 'bg-emerald-600' },
-      { id: 'wash', name: '설거지', icon: '🧼', badgeBg: 'bg-sky-600' },
+      { id: 'register', name: '제품 등록', icon: '📥' },
+      { id: 'prep', name: '조리실', icon: '🍳' },
+      { id: 'cook', name: '요리하기', icon: '🥘' },
+      { id: 'michelin', name: '미슐랭', icon: '🏅' },
+      { id: 'pantry', name: '팬트리', icon: '🗄️' },
+      { id: 'wash', name: '설거지', icon: '🧼' },
     ];
 
     const LABEL_GENRES = [
@@ -167,22 +161,22 @@
       '드라마', '전쟁', '로맨스', '게임', 'SF', '기타'
     ];
 
-    const RATING_CHOICES = [
-      { id: 'drop_1_5', label: '★ 1~5화 하차', short: '★ 1~5화', desc: '초반 흡입력·전개 속도 아쉬움', pill: 'bg-rose-100 text-rose-800 border-rose-200' },
-      { id: 'drop_6_10', label: '★★ 6~10화 하차', short: '★★ 6~10화', desc: '초반 설정 이후 동력 약화', pill: 'bg-orange-100 text-orange-800 border-orange-200' },
-      { id: 'drop_11_15', label: '★★★ 11~15화 하차', short: '★★★ 11~15화', desc: '무난하나 차별화 포인트 부족', pill: 'bg-amber-100 text-amber-800 border-amber-200' },
-      { id: 'read_16_plus', label: '★★★★ 16화 이상 정독', short: '★★★★ 16화+', desc: '정독 가치 높음 · 레퍼런스 유망', pill: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
-      { id: 'hold', label: '☆ 판단 보류', short: '☆ 판단 보류', desc: '추가 회차 관찰 또는 재검토 필요', pill: 'bg-slate-100 text-slate-700 border-slate-300' },
+    const RATINGS = [
+      { id: 'drop_1_5', label: '★ 1~5화 하차', short: '★ 1~5화', score: 1, pill: 'bg-rose-100 text-rose-800 border-rose-200' },
+      { id: 'drop_6_10', label: '★★ 6~10화 하차', short: '★★ 6~10화', score: 2, pill: 'bg-orange-100 text-orange-800 border-orange-200' },
+      { id: 'drop_11_15', label: '★★★ 11~15화 하차', short: '★★★ 11~15화', score: 3, pill: 'bg-amber-100 text-amber-800 border-amber-200' },
+      { id: 'read_16_plus', label: '★★★★ 16화 이상 정독', short: '★★★★ 16화+', score: 4, pill: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
+      { id: 'hold', label: '☆ 판단 보류', short: '☆ 보류', score: 0, pill: 'bg-slate-100 text-slate-700 border-slate-300' },
     ];
 
-    const PREP_BADGES = [
-      { id: 'legend', label: '레전드 (작가뽕)', icon: '🔥', active: 'bg-purple-600 text-white border-purple-600', chip: 'bg-purple-100 text-purple-800 border-purple-200' },
-      { id: 'supernormal', label: '슈퍼노멀 (일반연재)', icon: '⚡', active: 'bg-blue-600 text-white border-blue-600', chip: 'bg-blue-100 text-blue-800 border-blue-200' },
-      { id: 'cook', label: '요리하기 (좋은소스)', icon: '🍳', active: 'bg-orange-600 text-white border-orange-600', chip: 'bg-orange-100 text-orange-800 border-orange-200' },
-      { id: 'fridge', label: '냉장고 (독자로써 보관)', icon: '🧊', active: 'bg-cyan-600 text-white border-cyan-600', chip: 'bg-cyan-100 text-cyan-800 border-cyan-200' },
+    const MULTI_FLAGS = [
+      { id: 'legend', label: '레전드 (작가뽕)', short: '레전드', icon: '🔥', active: 'bg-purple-600 text-white border-purple-600', chip: 'bg-purple-100 text-purple-800 border-purple-200' },
+      { id: 'supernormal', label: '슈퍼노멀 (일반연재)', short: '슈퍼노멀', icon: '⚡', active: 'bg-blue-600 text-white border-blue-600', chip: 'bg-blue-100 text-blue-800 border-blue-200' },
+      { id: 'cook', label: '요리하기 (좋은소스)', short: '요리하기', icon: '🥘', active: 'bg-orange-600 text-white border-orange-600', chip: 'bg-orange-100 text-orange-800 border-orange-200' },
+      { id: 'fridge', label: '냉장고 (독자로써 보관)', short: '냉장고', icon: '🧊', active: 'bg-cyan-600 text-white border-cyan-600', chip: 'bg-cyan-100 text-cyan-800 border-cyan-200' },
     ];
 
-    const MICHELIN_TIERS = [
+    const MICHELIN_OPTIONS = [
       { id: 'unanalyzed', label: '분석 전', medal: '' },
       { id: 'dead', label: '폐사', medal: '' },
       { id: 'scheduled', label: '전환 예정', medal: '' },
@@ -192,15 +186,12 @@
       { id: 'tier_1', label: '전환 1티어', medal: '🥇1' },
     ];
 
-    const DEFAULT_TAG_POOL = [
-      '회귀', '빙의', '상태창', '먼치킨', '사이다', '착각계',
-      '아카데미', '재벌물', '선협', '생존', '성장형', '두뇌싸움'
-    ];
+    const DEFAULT_TAGS = ['회귀', '빙의', '상태창', '먼치킨', '사이다', '착각계', '아카데미', '재벌물'];
 
     // -------------------------------------------------------------------------
-    // 요리하기 7대 영역 상세 택소노미 (큰 계열 + 세부 항목)
+    // 요리하기 7대 요소(1) 장르 ~ 7) 성장) 전체 계열 및 세부 항목
     // -------------------------------------------------------------------------
-    const COOKING_DIMENSIONS = [
+    const COOK_DIMENSIONS = [
       {
         key: 'genre',
         label: '1) 장르',
@@ -242,108 +233,108 @@
         icon: '🗺️',
         groups: [
           {
-            name: '(1) 현대 ① 현대사회',
+            name: '(1) 현대 및 현실 배경 - ① 현대사회',
             items: ['현대 대한민국', '현대 미국', '현대 일본', '현대 중국', '현대 유럽', '대도시', '지방도시', '농촌', '어촌', '시골 마을', '재개발 지역', '빈민가', '부촌', '상류층 사회', '재벌가', '기업도시', '산업단지', '대학가', '번화가', '지하경제', '암흑가', '범죄도시', '연예계', '방송국', '인터넷 커뮤니티', '온라인 플랫폼']
           },
           {
-            name: '(1) 현대 ② 직장 및 전문직 공간',
+            name: '(1) 현대 및 현실 배경 - ② 직장 및 전문직 공간',
             items: ['대기업', '중소기업', '스타트업', '벤처기업', '증권사', '투자회사', '금융기관', '로펌', '법원', '검찰청', '경찰서', '병원', '대학병원', '연구소', '과학기술원', '언론사', '연예기획사', '프로덕션', '건설회사', '호텔', '레스토랑', '요식업체', '물류센터', '공장', '군부대', '관공서']
           },
           {
-            name: '(1) 현대 ③ 학교 및 교육 공간',
+            name: '(1) 현대 및 현실 배경 - ③ 학교 및 교육 공간',
             items: ['초등학교', '중학교', '고등학교', '대학교', '명문 사립학교', '귀족학교', '마법학교', '기사학교', '헌터학교', '전투학교', '군사학교', '예술고등학교', '체육고등학교', '의과대학', '법학전문대학원', '기숙학교', '기숙사', '입시학원', '연구중심대학', '특수교육기관']
           },
           {
-            name: '(2) 판타지 ① 왕국 및 귀족사회',
+            name: '(2) 판타지 및 이세계 배경 - ① 왕국 및 귀족사회',
             items: ['중세 왕국', '판타지 제국', '봉건사회', '귀족사회', '왕실', '황궁', '왕궁', '공작령', '후작령', '변경백령', '영지', '영주성', '귀족저택', '황실가문', '왕위계승전', '귀족회의', '왕국의회', '기사단 영지', '신성제국', '마도제국']
           },
           {
-            name: '(2) 판타지 ② 판타지 자연 및 지형',
+            name: '(2) 판타지 및 이세계 배경 - ② 판타지 자연 및 지형',
             items: ['마법의 숲', '엘프의 숲', '정령의 숲', '고대 원시림', '마수의 숲', '저주받은 숲', '드래곤의 산맥', '화산지대', '빙하지대', '사막왕국', '지하세계', '지저도시', '해저왕국', '공중도시', '부유섬', '마계', '천계', '신계', '요정계', '이계', '차원공간', '미궁', '고대유적', '잊혀진 대륙', '미지의 대륙']
           },
           {
-            name: '(2) 판타지 ③ 판타지 도시 및 시설',
+            name: '(2) 판타지 및 이세계 배경 - ③ 판타지 도시 및 시설',
             items: ['마법도시', '마도공학도시', '상업도시', '항구도시', '광산도시', '국경도시', '모험가마을', '용병도시', '마법사탑', '마탑', '기사단 본부', '모험가 길드', '용병 길드', '상인 길드', '암살자 길드', '마법도서관', '연금술 연구소', '드래곤 둥지', '마왕성', '신전도시', '성기사단 본부']
           },
           {
-            name: '(3) 헌터·던전 ① 헌터 및 게이트',
+            name: '(3) 헌터·던전·탑 배경 - ① 헌터 및 게이트',
             items: ['게이트 발생 도시', '헌터 전용구역', '각성자 관리센터', '헌터 협회', '헌터 길드', '길드 본부', '던전 관리소', '레이드 대기실', '헌터 훈련장', '능력 측정센터', '각성자 학교', '헌터 아카데미', '던전 산업단지', '게이트 재난지역', '몬스터 격리구역', '국제 헌터 연합']
           },
           {
-            name: '(3) 헌터·던전 ② 탑 및 던전',
+            name: '(3) 헌터·던전·탑 배경 - ② 탑 및 던전',
             items: ['무한의 탑', '시련의 탑', '마천루형 탑', '지하던전', '고대던전', '심연의 던전', '미궁형 던전', '생체던전', '무한회랑', '차원미궁', '보스룸', '몬스터 서식지', '던전 핵심부', '던전 도시', '던전 경제구역', '던전 개척지', '던전 왕국', '던전 농장', '던전 경영시설']
           },
           {
-            name: '(3) 헌터·던전 ③ 초월적 공간',
+            name: '(3) 헌터·던전·탑 배경 - ③ 초월적 공간',
             items: ['성좌의 영역', '신들의 전장', '차원 균열', '이계 침식지역', '가상현실 공간', '관측자 공간', '무한회귀 공간', '초월자들의 회의장', '신들의 정원', '영혼의 세계', '사후세계', '지옥', '연옥', '천국']
           },
           {
-            name: '(4) 무협 ① 무림사회',
+            name: '(4) 무협 및 동양 판타지 배경 - ① 무림사회',
             items: ['강호', '중원', '무림맹', '사파 세력권', '정파 세력권', '마교', '세가', '명문 문파', '무림세가', '황실', '황궁', '변방', '북방 초원', '서역', '남만', '사천당가', '소림사', '무당파', '화산파', '종남파', '개방', '흑도 세력권']
           },
           {
-            name: '(4) 무협 ② 무협 시설',
+            name: '(4) 무협 및 동양 판타지 배경 - ② 무협 시설',
             items: ['무림문파', '무공수련장', '비무대', '장서각', '장문인 거처', '무림맹 본부', '객잔', '주루', '기루', '표국', '전장', '약방', '의원', '무기점', '대장간', '감옥', '비밀동굴', '금역', '무덤', '고대비경', '무공비급 보관소']
           },
           {
-            name: '(4) 무협 ③ 선협 및 동양 신화',
-            items: ['선계', '수선계', '봉래산', '신선의 산', '영산', '선인동부', '영맥', '영석광산', '종문', '수련동굴', '비승대', '요계', '용궁', '저승', '명계', '윤회전생의 세계', '삼계', '봉신전장', '신화시대의 대륙']
+            name: '(4) 무협 및 동양 판타지 배경 - ③ 선협 및 동양 신화',
+            items: ['선계', '수선계', '봉래산', '신선의 산', '영산', '선인동부', '영맥', '영석광산', '종문', '수련동굴', '비승대', '천계', '요계', '마계', '용궁', '저승', '명계', '윤회전생의 세계', '삼계', '봉신전장', '신화시대의 대륙']
           },
           {
-            name: '(5) 로판·서양풍 ① 궁중 및 귀족사회',
-            items: ['황궁', '황실정원', '황태자궁', '왕세자궁', '귀족저택', '공작가 저택', '후작가 저택', '백작가 저택', '영애의 별궁', '황실연회장', '무도회장', '귀족 사교계', '황실 의회', '왕실 알현실', '귀족 영지', '황실 별장']
+            name: '(5) 로맨스판타지 및 서양풍 배경 - ① 궁중 및 귀족사회',
+            items: ['황궁', '왕궁', '황실정원', '황태자궁', '왕세자궁', '귀족저택', '공작가 저택', '후작가 저택', '백작가 저택', '영애의 별궁', '황실연회장', '무도회장', '귀족 사교계', '황실 의회', '왕실 알현실', '귀족 영지', '황실 별장']
           },
           {
-            name: '(5) 로판·서양풍 ② 로맨스 및 생활 공간',
+            name: '(5) 로맨스판타지 및 서양풍 배경 - ② 로맨스 및 생활 공간',
             items: ['대저택', '정원', '온실', '별장', '저택의 서재', '하녀 숙소', '집사 사무실', '마차', '왕립극장', '오페라하우스', '사교클럽', '고급 호텔', '고성', '별궁', '휴양지', '온천도시', '결혼식장', '수도원', '고아원']
           },
           {
-            name: '(5) 로판·서양풍 ③ 동양풍 로맨스판타지',
-            items: ['동양풍 제국', '후궁전', '세도가 저택', '무관 가문', '선비 가문', '궁중정원', '비밀정원', '사대부 저택', '전통시장', '기방', '관아', '사찰', '도교 사원', '도깨비 마을']
+            name: '(5) 로맨스판타지 및 서양풍 배경 - ③ 동양풍 로맨스판타지',
+            items: ['동양풍 제국', '황궁', '후궁전', '황태자궁', '세도가 저택', '무관 가문', '선비 가문', '궁중정원', '비밀정원', '사대부 저택', '전통시장', '기방', '관아', '사찰', '도교 사원', '신선의 산', '용궁', '도깨비 마을']
           },
           {
-            name: '(6) 역사·대체역사 ① 한국 역사',
+            name: '(6) 역사 및 대체역사 배경 - ① 한국 역사',
             items: ['삼국시대 고구려', '삼국시대 백제', '삼국시대 신라', '통일신라', '발해', '고려시대', '무신정권', '조선 전기', '조선 중기', '조선 후기', '세도정치기', '대한제국', '일제강점기', '해방 직후', '한국전쟁', '산업화 시대', '1980년대 한국', '1990년대 한국', 'IMF 외환위기 시대']
           },
           {
-            name: '(6) 역사·대체역사 ② 해외 역사',
+            name: '(6) 역사 및 대체역사 배경 - ② 해외 역사',
             items: ['고대 그리스', '고대 로마', '고대 이집트', '춘추전국시대', '진나라', '한나라', '삼국시대 중국', '당나라', '송나라', '명나라', '청나라', '일본 전국시대', '에도시대', '메이지시대', '중세 유럽', '르네상스 시대', '절대왕정 시대', '빅토리아 시대', '미국 서부개척시대', '산업혁명 시대']
           },
           {
-            name: '(6) 역사·대체역사 ③ 전쟁 및 정치',
+            name: '(6) 역사 및 대체역사 배경 - ③ 전쟁 및 정치',
             items: ['삼국지 시대', '전국시대', '왕조 교체기', '왕위쟁탈전', '제국주의 시대', '식민지 시대', '세계대전 시대', '냉전 시대', '내전 상황', '혁명기', '군벌시대', '독립전쟁', '해상무역 시대', '개척시대', '정복전쟁 시대']
           },
           {
-            name: '(7) SF·미래 ① 미래 문명',
+            name: '(7) SF 및 미래 배경 - ① 미래 문명',
             items: ['근미래 대한민국', '미래 대도시', '초고층 메가시티', '사이버펑크 도시', '디스토피아 사회', '유토피아 사회', 'AI 통제사회', '인공지능 국가', '로봇 문명', '가상현실 사회', '메타버스 도시', '생명공학 사회', '유전자 개조 사회', '감시사회', '기업 지배사회', '인류 멸망 이후의 세계']
           },
           {
-            name: '(7) SF·미래 ② 우주 및 외계',
+            name: '(7) SF 및 미래 배경 - ② 우주 및 외계',
             items: ['우주정거장', '우주함대', '은하제국', '행성 식민지', '외계 행성', '화성 기지', '달 기지', '우주 개척지', '우주 해적 소굴', '외계 문명', '은하 연합', '우주 전쟁터', '성간 무역항', '우주 연구소', '외계 생명체 서식지', '차원 항로']
           },
           {
-            name: '(7) SF·미래 ③ 포스트 아포칼립스',
+            name: '(7) SF 및 미래 배경 - ③ 포스트 아포칼립스',
             items: ['좀비 아포칼립스', '핵전쟁 이후', '바이러스 대재앙 이후', '기후재난 이후', '문명 붕괴 이후', '몬스터 침공 이후', '외계 침공 이후', '인류 멸망 이후', '폐허 도시', '지하 벙커', '생존자 거점', '방벽 도시', '황무지', '방사능 오염지역', '버려진 지하철', '무법자 거주지']
           },
           {
-            name: '(8) 공포·미스터리 ① 괴담 및 초자연 공간',
+            name: '(8) 공포·미스터리·특수 배경 - ① 괴담 및 초자연 공간',
             items: ['폐교', '폐병원', '폐건물', '폐아파트', '폐공장', '폐역', '지하철역', '심야 편의점', '무인 모텔', '오래된 여관', '산속 마을', '외딴섬', '버려진 마을', '금지구역', '귀신 들린 저택', '저주받은 마을', '괴담의 도시', '이면세계', '백룸', '미지의 공간']
           },
           {
-            name: '(8) 공포·미스터리 ② 밀실 및 생존 공간',
+            name: '(8) 공포·미스터리·특수 배경 - ② 밀실 및 생존 공간',
             items: ['밀폐된 호텔', '무인도', '폐쇄된 학교', '격리시설', '감염병 병동', '감옥', '잠수함', '유령선', '크루즈선', '열차', '비행기', '우주선', '지하도시', '생존자 캠프', '죽음의 게임장', '무한 미궁']
           },
           {
-            name: '(8) 공포·미스터리 ③ 특수 공간',
+            name: '(8) 공포·미스터리·특수 배경 - ③ 특수 공간',
             items: ['시간 루프에 갇힌 도시', '평행세계의 지구', '꿈속 세계', '기억 속 세계', '소설 속 세계', '만화 속 세계', '게임 속 세계', '영화 속 세계', '가상 시뮬레이션', '무한 호텔', '차원 이동 통로', '신들의 관찰실', '죽음 이후의 재판장']
           },
           {
-            name: '(9) 일상·특수직업 ① 생활 및 자영업',
-            items: ['시골 농장', '대형 농장', '과수원', '목장', '어촌', '양식장', '캠핑장', '펜션', '민박집', '카페', '베이커리', '식당', '한식당', '고급 레스토랑', '포장마차', '전통시장', '대형마트', '편의점', '백화점', '리조트', '온천', '관광마을']
+            name: '(9) 일상·생활·특수 직업 배경 - ① 생활 및 자영업',
+            items: ['시골 농장', '대형 농장', '과수원', '목장', '어촌', '양식장', '캠핑장', '펜션', '민박집', '카페', '베이커리', '식당', '한식당', '고급 레스토랑', '포장마차', '전통시장', '대형마트', '편의점', '백화점', '호텔', '리조트', '온천', '관광마을']
           },
           {
-            name: '(9) 일상·특수직업 ② 특수 직업 및 활동',
-            items: ['영화촬영장', '공연장', '콘서트홀', '프로스포츠 구단', '프로게임단', '게임개발사', '고고학 발굴현장', '탐험기지', '고고학 박물관', '경매장', '미술관', '박물관', '도서관', '출판사', '신문사', '우주탐사기지', '구조대 본부', '탐정사무소']
+            name: '(9) 일상·생활·특수 직업 배경 - ② 특수 직업 및 활동',
+            items: ['방송국', '연예기획사', '영화촬영장', '공연장', '콘서트홀', '프로스포츠 구단', '프로게임단', '게임개발사', '연구소', '고고학 발굴현장', '탐험기지', '고고학 박물관', '경매장', '미술관', '박물관', '도서관', '출판사', '신문사', '우주탐사기지', '구조대 본부', '탐정사무소']
           }
         ]
       },
@@ -629,312 +620,206 @@
     ];
 
     // =========================================================================
-    // 2. 날짜 & 샘플 데이터 생성 유틸리티
+    // 2. 날짜 & 초기 샘플 데이터 생성
     // =========================================================================
-    function formatDate(d) {
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
+    function formatYMD(dateObj) {
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const d = String(dateObj.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
     }
 
-    function offsetDateStr(days) {
+    function shiftDaysStr(offset) {
       const now = new Date();
-      return formatDate(new Date(now.getFullYear(), now.getMonth(), now.getDate() + days));
+      return formatYMD(new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset));
     }
 
-    function createEmptyCookingProfile() {
+    function createDefaultCooking() {
       return {
         genre: { bigs: ['② 현대판타지 계열'], subs: ['회귀물', '상태창물'] },
-        setting: { bigs: ['(3) 헌터·던전·탑 배경'], subs: ['무한의 탑', '헌터 길드'] },
+        setting: { bigs: ['(3) 헌터·던전·탑 배경 - ② 탑 및 던전'], subs: ['무한의 탑'] },
         protagonist: { bigs: ['③ 회귀·환생·빙의 중심 주인공'], subs: ['회귀자', '냉철한 주인공'] },
         ability: { bigs: ['② 성장 및 시스템 능력'], subs: ['스킬복사', '약점간파'] },
         goal: { bigs: ['④ 성장 및 최강자 추구'], subs: ['탑의 정상에 오르기'] },
         conflict: { bigs: ['⑥ 성장 및 한계 극복 갈등'], subs: ['약자의 강자 도전'] },
-        growth: { bigs: ['② 회귀·환생·빙의에 따른 성장'], subs: ['회귀 성장형', '미래 지식 활용형'] },
+        growth: { bigs: ['② 회귀·환생·빙의에 따른 성장'], subs: ['회귀 성장형'] },
       };
     }
 
-    function buildSampleNovels() {
+    function buildInitialNovels() {
       return [
         {
-          id: 'n-draft-1',
+          id: 'w-temp-1',
           sources: ['today'],
-          title: '폭군 황제의 검술 교본',
+          title: '황금빛 셰프의 던전 식당',
           genre: '',
           author: '',
-          stage: 'register_temp', // 'register_temp' | 'prep' | 'cook' | 'recipe' | 'pantry'
+          stage: 'register_temp', // 'register_temp' | 'prep' | 'pantry'
+          inCookQueue: false,
+          cookDone: false,
+          michelinDone: false,
           rating: 'hold',
-          badges: [],
+          flags: [],
           tags: [],
-          cooking: createEmptyCookingProfile(),
-          recipeCompleted: false,
-          remixedSummary: '',
-          michelin: {
-            tier: 'unanalyzed',
-            conversionValue: '',
-            freeEpisodeEnd: '',
-          },
-          createdAt: offsetDateStr(0),
+          cooking: createDefaultCooking(),
+          recipeText: '',
+          michelin: { tier: 'unanalyzed', conversionValue: '', freeEndEpisode: '' },
+          createdAt: shiftDaysStr(0),
         },
         {
-          id: 'n-prep-1',
+          id: 'w-prep-1',
           sources: ['new'],
-          title: '백발의 수석 감별사',
-          genre: '현대판타지',
-          author: '은빛루페',
-          stage: 'prep',
-          rating: 'read_16_plus',
-          badges: ['cook', 'fridge'],
-          tags: ['감별', '사이다', '두뇌싸움'],
-          cooking: createEmptyCookingProfile(),
-          recipeCompleted: false,
-          remixedSummary: '',
-          michelin: {
-            tier: 'scheduled',
-            conversionValue: '24.8',
-            freeEpisodeEnd: '25',
-          },
-          createdAt: offsetDateStr(0),
-        },
-        {
-          id: 'n-cook-1',
-          sources: ['today', 'new'],
           title: '무림맹 2인자의 은퇴 계략',
           genre: '무협',
           author: '청명도객',
-          stage: 'cook',
+          stage: 'prep',
+          inCookQueue: false,
+          cookDone: false,
+          michelinDone: false,
           rating: 'read_16_plus',
-          badges: ['legend', 'cook'],
+          flags: ['legend', 'cook'],
           tags: ['무협', '착각계', '사이다'],
           cooking: {
             genre: { bigs: ['③ 무협 계열'], subs: ['신무협', '무림경영물'] },
-            setting: { bigs: ['(4) 무협 및 동양 판타지 배경'], subs: ['무림맹', '객잔'] },
+            setting: { bigs: ['(4) 무협 및 동양 판타지 배경 - ① 무림사회'], subs: ['무림맹', '객잔'] },
             protagonist: { bigs: ['⑨ 인간관계 및 역할 중심 주인공'], subs: ['조력자 출신 주인공', '모략가'] },
             ability: { bigs: ['⑨ 정신 및 지능 관련 능력'], subs: ['전술분석', '심리전능력'] },
             goal: { bigs: ['⑦ 자유 및 독립 추구'], subs: ['은퇴하기'] },
             conflict: { bigs: ['④ 권력 및 지배 갈등'], subs: ['조직 장악'] },
             growth: { bigs: ['⑤ 조직·세력·경영을 통한 성장'], subs: ['세력 확장형'] },
           },
-          recipeCompleted: false,
-          remixedSummary: '',
-          michelin: {
-            tier: 'tier_2',
-            conversionValue: '31.5',
-            freeEpisodeEnd: '25',
-          },
-          createdAt: offsetDateStr(-1),
+          recipeText: '',
+          michelin: { tier: 'tier_2', conversionValue: '31.4', freeEndEpisode: '25' },
+          createdAt: shiftDaysStr(0),
         },
         {
-          id: 'n-recipe-1',
-          sources: ['today'],
+          id: 'w-cook-1',
+          sources: ['today', 'new'],
           title: '던전 속 미식가 길드장',
           genre: '퓨전',
           author: '불꽃레시피',
-          stage: 'recipe',
+          stage: 'pantry',
+          inCookQueue: true,
+          cookDone: false,
+          michelinDone: false,
           rating: 'read_16_plus',
-          badges: ['legend', 'cook', 'fridge'],
+          flags: ['legend', 'cook', 'fridge'],
           tags: ['던전', '요리', '성장형'],
           cooking: {
             genre: { bigs: ['① 판타지 계열', '⑥ 스포츠 및 드라마 계열'], subs: ['던전물', '요리물'] },
-            setting: { bigs: ['(3) 헌터·던전·탑 배경'], subs: ['던전 식당', '보스룸'] },
+            setting: { bigs: ['(3) 헌터·던전·탑 배경 - ② 탑 및 던전'], subs: ['보스룸'] },
             protagonist: { bigs: ['⑤ 직업 및 전문분야 중심 주인공'], subs: ['셰프', '길드 마스터'] },
             ability: { bigs: ['⑤ 창조 및 생산 능력'], subs: ['요리능력', '희귀재료발견'] },
             goal: { bigs: ['⑥ 성공 및 사회적 인정 추구'], subs: ['최고의 요리사 되기'] },
             conflict: { bigs: ['① 생존 및 위기 갈등'], subs: ['몬스터 습격'] },
             growth: { bigs: ['⑧ 지식·전문성 중심 성장'], subs: ['요리 실력 성장형'] },
           },
-          recipeCompleted: false,
-          remixedSummary: '「던전 속 미식가 길드장」 소스를 바탕으로 판타지·요리 장르와 사후세계·비밀동굴 배경을 결합해, 사냥한 몬스터 재료로 미식 식당을 운영하며 세계를 구하는 차기작 컨셉.',
-          michelin: {
-            tier: 'tier_1',
-            conversionValue: '38.2',
-            freeEpisodeEnd: '25',
-          },
-          createdAt: offsetDateStr(-2),
+          recipeText: '「던전 속 미식가 길드장」 소스를 변형한 차기작 기획: 던전·요리 컨셉을 바탕으로 사냥한 몬스터 재료로 미식 식당을 운영하며 세계를 구하는 역전 서사.',
+          michelin: { tier: 'tier_1', conversionValue: '38.6', freeEndEpisode: '25' },
+          createdAt: shiftDaysStr(-1),
         },
         {
-          id: 'n-pantry-1',
+          id: 'w-pantry-1',
           sources: ['new'],
           title: '조선 철도왕의 비밀 금고',
           genre: '대체역사',
           author: '기관사김',
           stage: 'pantry',
+          inCookQueue: false,
+          cookDone: false,
+          michelinDone: false,
           rating: 'drop_11_15',
-          badges: ['supernormal', 'fridge'],
+          flags: ['supernormal', 'fridge'],
           tags: ['대체역사', '경제', '조선'],
-          cooking: {
-            genre: { bigs: ['⑤ 대체역사 및 시대물 계열'], subs: ['한국대체역사', '경제개발물'] },
-            setting: { bigs: ['(6) 역사 및 대체역사 배경'], subs: ['조선 후기'] },
-            protagonist: { bigs: ['① 능력 및 재능 중심 주인공'], subs: ['경영천재'] },
-            ability: { bigs: ['⑫ 경제 및 경영 관련 능력'], subs: ['사업성분석', '자금조달'] },
-            goal: { bigs: ['② 부와 경제적 성공 추구'], subs: ['상업 제국 건설'] },
-            conflict: { bigs: ['⑤ 경제 및 성공 갈등'], subs: ['시장 지배권 확보'] },
-            growth: { bigs: ['⑤ 조직·세력·경영을 통한 성장'], subs: ['경제력 축적형'] },
-          },
-          recipeCompleted: false,
-          remixedSummary: '',
-          michelin: {
-            tier: 'tier_3',
-            conversionValue: '27.4',
-            freeEpisodeEnd: '25',
-          },
-          createdAt: offsetDateStr(-4),
+          cooking: createDefaultCooking(),
+          recipeText: '',
+          michelin: { tier: 'tier_3', conversionValue: '26.8', freeEndEpisode: '25' },
+          createdAt: shiftDaysStr(-3),
         },
         {
-          id: 'n-pantry-2',
+          id: 'w-pantry-2',
           sources: ['etc'],
           title: '별빛 아카데미의 늦깎이 수석',
           genre: '판타지',
           author: '밤하늘펜',
           stage: 'pantry',
+          inCookQueue: false,
+          cookDone: false,
+          michelinDone: false,
           rating: 'drop_6_10',
-          badges: ['supernormal'],
+          flags: ['supernormal'],
           tags: ['아카데미', '노력형'],
-          cooking: createEmptyCookingProfile(),
-          recipeCompleted: false,
-          remixedSummary: '',
-          michelin: {
-            tier: 'tier_4',
-            conversionValue: '19.6',
-            freeEpisodeEnd: '25',
-          },
-          createdAt: offsetDateStr(-6),
+          cooking: createDefaultCooking(),
+          recipeText: '',
+          michelin: { tier: 'tier_4', conversionValue: '19.5', freeEndEpisode: '25' },
+          createdAt: shiftDaysStr(-5),
         },
       ];
     }
 
     // =========================================================================
-    // 3. 앱 상태 관리 & 로컬스토리지
+    // 3. 앱 상태 & 저장/복원
     // =========================================================================
     const state = {
-      activeCategory: 'register', // 'register' | 'prep' | 'cook' | 'recipe' | 'michelin' | 'pantry' | 'wash'
+      activeCategory: 'register', // 'register' | 'prep' | 'cook' | 'michelin' | 'pantry' | 'wash'
       novels: [],
-      tagPool: [...DEFAULT_TAG_POOL],
-      // 제품 등록 폼 상태
+      tagPool: [...DEFAULT_TAGS],
       regForm: {
         sources: ['today'],
         title: '',
         genre: '',
         author: '',
-        editingId: null, // 기존 등록/임시등록 항목 수정 시 id
+        editingId: null,
       },
-      // 조리실 임시 입력 버퍼 (novelId -> { customTag })
-      prepTagInputs: {},
-      // 요리하기 확장 상태 (novelId -> { openDim, openGroups })
-      cookExpanded: {},
-      // 레시피분석 변형 선택 상태 (novelId -> { selectedDims: string[], seed: number })
-      recipeRemixState: {},
-      // 팬트리 필터
-      pantryFilter: 'all',
-      // 설거지 달력 상태
+      prepTagDrafts: {}, // novelId -> string
+      selectedCookId: '',
+      cookUI: {
+        activeDim: 'genre',
+        openGroups: {},
+        selectedRemixDims: ['genre', 'setting', 'protagonist'],
+        remixSeed: 1,
+      },
+      michelinEditingId: null,
+      pantryFilter: 'recent', // 'recent' | 'rating' | 'legend' | 'supernormal' | 'fridge'
       calendar: {
         year: new Date().getFullYear(),
         month: new Date().getMonth(),
-        selectedDate: formatDate(new Date()),
+        selectedDate: formatYMD(new Date()),
       },
-      // 모달 편집 대상 ID
-      editingModalNovelId: null,
+      modalEditId: null,
     };
 
-    function saveToStorage() {
+    function saveData() {
       try {
-        localStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({
-            novels: state.novels,
-            tagPool: state.tagPool,
-          })
-        );
-      } catch (e) {
-        console.error('로컬스토리지 저장 실패:', e);
-        showToast('저장 공간에 접근할 수 없습니다.', 'error');
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ novels: state.novels, tagPool: state.tagPool }));
+        localStorage.setItem(PANTRY_FILTER_KEY, state.pantryFilter);
+      } catch (err) {
+        console.error('로컬스토리지 저장 오류:', err);
+        showToast('브라우저 저장소 공간이 부족합니다.', 'error');
       }
     }
 
-    function loadFromStorage() {
+    function loadData() {
       try {
+        const savedFilter = localStorage.getItem(PANTRY_FILTER_KEY);
+        if (savedFilter) state.pantryFilter = savedFilter;
+
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
-          state.novels = Array.isArray(parsed.novels) ? parsed.novels : buildSampleNovels();
-          state.tagPool = Array.isArray(parsed.tagPool) && parsed.tagPool.length ? parsed.tagPool : [...DEFAULT_TAG_POOL];
+          state.novels = Array.isArray(parsed.novels) ? parsed.novels : buildInitialNovels();
+          state.tagPool = Array.isArray(parsed.tagPool) && parsed.tagPool.length ? parsed.tagPool : [...DEFAULT_TAGS];
           return;
         }
-      } catch (e) {
-        console.error('로컬스토리지 파싱 실패:', e);
+      } catch (err) {
+        console.error('로컬스토리지 로드 오류:', err);
       }
-      state.novels = buildSampleNovels();
-      state.tagPool = [...DEFAULT_TAG_POOL];
+      state.novels = buildInitialNovels();
+      state.tagPool = [...DEFAULT_TAGS];
     }
 
-    function normalizeTitle(t) {
-      return (t || '').replace(/\s+/g, '').toLowerCase().trim();
-    }
-
-    // =========================================================================
-    // 4. 귀여운 캐릭터 중복 안내 & 토스트 알림
-    // =========================================================================
-    function showToast(message, type = 'info') {
-      const area = document.getElementById('toast-area');
-      const el = document.createElement('div');
-      const styles = {
-        info: 'bg-slate-900 text-white border-slate-700',
-        success: 'bg-emerald-950 text-emerald-100 border-emerald-500',
-        warning: 'bg-amber-950 text-amber-100 border-amber-500',
-        error: 'bg-rose-950 text-rose-100 border-rose-500',
-      };
-      el.className = `pointer-events-auto border rounded-2xl px-3.5 py-2.5 shadow-xl text-xs font-bold flex items-center gap-2 animate-pop-in ${styles[type] || styles.info}`;
-      el.innerHTML = `<span>${escapeHtml(message)}</span>`;
-      area.appendChild(el);
-      setTimeout(() => {
-        el.style.opacity = '0';
-        el.style.transition = 'opacity 0.25s ease';
-        setTimeout(() => el.remove(), 250);
-      }, 2800);
-    }
-
-    function showDuplicateCharacterAlert(titleText) {
-      const area = document.getElementById('toast-area');
-      const card = document.createElement('div');
-      card.className =
-        'pointer-events-auto bg-white border-2 border-amber-400 rounded-3xl p-3.5 shadow-2xl flex items-center gap-3 animate-pop-in';
-      card.innerHTML = `
-        <div class="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl shrink-0 animate-float">
-          🐻‍❄️
-        </div>
-        <div class="min-w-0 flex-1">
-          <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-extrabold">
-            쉐프 곰돌이 알림
-          </div>
-          <p class="text-sm font-extrabold text-slate-900 mt-0.5">이미 등록된 작품입니다</p>
-          <p class="text-[11px] text-slate-500 truncate">「${escapeHtml(titleText)}」</p>
-        </div>
-      `;
-      area.appendChild(card);
-      setTimeout(() => {
-        card.style.opacity = '0';
-        card.style.transition = 'opacity 0.3s ease';
-        setTimeout(() => card.remove(), 300);
-      }, 3200);
-    }
-
-    function copyToClipboard(text, label = '제목') {
-      if (!text) return;
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      try {
-        document.execCommand('copy');
-        showToast(`${label} 복사 완료! 문피아 검색창에 붙여넣으세요.`, 'success');
-      } catch (e) {
-        showToast('복사에 실패했습니다.', 'error');
-      } finally {
-        ta.remove();
-      }
+    function normalizeKey(text) {
+      return String(text || '').replace(/\s+/g, '').toLowerCase().trim();
     }
 
     function escapeHtml(str) {
@@ -947,131 +832,179 @@
     }
 
     // =========================================================================
-    // 5. 도메인 헬퍼 (미슐랭 메달, 단계 전환, 레시피 랜덤 변형)
+    // 4. 귀여운 셰프 캐릭터 중복 알림 & 토스트 & 클립보드 복사
     // =========================================================================
-    function getMichelinMedalBadge(novel) {
+    function showToast(msg, variant = 'info') {
+      const box = document.getElementById('toast-container');
+      const el = document.createElement('div');
+      const cls = {
+        info: 'bg-slate-900 text-white border-slate-700',
+        success: 'bg-emerald-950 text-emerald-100 border-emerald-500',
+        warning: 'bg-amber-950 text-amber-100 border-amber-500',
+        error: 'bg-rose-950 text-rose-100 border-rose-500',
+      }[variant] || 'bg-slate-900 text-white border-slate-700';
+
+      el.className = `pointer-events-auto border rounded-2xl px-3.5 py-2.5 shadow-xl text-xs font-bold flex items-center gap-2 animate-pop-in ${cls}`;
+      el.innerHTML = `<span>${escapeHtml(msg)}</span>`;
+      box.appendChild(el);
+
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transition = 'opacity 0.25s ease';
+        setTimeout(() => el.remove(), 250);
+      }, 2600);
+    }
+
+    function showDuplicateCharacterModal(dupTitle) {
+      const box = document.getElementById('toast-container');
+      const card = document.createElement('div');
+      card.className =
+        'pointer-events-auto bg-white border-2 border-amber-400 rounded-3xl p-3.5 shadow-2xl flex items-center gap-3 animate-pop-in';
+      card.innerHTML = `
+        <div class="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0 animate-float-char">
+          <svg viewBox="0 0 64 64" class="w-12 h-12" aria-hidden="true">
+            <circle cx="32" cy="38" r="18" fill="#fde68a" stroke="#92400e" stroke-width="2.5"/>
+            <path d="M18 22 C16 10, 28 8, 32 14 C36 8, 48 10, 46 22 Z" fill="#ffffff" stroke="#92400e" stroke-width="2.5"/>
+            <rect x="20" y="20" width="24" height="5" rx="2" fill="#fb923c" stroke="#92400e" stroke-width="2"/>
+            <circle cx="26" cy="37" r="2.5" fill="#451a03"/>
+            <circle cx="38" cy="37" r="2.5" fill="#451a03"/>
+            <path d="M27 44 Q32 48 37 44" fill="none" stroke="#92400e" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="21" cy="41" r="2.5" fill="#fda4af" opacity="0.8"/>
+            <circle cx="43" cy="41" r="2.5" fill="#fda4af" opacity="0.8"/>
+          </svg>
+        </div>
+        <div class="min-w-0 flex-1">
+          <span class="inline-block px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-extrabold">
+            꼬마 셰프 알림
+          </span>
+          <p class="text-sm font-extrabold text-slate-900 mt-0.5">이미 등록된 작품입니다</p>
+          <p class="text-[11px] text-slate-500 truncate">「${escapeHtml(dupTitle)}」</p>
+        </div>
+      `;
+      box.appendChild(card);
+
+      setTimeout(() => {
+        card.style.opacity = '0';
+        card.style.transition = 'opacity 0.25s ease';
+        setTimeout(() => card.remove(), 250);
+      }, 3200);
+    }
+
+    function copyTextToClipboard(text, label = '제목') {
+      if (!text) return;
+      const helper = document.createElement('textarea');
+      helper.value = text;
+      helper.style.position = 'fixed';
+      helper.style.opacity = '0';
+      document.body.appendChild(helper);
+      helper.select();
+      try {
+        document.execCommand('copy');
+        showToast(`${label} 복사 완료! 문피아 검색창에 바로 붙여넣으세요.`, 'success');
+      } catch (e) {
+        showToast('복사에 실패했습니다.', 'error');
+      } finally {
+        helper.remove();
+      }
+    }
+
+    // =========================================================================
+    // 5. 도메인 헬퍼 (미슐랭 메달, 단계 판별, 레시피 변형 생성)
+    // =========================================================================
+    function getMedalBadgeHtml(novel) {
       const tierId = novel?.michelin?.tier;
-      const found = MICHELIN_TIERS.find((t) => t.id === tierId);
-      if (!found || !found.medal) return '';
-      return `<span class="inline-flex items-center px-1.5 py-0.5 rounded-lg bg-amber-100 border border-amber-300 text-amber-900 text-[11px] font-extrabold ml-1.5 align-middle">${found.medal}</span>`;
+      const opt = MICHELIN_OPTIONS.find((m) => m.id === tierId);
+      if (!opt || !opt.medal) return '';
+      return `<span class="inline-flex items-center px-1.5 py-0.5 rounded-lg bg-amber-100 border border-amber-300 text-amber-950 text-[11px] font-extrabold ml-1.5 align-middle">${opt.medal}</span>`;
     }
 
-    function hasCompletedPrep(novel) {
-      return novel.stage !== 'register_temp';
+    function isPrepCompleted(novel) {
+      return novel.stage === 'pantry';
     }
 
-    function isCookSourceSelected(novel) {
-      return Array.isArray(novel.badges) && novel.badges.includes('cook');
+    function hasCookFlag(novel) {
+      return Array.isArray(novel.flags) && novel.flags.includes('cook');
     }
 
-    function hasCookingSelections(novel) {
-      if (!novel.cooking) return false;
-      return COOKING_DIMENSIONS.some((d) => {
-        const block = novel.cooking[d.key];
-        return block && ((block.bigs && block.bigs.length > 0) || (block.subs && block.subs.length > 0));
-      });
+    function getActiveCookNovels() {
+      return state.novels.filter((n) => isPrepCompleted(n) && hasCookFlag(n) && n.inCookQueue && !n.cookDone);
     }
 
-    // 요리하기에 표시되어야 하는 작품 (조리실에서 '요리하기 (좋은소스)' 선택됨 & 아직 레시피분석으로 이동 전)
-    function getCookingQueueNovels() {
-      return state.novels.filter((n) => n.stage === 'cook');
+    function getMetadataAnalysisNovels() {
+      return state.novels.filter((n) => isPrepCompleted(n) && hasCookFlag(n));
     }
 
-    // 레시피분석에 표시되어야 하는 작품 (stage === 'recipe' 이고 recipeCompleted가 false)
-    function getRecipeAnalysisNovels() {
-      return state.novels.filter((n) => n.stage === 'recipe' && !n.recipeCompleted);
-    }
-
-    // 메타데이터 장르 분석용: 요리하기에 등록되었던(혹은 요리하기 단계를 거친/소스가 선택된) 작품들
-    function getMetadataGenreNovels() {
-      return state.novels.filter(
-        (n) =>
-          isCookSourceSelected(n) ||
-          hasCookingSelections(n) ||
-          n.stage === 'cook' ||
-          n.stage === 'recipe' ||
-          n.recipeCompleted
-      );
-    }
-
-    // 레시피분석 랜덤 변형 엔진
-    function generateRemixSentence(novel, selectedDims, seed = 1) {
-      const dimsToUse = selectedDims && selectedDims.length ? selectedDims : ['genre', 'setting', 'protagonist'];
-      const pickedDetails = dimsToUse.map((dimKey, idx) => {
-        const dimObj = COOKING_DIMENSIONS.find((d) => d.key === dimKey) || COOKING_DIMENSIONS[0];
+    function buildMutatedConceptSentence(novel, selectedDims, seed) {
+      const dims = selectedDims && selectedDims.length ? selectedDims : ['genre', 'setting', 'protagonist'];
+      const segments = dims.map((dimKey, idx) => {
+        const dimDef = COOK_DIMENSIONS.find((d) => d.key === dimKey) || COOK_DIMENSIONS[0];
         const block = novel.cooking?.[dimKey] || { bigs: [], subs: [] };
-        const pool = [...(block.subs || []), ...(block.bigs || [])];
+        const baseCandidates = [...(block.subs || []), ...(block.bigs || [])];
+        const allSubItems = dimDef.groups.flatMap((g) => g.items);
 
-        if (pool.length > 0) {
-          const baseItem = pool[(seed + idx) % pool.length];
-          // 랜덤 변형 파생어 생성
-          const allSubPool = dimObj.groups.flatMap((g) => g.items);
-          const randomAlt = allSubPool[(seed * 7 + idx * 13 + novel.title.length) % allSubPool.length];
-          return `${dimObj.label.replace(/^\d+\)\s*/, '')}: 「${baseItem}」 → 변형「${randomAlt}」`;
-        } else {
-          const fallbackGroup = dimObj.groups[(seed + idx) % dimObj.groups.length];
-          const fallbackSub = fallbackGroup.items[(seed * 5 + idx) % fallbackGroup.items.length];
-          return `${dimObj.label.replace(/^\d+\)\s*/, '')}: 「${fallbackGroup.name}」 기반 「${fallbackSub}」`;
-        }
+        const baseLabel = baseCandidates.length
+          ? baseCandidates[(seed + idx) % baseCandidates.length]
+          : dimDef.groups[(seed + idx) % dimDef.groups.length].name;
+
+        const mutatedLabel = allSubItems[(seed * 7 + idx * 11 + novel.title.length) % allSubItems.length];
+        const cleanDimName = dimDef.label.replace(/^\d+\)\s*/, '');
+        return `${cleanDimName}: 「${baseLabel}」→「${mutatedLabel}」`;
       });
 
-      const hookActions = [
-        '초반 15화 내 확실한 이권과 보상 루프를 배치한',
-        '기존 클리셰의 허점을 역이용해 초반 몰입감을 끌어올린',
-        '독자의 기대치를 비틀며 회차 넘김 속도를 극대화한',
+      const twistHooks = [
+        '초반 15화 내 확실한 손익 역전과 사이다 전개를 배치한',
+        '독자의 예상을 빗나가는 설정 충돌로 몰입도를 끌어올린',
+        '연재 초반부터 회차 넘김 동력을 극대화한',
       ];
-      const hook = hookActions[seed % hookActions.length];
+      const hook = twistHooks[seed % twistHooks.length];
 
-      return `「${novel.title}」(${novel.genre || '웹소설'}) 베이스 변형 기획 — ${pickedDetails.join(' / ')} 조합으로, ${hook} 차기작 컨셉입니다.`;
+      return `「${novel.title}」(${novel.genre || '웹소설'}) 기반 차기작 레시피 — ${segments.join(' / ')} 조합으로, ${hook} 아이디어입니다.`;
     }
 
     // =========================================================================
     // 6. 네비게이션 렌더링
     // =========================================================================
-    function getCategoryCount(catId) {
+    function getNavBadgeCount(catId) {
       if (catId === 'register') return state.novels.filter((n) => n.stage === 'register_temp').length;
       if (catId === 'prep') return state.novels.filter((n) => n.stage === 'prep').length;
-      if (catId === 'cook') return getCookingQueueNovels().length;
-      if (catId === 'recipe') return getRecipeAnalysisNovels().length;
-      if (catId === 'michelin') return state.novels.filter((n) => hasCompletedPrep(n)).length;
-      if (catId === 'pantry') return state.novels.filter((n) => hasCompletedPrep(n)).length;
+      if (catId === 'cook') return getActiveCookNovels().length;
+      if (catId === 'michelin') return state.novels.filter((n) => isPrepCompleted(n) && !n.michelinDone).length;
+      if (catId === 'pantry') return state.novels.filter((n) => isPrepCompleted(n)).length;
       if (catId === 'wash') return state.novels.length;
       return 0;
     }
 
-    function renderNavigation() {
-      const strip = document.getElementById('top-category-strip');
-      const bottom = document.getElementById('bottom-nav-grid');
+    function renderNavBars() {
+      const topEl = document.getElementById('top-cat-tabs');
+      const botEl = document.getElementById('bottom-nav-grid');
 
-      strip.innerHTML = CATEGORIES.map((c) => {
+      topEl.innerHTML = CATEGORIES.map((c) => {
         const active = state.activeCategory === c.id;
-        const cnt = getCategoryCount(c.id);
+        const cnt = getNavBadgeCount(c.id);
         return `
           <button
             type="button"
-            data-cat-nav="${c.id}"
-            class="cat-nav-btn shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${
-              active
-                ? 'bg-chef-500 text-white shadow-sm'
-                : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700'
+            data-nav-cat="${c.id}"
+            class="nav-cat-btn shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${
+              active ? 'bg-chef-500 text-white shadow-xs' : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700'
             }"
           >
             <span>${c.icon}</span>
             <span>${c.name}</span>
             <span class="px-1.5 py-0.2 rounded-full text-[10px] ${
-              active ? 'bg-white/20 text-white' : 'bg-slate-900 text-slate-400'
+              active ? 'bg-white/25 text-white' : 'bg-slate-900 text-slate-400'
             }">${cnt}</span>
           </button>
         `;
       }).join('');
 
-      bottom.innerHTML = CATEGORIES.map((c) => {
+      botEl.innerHTML = CATEGORIES.map((c) => {
         const active = state.activeCategory === c.id;
         return `
           <button
             type="button"
-            data-cat-nav="${c.id}"
-            class="cat-nav-btn py-1.5 px-0.5 rounded-2xl flex flex-col items-center justify-center gap-0.5 transition cursor-pointer ${
+            data-nav-cat="${c.id}"
+            class="nav-cat-btn py-1.5 px-0.5 rounded-2xl flex flex-col items-center justify-center gap-0.5 transition cursor-pointer ${
               active ? 'bg-chef-50 text-chef-700 font-extrabold ring-1 ring-chef-200' : 'text-slate-500 hover:bg-slate-50 font-semibold'
             }"
           >
@@ -1081,46 +1014,42 @@
         `;
       }).join('');
 
-      document.querySelectorAll('.cat-nav-btn').forEach((btn) => {
+      document.querySelectorAll('.nav-cat-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          state.activeCategory = btn.getAttribute('data-cat-nav');
-          renderApp();
+          state.activeCategory = btn.getAttribute('data-nav-cat');
+          renderAll();
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       });
     }
 
     // =========================================================================
-    // 7. 각 카테고리 뷰 렌더러 (1 ~ 7)
+    // 7. 6대 카테고리 뷰 렌더러
     // =========================================================================
 
-    // [1] 제품 등록 (메뉴 선정 + 라벨링 + [임시등록] 별도 분류)
+    // [1] 제품 등록 (📥)
     function renderRegisterView() {
       const f = state.regForm;
-      const tempItems = state.novels.filter((n) => n.stage === 'register_temp');
+      const tempList = state.novels.filter((n) => n.stage === 'register_temp');
 
       return `
         <section class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-4 animate-pop-in">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-2">
-              <span class="text-xl">📝</span>
+              <span class="text-xl">📥</span>
               <div>
                 <h2 class="text-base font-extrabold text-slate-900">제품 등록 ${f.editingId ? '(수정 중)' : ''}</h2>
-                <p class="text-[11px] text-slate-500">1단계 메뉴 선정 · 2단계 라벨링 완료 시 조리실로 자동 이동합니다.</p>
+                <p class="text-[11px] text-slate-500">메뉴 선정 및 라벨링 완료 시 조리실로 이동합니다.</p>
               </div>
             </div>
             ${f.editingId ? `
-              <button id="btn-cancel-reg-edit" type="button" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold cursor-pointer">수정 취소</button>
+              <button id="btn-cancel-reg" type="button" class="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold cursor-pointer">취소</button>
             ` : ''}
           </div>
 
           <!-- 1단계: 메뉴 선정 -->
           <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200/70 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-extrabold text-chef-700">STEP 1 · 메뉴 선정 (수동 체크 & 제목)</span>
-              <span class="text-[10px] text-slate-400">중복 시 캐릭터 안내</span>
-            </div>
-
+            <div class="text-xs font-extrabold text-chef-700">1단계 · 메뉴 선정 (수동 체크 & 제목)</div>
             <div class="grid grid-cols-3 gap-1.5">
               ${[
                 { id: 'today', label: '투데이 베스트' },
@@ -1131,11 +1060,9 @@
                 return `
                   <button
                     type="button"
-                    data-reg-source="${src.id}"
-                    class="reg-source-btn py-2 px-2 rounded-xl border text-[11px] font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
-                      checked
-                        ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
-                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
+                    data-reg-src="${src.id}"
+                    class="reg-src-btn py-2 px-2 rounded-xl border text-[11px] font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
+                      checked ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
                     }"
                   >
                     <span>${checked ? '☑' : '☐'}</span>
@@ -1146,12 +1073,12 @@
             </div>
 
             <div>
-              <label for="reg-title-input" class="block text-xs font-bold text-slate-700 mb-1">작품 제목</label>
+              <label for="reg-title" class="block text-xs font-bold text-slate-700 mb-1">제목</label>
               <input
-                id="reg-title-input"
+                id="reg-title"
                 type="text"
                 value="${escapeHtml(f.title)}"
-                placeholder="문피아 베스트 작품 제목을 입력하세요"
+                placeholder="작품 제목을 입력하세요"
                 class="w-full px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-chef-500"
               />
             </div>
@@ -1160,214 +1087,193 @@
           <!-- 2단계: 라벨링 -->
           <div class="bg-amber-50/60 rounded-2xl p-3.5 border border-amber-200/70 space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-extrabold text-amber-900">STEP 2 · 라벨링 (장르 & 작가명)</span>
-              <span class="text-[10px] font-semibold text-amber-800">미입력 시 [임시등록]</span>
+              <span class="text-xs font-extrabold text-amber-900">2단계 · 라벨링 (장르 & 작가명)</span>
+              <span class="text-[10px] font-semibold text-amber-800">미완성 시 [임시등록]</span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label for="reg-genre-select" class="block text-xs font-bold text-slate-700 mb-1">장르 선택</label>
-                <select
-                  id="reg-genre-select"
-                  class="w-full px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-chef-500"
-                >
-                  <option value="">-- 장르 선택 (나중에 입력 가능) --</option>
-                  ${LABEL_GENRES.map((g) => `
-                    <option value="${escapeHtml(g)}" ${f.genre === g ? 'selected' : ''}>${escapeHtml(g)}</option>
-                  `).join('')}
+                <label for="reg-genre" class="block text-xs font-bold text-slate-700 mb-1">장르</label>
+                <select id="reg-genre" class="w-full px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-800">
+                  <option value="">-- 장르 선택 --</option>
+                  ${LABEL_GENRES.map((g) => `<option value="${escapeHtml(g)}" ${f.genre === g ? 'selected' : ''}>${escapeHtml(g)}</option>`).join('')}
                 </select>
               </div>
               <div>
-                <label for="reg-author-input" class="block text-xs font-bold text-slate-700 mb-1">작가명</label>
+                <label for="reg-author" class="block text-xs font-bold text-slate-700 mb-1">작가명</label>
                 <input
-                  id="reg-author-input"
+                  id="reg-author"
                   type="text"
                   value="${escapeHtml(f.author)}"
                   placeholder="작가명 입력"
-                  class="w-full px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-chef-500"
+                  class="w-full px-3 py-2.5 rounded-xl bg-white border border-slate-300 text-xs"
                 />
               </div>
             </div>
           </div>
 
           <button
-            id="btn-save-registration"
+            id="btn-submit-reg"
             type="button"
             class="w-full py-3.5 rounded-2xl bg-chef-500 hover:bg-chef-600 text-white font-extrabold text-sm shadow-md transition cursor-pointer"
           >
-            ${f.editingId ? '수정 내용 저장하기' : '제품 등록 / 조리실 보내기'}
+            ${f.editingId ? '수정 내용 저장' : '등록 완료 / 조리실로 보내기'}
           </button>
         </section>
 
-        <!-- [임시등록] 별도 분류 섹션 -->
+        <!-- [임시등록] 별도 분류 -->
         <section class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded-lg bg-amber-100 text-amber-900 text-xs font-extrabold">[임시등록]</span>
-              <h3 class="text-sm font-extrabold text-slate-900">라벨링 대기 목록 (${tempItems.length}편)</h3>
+              <span class="px-2 py-0.5 rounded-lg bg-amber-100 text-amber-950 text-xs font-extrabold">[임시등록]</span>
+              <h3 class="text-sm font-extrabold text-slate-900">라벨링 대기 작품 (${tempList.length}편)</h3>
             </div>
-            <span class="text-[11px] text-slate-400">장르·작가명 입력 시 조리실 이동</span>
           </div>
 
-          ${tempItems.length ? `
-            <div class="space-y-2.5">
-              ${tempItems.map((item) => `
-                <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
-                  <div class="flex items-start justify-between gap-2">
-                    <div class="min-w-0">
-                      <div class="flex flex-wrap items-center gap-1 mb-1">
-                        <span class="px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-950 text-[10px] font-extrabold">[임시등록]</span>
-                        ${(item.sources || []).map((s) => `
-                          <span class="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-700 text-[10px] font-bold">
-                            ${s === 'today' ? '투데이 베스트' : s === 'new' ? '신규 베스트' : '기타'}
-                          </span>
-                        `).join('')}
-                      </div>
-                      <h4 class="text-sm font-extrabold text-slate-900">${escapeHtml(item.title)}</h4>
-                      <p class="text-[11px] text-slate-500">
-                        장르: <strong class="text-slate-700">${escapeHtml(item.genre || '미입력')}</strong> · 작가: <strong class="text-slate-700">${escapeHtml(item.author || '미입력')}</strong>
-                      </p>
-                    </div>
-                  </div>
-
-                  <!-- 인라인 빠른 라벨링 완료 폼 -->
-                  <div class="grid grid-cols-2 gap-1.5 pt-1">
-                    <select data-quick-genre-id="${item.id}" class="quick-genre-select px-2 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold">
-                      <option value="">장르 선택</option>
-                      ${LABEL_GENRES.map((g) => `<option value="${escapeHtml(g)}" ${item.genre === g ? 'selected' : ''}>${escapeHtml(g)}</option>`).join('')}
-                    </select>
-                    <input type="text" data-quick-author-id="${item.id}" value="${escapeHtml(item.author || '')}" placeholder="작가명 입력" class="quick-author-input px-2 py-1.5 rounded-xl bg-white border border-slate-200 text-xs" />
-                  </div>
-
-                  <div class="flex items-center gap-1.5 pt-1">
-                    <button type="button" data-complete-label-id="${item.id}" class="complete-label-btn flex-1 py-2 px-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer">
-                      라벨 완료 → 조리실
-                    </button>
-                    <button type="button" data-edit-temp-id="${item.id}" class="edit-temp-btn py-2 px-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold cursor-pointer">
-                      수정
-                    </button>
-                    <button type="button" data-copy-title="${escapeHtml(item.title)}" class="copy-search-btn py-2 px-2.5 rounded-xl bg-munpia-50 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold cursor-pointer">
-                      문피아 검색(복사)
-                    </button>
-                    <button type="button" data-delete-id="${item.id}" class="delete-novel-btn py-2 px-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold cursor-pointer">
-                      삭제
-                    </button>
-                  </div>
+          ${tempList.length ? tempList.map((item) => `
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
+              <div>
+                <div class="flex flex-wrap items-center gap-1 mb-1">
+                  <span class="px-1.5 py-0.5 rounded bg-amber-200 text-amber-950 text-[10px] font-extrabold">[임시등록]</span>
+                  ${(item.sources || []).map((s) => `
+                    <span class="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-700 text-[10px] font-bold">
+                      ${s === 'today' ? '투데이 베스트' : s === 'new' ? '신규 베스트' : '기타'}
+                    </span>
+                  `).join('')}
                 </div>
-              `).join('')}
+                <h4 class="text-sm font-extrabold text-slate-900">${escapeHtml(item.title)}</h4>
+                <p class="text-[11px] text-slate-500">
+                  장르: <strong>${escapeHtml(item.genre || '미입력')}</strong> · 작가: <strong>${escapeHtml(item.author || '미입력')}</strong>
+                </p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-1.5">
+                <select data-temp-g="${item.id}" class="temp-g-sel px-2 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold">
+                  <option value="">장르 선택</option>
+                  ${LABEL_GENRES.map((g) => `<option value="${escapeHtml(g)}" ${item.genre === g ? 'selected' : ''}>${escapeHtml(g)}</option>`).join('')}
+                </select>
+                <input type="text" data-temp-a="${item.id}" value="${escapeHtml(item.author || '')}" placeholder="작가명 입력" class="temp-a-inp px-2 py-1.5 rounded-xl bg-white border border-slate-200 text-xs" />
+              </div>
+
+              <div class="flex items-center gap-1.5">
+                <button type="button" data-finish-temp="${item.id}" class="finish-temp-btn flex-1 py-2 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer">
+                  라벨 완료 → 조리실
+                </button>
+                <button type="button" data-edit-temp="${item.id}" class="edit-temp-btn py-2 px-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold cursor-pointer">
+                  수정
+                </button>
+                <button type="button" data-del-id="${item.id}" class="del-work-btn py-2 px-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold cursor-pointer">
+                  삭제
+                </button>
+              </div>
             </div>
-          ` : `
+          `).join('') : `
             <div class="py-6 text-center text-xs text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-              현재 [임시등록] 대기 중인 작품이 없습니다.
+              [임시등록] 작품이 없습니다.
             </div>
           `}
         </section>
       `;
     }
 
-    // [2] 조리실 (별점 5종 + 중복 뱃지 4종 + 태그 최대 5개 & 저장 풀 + 라우팅)
+    // [2] 조리실 (🍳)
     function renderPrepView() {
-      const prepList = state.novels.filter((n) => n.stage === 'prep');
+      const list = state.novels.filter((n) => n.stage === 'prep');
 
       return `
         <section class="space-y-3 animate-pop-in">
-          <div class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-xl">🔪</span>
-                <div>
-                  <h2 class="text-base font-extrabold text-slate-900">조리실 · 평가 & 분류</h2>
-                  <p class="text-[11px] text-slate-500">별점·구분·태그 입력 후 이동 버튼을 누르면 조리실에서 이동합니다.</p>
-                </div>
+          <div class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">🍳</span>
+              <div>
+                <h2 class="text-base font-extrabold text-slate-900">조리실 · 평가 & 분류</h2>
+                <p class="text-[11px] text-slate-500">별점·구분·태그(약 5개) 입력 후 이동하면 조리실에서 숨겨집니다.</p>
               </div>
-              <span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-extrabold">${prepList.length}편</span>
             </div>
+            <span class="px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 text-xs font-extrabold">${list.length}편</span>
           </div>
 
-          ${prepList.length ? prepList.map((n) => {
-            const customTagVal = state.prepTagInputs[n.id] || '';
-            const cookSelected = isCookSourceSelected(n);
+          ${list.length ? list.map((n) => {
+            const draftTag = state.prepTagDrafts[n.id] || '';
+            const hasCook = hasCookFlag(n);
             return `
               <article class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3.5">
                 <div class="flex items-start justify-between gap-2">
-                  <div>
-                    <div class="flex flex-wrap items-center gap-1 mb-1">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-1.5 mb-0.5">
                       <span class="px-2 py-0.5 rounded-lg bg-slate-900 text-white text-[10px] font-bold">${escapeHtml(n.genre)}</span>
-                      <span class="text-[11px] text-slate-500 font-semibold">${escapeHtml(n.author)}</span>
+                      <span class="text-[11px] text-slate-500 truncate">${escapeHtml(n.author)}</span>
                     </div>
-                    <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(n.title)}${getMichelinMedalBadge(n)}</h3>
+                    <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(n.title)}${getMedalBadgeHtml(n)}</h3>
                   </div>
-                  <div class="flex items-center gap-1">
-                    <button type="button" data-copy-title="${escapeHtml(n.title)}" class="copy-search-btn px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[10px] font-bold text-slate-700 cursor-pointer">
-                      검색복사
+                  <div class="flex items-center gap-1 shrink-0">
+                    <button type="button" data-copy-title="${escapeHtml(n.title)}" class="copy-title-btn px-2 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-[11px] font-bold cursor-pointer">
+                      제목복사
                     </button>
-                    <button type="button" data-delete-id="${n.id}" class="delete-novel-btn px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-[10px] font-bold text-rose-600 cursor-pointer">
+                    <button type="button" data-del-id="${n.id}" class="del-work-btn px-2 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold cursor-pointer">
                       삭제
                     </button>
                   </div>
                 </div>
 
-                <!-- 1. 별점 선택 (5가지 중 1개, 언제든 수정 가능) -->
+                <!-- 별점 (5가지 중 1개 선택, 언제든 수정 가능) -->
                 <div>
                   <label class="block text-xs font-extrabold text-slate-700 mb-1.5">별점 선택 (1개 선택)</label>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                    ${RATING_CHOICES.map((rc) => {
-                      const active = n.rating === rc.id;
+                    ${RATINGS.map((r) => {
+                      const sel = n.rating === r.id;
                       return `
                         <button
                           type="button"
-                          data-prep-rating-work="${n.id}"
-                          data-prep-rating-id="${rc.id}"
-                          class="prep-rating-btn px-3 py-2 rounded-xl border text-left transition cursor-pointer ${
-                            active
-                              ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
-                              : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                          data-prep-r-work="${n.id}"
+                          data-prep-r-id="${r.id}"
+                          class="prep-r-btn px-3 py-2 rounded-xl border text-left text-xs font-bold transition cursor-pointer ${
+                            sel ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                           }"
                         >
-                          <div class="text-xs font-bold">${rc.label}</div>
-                          <div class="text-[10px] ${active ? 'text-slate-300' : 'text-slate-500'}">${rc.desc}</div>
+                          ${r.label}
                         </button>
                       `;
                     }).join('')}
                   </div>
                 </div>
 
-                <!-- 2. 추가 항목 중복 선택 (4가지) -->
+                <!-- 추가 항목 중복 선택 (4가지) -->
                 <div>
                   <label class="block text-xs font-extrabold text-slate-700 mb-1.5">추가 분류 (중복 선택 가능)</label>
                   <div class="grid grid-cols-2 gap-1.5">
-                    ${PREP_BADGES.map((b) => {
-                      const active = Array.isArray(n.badges) && n.badges.includes(b.id);
+                    ${MULTI_FLAGS.map((fl) => {
+                      const sel = (n.flags || []).includes(fl.id);
                       return `
                         <button
                           type="button"
-                          data-prep-badge-work="${n.id}"
-                          data-prep-badge-id="${b.id}"
-                          class="prep-badge-btn px-2.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${
-                            active ? b.active + ' shadow-2xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                          data-prep-f-work="${n.id}"
+                          data-prep-f-id="${fl.id}"
+                          class="prep-f-btn px-2.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${
+                            sel ? fl.active : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                           }"
                         >
-                          <span>${b.icon}</span>
-                          <span class="truncate">${b.label}</span>
-                          <span class="ml-auto">${active ? '✓' : '+'}</span>
+                          <span>${fl.icon}</span>
+                          <span class="truncate">${fl.label}</span>
+                          <span class="ml-auto">${sel ? '✓' : '+'}</span>
                         </button>
                       `;
                     }).join('')}
                   </div>
                 </div>
 
-                <!-- 3. 태그 설정 (최대 5개 + 저장 풀 재사용) -->
+                <!-- 작품별 태그 (약 5개 입력 & 저장 풀 재선택) -->
                 <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200/70 space-y-2">
                   <div class="flex items-center justify-between">
                     <span class="text-xs font-extrabold text-slate-700">작품 태그 (${(n.tags || []).length}/5)</span>
-                    <span class="text-[10px] text-slate-400">저장 태그 클릭으로 재사용</span>
+                    <span class="text-[10px] text-slate-400">저장된 태그 탭하여 추가</span>
                   </div>
 
-                  <div class="flex flex-wrap gap-1.5 min-h-[24px]">
+                  <div class="flex flex-wrap gap-1.5 min-h-[22px]">
                     ${(n.tags || []).length ? (n.tags || []).map((t) => `
                       <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-chef-500 text-white text-[11px] font-bold">
                         #${escapeHtml(t)}
-                        <button type="button" data-prep-del-tag-work="${n.id}" data-prep-del-tag="${escapeHtml(t)}" class="prep-del-tag-btn hover:text-amber-200 cursor-pointer">✕</button>
+                        <button type="button" data-rm-tag-work="${n.id}" data-rm-tag="${escapeHtml(t)}" class="rm-tag-btn hover:text-amber-200 cursor-pointer">✕</button>
                       </span>
                     `).join('') : `<span class="text-[11px] text-slate-400">등록된 태그가 없습니다.</span>`}
                   </div>
@@ -1375,446 +1281,390 @@
                   <div class="flex gap-1.5">
                     <input
                       type="text"
-                      data-prep-tag-input-id="${n.id}"
-                      value="${escapeHtml(customTagVal)}"
-                      placeholder="새 태그 입력 (저장 후 재사용 가능)"
-                      class="prep-tag-input flex-1 min-w-0 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs"
+                      data-tag-inp-work="${n.id}"
+                      value="${escapeHtml(draftTag)}"
+                      placeholder="태그 입력 (저장 후 재사용)"
+                      class="tag-inp flex-1 min-w-0 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs"
                     />
-                    <button
-                      type="button"
-                      data-prep-add-tag-id="${n.id}"
-                      class="prep-add-tag-btn px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold cursor-pointer"
-                    >
+                    <button type="button" data-add-tag-work="${n.id}" class="add-tag-btn px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold cursor-pointer">
                       추가
                     </button>
                   </div>
 
                   <div class="flex flex-wrap gap-1 pt-0.5">
-                    ${state.tagPool.map((pt) => {
-                      const has = (n.tags || []).includes(pt);
+                    ${state.tagPool.map((poolTag) => {
+                      const active = (n.tags || []).includes(poolTag);
                       return `
                         <button
                           type="button"
-                          data-prep-pool-work="${n.id}"
-                          data-prep-pool-tag="${escapeHtml(pt)}"
-                          class="prep-pool-btn px-2 py-0.5 rounded-lg border text-[10px] font-bold transition cursor-pointer ${
-                            has ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
+                          data-pool-tag-work="${n.id}"
+                          data-pool-tag-val="${escapeHtml(poolTag)}"
+                          class="pool-tag-btn px-2 py-0.5 rounded-lg border text-[10px] font-bold transition cursor-pointer ${
+                            active ? 'bg-amber-100 text-amber-950 border-amber-300' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
                           }"
                         >
-                          ${has ? '✓ ' : '+ '}#${escapeHtml(pt)}
+                          ${active ? '✓ ' : '+ '}#${escapeHtml(poolTag)}
                         </button>
                       `;
                     }).join('')}
                   </div>
                 </div>
 
-                <!-- 라우팅 실행 버튼 -->
+                <!-- 이동 버튼: 요리하기 선택 시 요리하기+팬트리, 미선택 시 팬트리 -->
                 <button
                   type="button"
-                  data-route-prep-id="${n.id}"
-                  class="route-prep-btn w-full py-3 rounded-2xl text-white text-xs font-extrabold shadow-sm transition cursor-pointer ${
-                    cookSelected
+                  data-move-pantry-work="${n.id}"
+                  class="move-pantry-btn w-full py-3 rounded-2xl text-white text-xs font-extrabold shadow-sm transition cursor-pointer ${
+                    hasCook
                       ? 'bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600'
                       : 'bg-emerald-600 hover:bg-emerald-700'
                   }"
                 >
-                  ${cookSelected
-                    ? '🍳 조리 완료 → 요리하기 + 팬트리로 이동'
-                    : '🗄️ 조리 완료 → 팬트리로 이동'}
+                  ${hasCook
+                    ? '🥘 평가 완료 → 요리하기 + 팬트리로 이동'
+                    : '🗄️ 평가 완료 → 팬트리로 이동'}
                 </button>
               </article>
             `;
           }).join('') : `
-            <div class="bg-white rounded-3xl p-8 text-center border border-slate-200 space-y-2">
-              <div class="text-3xl">🔪</div>
-              <p class="text-sm font-bold text-slate-800">조리실에 대기 중인 작품이 없습니다.</p>
-              <p class="text-xs text-slate-500">제품 등록에서 라벨링을 완료하면 이곳에 나타납니다.</p>
-            </div>
-          `}
-        </section>
-      `;
-    }
-
-    // [3] 요리하기 (7대 큰 계열 + 세부 항목 중복 선택 & 레시피분석 이동)
-    function renderCookView() {
-      const cookNovels = getCookingQueueNovels();
-
-      return `
-        <section class="space-y-3 animate-pop-in">
-          <div class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-xl">🍳</span>
-                <div>
-                  <h2 class="text-base font-extrabold text-slate-900">요리하기 · 7대 요소 조합</h2>
-                  <p class="text-[11px] text-slate-500">큰 계열만 선택하거나 세부 항목까지 중복 선택 후 레시피분석으로 보내세요.</p>
-                </div>
-              </div>
-              <span class="px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 text-xs font-extrabold">${cookNovels.length}편</span>
-            </div>
-          </div>
-
-          ${cookNovels.length ? cookNovels.map((n) => {
-            const expState = state.cookExpanded[n.id] || { openDim: 'genre', openGroups: {} };
-            const activeDim = expState.openDim || 'genre';
-            const dimDef = COOKING_DIMENSIONS.find((d) => d.key === activeDim) || COOKING_DIMENSIONS[0];
-            const dimSelection = n.cooking?.[dimDef.key] || { bigs: [], subs: [] };
-
-            return `
-              <article class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3.5">
-                <div class="flex items-start justify-between gap-2">
-                  <div>
-                    <div class="flex items-center gap-1.5 mb-0.5">
-                      <span class="px-2 py-0.5 rounded-lg bg-orange-100 text-orange-800 text-[10px] font-extrabold">${escapeHtml(n.genre)}</span>
-                      <span class="text-[11px] text-slate-500">${escapeHtml(n.author)}</span>
-                    </div>
-                    <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(n.title)}${getMichelinMedalBadge(n)}</h3>
-                  </div>
-                  <button type="button" data-delete-id="${n.id}" class="delete-novel-btn px-2.5 py-1 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold cursor-pointer">
-                    삭제
-                  </button>
-                </div>
-
-                <!-- 선택 요약 뱃지 -->
-                <div class="bg-slate-50 rounded-2xl p-2.5 border border-slate-200/70 space-y-1.5">
-                  <div class="text-[11px] font-extrabold text-slate-700">현재 선택된 요리 재료 요약</div>
-                  <div class="flex flex-wrap gap-1">
-                    ${COOKING_DIMENSIONS.map((d) => {
-                      const b = n.cooking?.[d.key] || { bigs: [], subs: [] };
-                      const totalPicked = (b.bigs?.length || 0) + (b.subs?.length || 0);
-                      return `
-                        <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${
-                          totalPicked > 0 ? 'bg-chef-500 text-white' : 'bg-white text-slate-400 border border-slate-200'
-                        }">
-                          ${d.icon} ${d.label.replace(/^\d+\)\s*/, '')} (${totalPicked})
-                        </span>
-                      `;
-                    }).join('')}
-                  </div>
-                </div>
-
-                <!-- 7대 큰 계열 선택 탭 -->
-                <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
-                  ${COOKING_DIMENSIONS.map((d) => {
-                    const isSel = d.key === activeDim;
-                    const cnt = (n.cooking?.[d.key]?.bigs?.length || 0) + (n.cooking?.[d.key]?.subs?.length || 0);
-                    return `
-                      <button
-                        type="button"
-                        data-cook-dim-work="${n.id}"
-                        data-cook-dim-key="${d.key}"
-                        class="cook-dim-btn shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold border transition cursor-pointer ${
-                          isSel ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                        }"
-                      >
-                        ${d.icon} ${d.label} ${cnt ? `·${cnt}` : ''}
-                      </button>
-                    `;
-                  }).join('')}
-                </div>
-
-                <!-- 선택된 큰 계열의 세부 그룹 (큰 계열 체크 + 세부 항목 펼치기/중복 선택) -->
-                <div class="space-y-2 max-h-[380px] overflow-y-auto pr-0.5">
-                  ${dimDef.groups.map((grp, gIdx) => {
-                    const bigChecked = (dimSelection.bigs || []).includes(grp.name);
-                    const pickedSubsInGroup = (dimSelection.subs || []).filter((s) => grp.items.includes(s));
-                    const groupOpen = !!(expState.openGroups && expState.openGroups[`${dimDef.key}_${gIdx}`]);
-
-                    return `
-                      <div class="rounded-2xl border ${bigChecked || pickedSubsInGroup.length ? 'border-orange-300 bg-orange-50/30' : 'border-slate-200 bg-slate-50/60'} p-2.5 space-y-2">
-                        <div class="flex items-center justify-between gap-2">
-                          <button
-                            type="button"
-                            data-cook-big-work="${n.id}"
-                            data-cook-big-dim="${dimDef.key}"
-                            data-cook-big-name="${escapeHtml(grp.name)}"
-                            class="cook-big-btn flex-1 text-left flex items-center gap-2 text-xs font-extrabold text-slate-900 cursor-pointer"
-                          >
-                            <span class="w-5 h-5 rounded-md flex items-center justify-center text-xs border ${
-                              bigChecked ? 'bg-chef-500 text-white border-chef-500' : 'bg-white text-slate-400 border-slate-300'
-                            }">${bigChecked ? '✓' : ''}</span>
-                            <span class="truncate">${escapeHtml(grp.name)}</span>
-                            ${pickedSubsInGroup.length ? `<span class="px-1.5 py-0.2 rounded bg-amber-200 text-amber-950 text-[10px]">세부 ${pickedSubsInGroup.length}</span>` : ''}
-                          </button>
-
-                          <button
-                            type="button"
-                            data-cook-expand-work="${n.id}"
-                            data-cook-expand-key="${dimDef.key}_${gIdx}"
-                            class="cook-expand-btn px-2 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 hover:bg-slate-100 shrink-0 cursor-pointer"
-                          >
-                            ${groupOpen ? '세부 닫기 ▲' : `세부 (${grp.items.length}) ▼`}
-                          </button>
-                        </div>
-
-                        ${groupOpen ? `
-                          <div class="pt-1.5 border-t border-slate-200/70 flex flex-wrap gap-1.5">
-                            ${grp.items.map((subItem) => {
-                              const subChecked = (dimSelection.subs || []).includes(subItem);
-                              return `
-                                <button
-                                  type="button"
-                                  data-cook-sub-work="${n.id}"
-                                  data-cook-sub-dim="${dimDef.key}"
-                                  data-cook-sub-name="${escapeHtml(subItem)}"
-                                  class="cook-sub-btn px-2 py-1 rounded-lg text-[11px] font-semibold border transition cursor-pointer ${
-                                    subChecked
-                                      ? 'bg-chef-500 text-white border-chef-500 font-bold'
-                                      : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300'
-                                  }"
-                                >
-                                  ${subChecked ? '✓ ' : ''}${escapeHtml(subItem)}
-                                </button>
-                              `;
-                            }).join('')}
-                          </div>
-                        ` : ''}
-                      </div>
-                    `;
-                  }).join('')}
-                </div>
-
-                <!-- 레시피분석으로 이동 버튼 -->
-                <button
-                  type="button"
-                  data-move-recipe-id="${n.id}"
-                  class="move-recipe-btn w-full py-3 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
-                >
-                  🧪 선택 완료 → 레시피분석으로 이동
-                </button>
-              </article>
-            `;
-          }).join('') : `
-            <div class="bg-white rounded-3xl p-8 text-center border border-slate-200 space-y-2">
+            <div class="bg-white rounded-3xl p-8 text-center border border-slate-200 space-y-1.5">
               <div class="text-3xl">🍳</div>
-              <p class="text-sm font-bold text-slate-800">요리하기 단계에 대기 중인 작품이 없습니다.</p>
-              <p class="text-xs text-slate-500">조리실에서 '요리하기 (좋은소스)'를 선택해 이동하거나 팬트리에서 확인하세요.</p>
+              <p class="text-sm font-bold text-slate-800">조리실에 대기 중인 작품이 없습니다.</p>
+              <p class="text-xs text-slate-500">제품 등록에서 라벨링을 마치면 이곳에 표시됩니다.</p>
             </div>
           `}
         </section>
       `;
     }
 
-    // [4] 레시피분석 (랜덤 변형 + 문장 복사 + 삭제 + 완료 숨김 + 하단 [메타데이터] 취향 그래프)
-    function renderRecipeAnalysisView() {
-      const recipeList = getRecipeAnalysisNovels();
-      const metaNovels = getMetadataGenreNovels();
-
-      // 장르별 카운트 집계
-      const genreCounts = {};
-      metaNovels.forEach((n) => {
+    // [3] 요리하기 (🥘) — 상단 [메타데이터] 취향 그래프 + 7대 요소(큰 계열/세부 중복 선택) + 하단 [레시피분석] + [요리완료]
+    function renderCookView() {
+      // 1) 상단 [메타데이터] 장르 그래프 계산
+      const metaList = getMetadataAnalysisNovels();
+      const genreMap = {};
+      metaList.forEach((n) => {
         const g = n.genre || '기타';
-        genreCounts[g] = (genreCounts[g] || 0) + 1;
+        genreMap[g] = (genreMap[g] || 0) + 1;
       });
-      const sortedGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]);
-      const maxGenreVal = sortedGenres.length ? Math.max(...sortedGenres.map(([, c]) => c)) : 1;
+      const genreEntries = Object.entries(genreMap).sort((a, b) => b[1] - a[1]);
+      const maxGenreCount = genreEntries.length ? Math.max(...genreEntries.map(([, c]) => c)) : 1;
+
+      // 2) 현재 요리하기 목록 작품 선택
+      const activeCookList = getActiveCookNovels();
+      const currentWork =
+        activeCookList.find((n) => n.id === state.selectedCookId) || activeCookList[0] || null;
+      if (currentWork) state.selectedCookId = currentWork.id;
+
+      const activeDimKey = state.cookUI.activeDim || 'genre';
+      const dimObj = COOK_DIMENSIONS.find((d) => d.key === activeDimKey) || COOK_DIMENSIONS[0];
+      const curDimSelection = currentWork?.cooking?.[dimObj.key] || { bigs: [], subs: [] };
+
+      const remixDims = state.cookUI.selectedRemixDims || ['genre', 'setting', 'protagonist'];
+      const remixSentence = currentWork
+        ? (currentWork.recipeText || buildMutatedConceptSentence(currentWork, remixDims, state.cookUI.remixSeed || 1))
+        : '';
 
       return `
-        <section class="space-y-3 animate-pop-in">
-          <div class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-xl">🧪</span>
-                <div>
-                  <h2 class="text-base font-extrabold text-slate-900">레시피분석 · 아이디어 변형</h2>
-                  <p class="text-[11px] text-slate-500">원하는 영역을 눌러 랜덤 변형 조합을 생성하고 문장으로 복사하세요.</p>
-                </div>
-              </div>
-              <span class="px-2.5 py-1 rounded-full bg-violet-100 text-violet-800 text-xs font-extrabold">${recipeList.length}편</span>
-            </div>
-          </div>
-
-          ${recipeList.length ? recipeList.map((n) => {
-            const rs = state.recipeRemixState[n.id] || {
-              selectedDims: ['genre', 'setting', 'protagonist'],
-              seed: 1,
-            };
-            const summaryText = n.remixedSummary || generateRemixSentence(n, rs.selectedDims, rs.seed);
-
-            return `
-              <article class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3">
-                <div class="flex items-start justify-between gap-2">
-                  <div>
-                    <div class="flex items-center gap-1.5 mb-0.5">
-                      <span class="px-2 py-0.5 rounded-lg bg-violet-100 text-violet-800 text-[10px] font-extrabold">${escapeHtml(n.genre)}</span>
-                      <span class="text-[11px] text-slate-500">${escapeHtml(n.author)}</span>
-                    </div>
-                    <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(n.title)}${getMichelinMedalBadge(n)}</h3>
-                  </div>
-                  <button type="button" data-delete-id="${n.id}" class="delete-novel-btn px-2.5 py-1 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold cursor-pointer">
-                    삭제
-                  </button>
-                </div>
-
-                <!-- 변형할 차원(1개 또는 여러 개) 선택 -->
-                <div>
-                  <label class="block text-xs font-extrabold text-slate-700 mb-1.5">랜덤 변형할 항목 선택 (복수 가능)</label>
-                  <div class="flex flex-wrap gap-1.5">
-                    ${COOKING_DIMENSIONS.map((d) => {
-                      const active = rs.selectedDims.includes(d.key);
-                      return `
-                        <button
-                          type="button"
-                          data-remix-dim-work="${n.id}"
-                          data-remix-dim-key="${d.key}"
-                          class="remix-dim-btn px-2.5 py-1 rounded-xl text-[11px] font-bold border transition cursor-pointer ${
-                            active ? 'bg-violet-600 text-white border-violet-600' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-                          }"
-                        >
-                          ${d.icon} ${d.label.replace(/^\d+\)\s*/, '')}
-                        </button>
-                      `;
-                    }).join('')}
-                  </div>
-                </div>
-
-                <!-- 랜덤 변형 버튼 -->
-                <button
-                  type="button"
-                  data-run-remix-id="${n.id}"
-                  class="run-remix-btn w-full py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 transition cursor-pointer"
-                >
-                  <span>🎲 선택 항목 랜덤 변형 재설정</span>
-                </button>
-
-                <!-- 문장 정리 결과 박스 -->
-                <div class="bg-violet-50/70 border border-violet-200 rounded-2xl p-3 space-y-2">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-extrabold text-violet-900">메모장 붙여넣기용 아이디어 문장</span>
-                    <button
-                      type="button"
-                      data-copy-sentence="${escapeHtml(summaryText)}"
-                      class="copy-sentence-btn px-2.5 py-1 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-[11px] font-bold cursor-pointer"
-                    >
-                      복사하기
-                    </button>
-                  </div>
-                  <p class="text-xs text-slate-800 leading-relaxed font-medium">${escapeHtml(summaryText)}</p>
-                </div>
-
-                <!-- 레시피분석 완료 버튼 (목록에서 숨김) -->
-                <button
-                  type="button"
-                  data-complete-recipe-id="${n.id}"
-                  class="complete-recipe-btn w-full py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition cursor-pointer"
-                >
-                  ✓ 레시피분석 완료 (목록에서 숨기기)
-                </button>
-              </article>
-            `;
-          }).join('') : `
-            <div class="bg-white rounded-3xl p-6 text-center border border-slate-200 space-y-1.5">
-              <div class="text-3xl">🧪</div>
-              <p class="text-sm font-bold text-slate-800">분석 대기 중인 레시피가 없습니다.</p>
-              <p class="text-xs text-slate-500">요리하기에서 이동하거나 팬트리에서 '레시피분석으로 다시 보내기'를 눌러보세요.</p>
-            </div>
-          `}
-
-          <!-- 하단 [메타데이터] 취향 분석 그래프 -->
-          <section class="bg-slate-950 text-white rounded-3xl p-4 border border-slate-800 shadow-md space-y-3">
+        <section class="space-y-3.5 animate-pop-in">
+          <!-- 상단 [메타데이터] 장르 취향 그래프 -->
+          <div class="bg-slate-950 text-white rounded-3xl p-4 border border-slate-800 shadow-md space-y-3">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-[10px] font-extrabold tracking-wider uppercase text-amber-400">METADATA TASTE ANALYTICS</span>
-                <h3 class="text-sm font-extrabold text-white mt-0.5">[메타데이터] 요리하기 장르 취향 그래프</h3>
+                <span class="text-[10px] font-extrabold tracking-wider uppercase text-amber-400">[메타데이터] 취향 분석</span>
+                <h2 class="text-sm font-extrabold text-white mt-0.5">등록 작품 장르 분포 그래프</h2>
               </div>
-              <span class="px-2 py-0.5 rounded-lg bg-slate-800 text-slate-300 text-[11px] font-bold">총 ${metaNovels.length}편</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-slate-800 text-amber-300 text-[11px] font-extrabold">
+                분석 ${metaList.length}편
+              </span>
             </div>
 
-            ${sortedGenres.length ? `
-              <div class="space-y-2.5 pt-1">
-                ${sortedGenres.map(([genreName, count]) => {
-                  const pct = Math.round((count / Math.max(1, metaNovels.length)) * 100);
-                  const barWidth = Math.max(12, Math.round((count / maxGenreVal) * 100));
+            ${genreEntries.length ? `
+              <div class="space-y-2 pt-0.5">
+                ${genreEntries.map(([gName, cnt]) => {
+                  const ratio = Math.round((cnt / Math.max(1, metaList.length)) * 100);
+                  const barPct = Math.max(14, Math.round((cnt / maxGenreCount) * 100));
                   return `
                     <div class="space-y-1">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="font-bold text-slate-200">${escapeHtml(genreName)}</span>
-                        <span class="text-amber-300 font-extrabold">${count}편 (${pct}%)</span>
+                        <span class="font-bold text-slate-200">${escapeHtml(gName)}</span>
+                        <span class="font-extrabold text-amber-300">${cnt}편 (${ratio}%)</span>
                       </div>
                       <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden">
-                        <div class="h-full rounded-full bg-gradient-to-r from-orange-500 to-amber-400 transition-all duration-300" style="width: ${barWidth}%"></div>
+                        <div class="h-full rounded-full bg-gradient-to-r from-orange-500 to-amber-400 transition-all duration-300" style="width:${barPct}%"></div>
                       </div>
                     </div>
                   `;
                 }).join('')}
               </div>
             ` : `
-              <p class="text-xs text-slate-400 py-3 text-center">아직 요리하기에 등록된 장르 데이터가 없습니다.</p>
+              <p class="text-xs text-slate-400 py-2 text-center">아직 요리하기에 등록된 장르 데이터가 없습니다.</p>
             `}
-          </section>
+          </div>
+
+          ${currentWork ? `
+            <!-- 작품 선택 & 액션 바 -->
+            <div class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="text-xl">🥘</span>
+                  <div class="min-w-0">
+                    <h3 class="text-sm font-extrabold text-slate-900 truncate">
+                      ${escapeHtml(currentWork.title)}${getMedalBadgeHtml(currentWork)}
+                    </h3>
+                    <p class="text-[11px] text-slate-500">${escapeHtml(currentWork.genre)} · ${escapeHtml(currentWork.author)}</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                  <button type="button" data-cook-done-id="${currentWork.id}" class="cook-done-btn px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold cursor-pointer">
+                    요리완료
+                  </button>
+                  <button type="button" data-del-id="${currentWork.id}" class="del-work-btn px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold cursor-pointer">
+                    삭제
+                  </button>
+                </div>
+              </div>
+
+              ${activeCookList.length > 1 ? `
+                <div class="flex gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
+                  ${activeCookList.map((w) => `
+                    <button
+                      type="button"
+                      data-pick-cook-id="${w.id}"
+                      class="pick-cook-btn shrink-0 px-2.5 py-1 rounded-xl text-[11px] font-bold border cursor-pointer ${
+                        w.id === currentWork.id ? 'bg-chef-500 text-white border-chef-500' : 'bg-slate-50 text-slate-700 border-slate-200'
+                      }"
+                    >
+                      ${escapeHtml(w.title)}
+                    </button>
+                  `).join('')}
+                </div>
+              ` : ''}
+
+              <!-- 7대 항목 큰 계열 탭 (선택 사항 · 언제든 수정 가능) -->
+              <div>
+                <div class="text-xs font-extrabold text-slate-700 mb-1.5">7대 항목 선택 (큰 계열만 선택 또는 세부 항목 중복 선택)</div>
+                <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+                  ${COOK_DIMENSIONS.map((d) => {
+                    const isAct = d.key === dimObj.key;
+                    const bObj = currentWork.cooking?.[d.key] || { bigs: [], subs: [] };
+                    const total = (bObj.bigs?.length || 0) + (bObj.subs?.length || 0);
+                    return `
+                      <button
+                        type="button"
+                        data-cook-dim="${d.key}"
+                        class="cook-dim-tab shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                          isAct ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                        }"
+                      >
+                        ${d.icon} ${d.label}${total ? ` (${total})` : ''}
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+
+              <!-- 선택된 항목 요약 -->
+              <div class="bg-slate-50 rounded-2xl p-2.5 border border-slate-200/70 space-y-1">
+                <div class="text-[11px] font-extrabold text-slate-700">${dimObj.label} 선택 현황</div>
+                <div class="flex flex-wrap gap-1">
+                  ${[...(curDimSelection.bigs || []), ...(curDimSelection.subs || [])].length
+                    ? [...(curDimSelection.bigs || []), ...(curDimSelection.subs || [])].map((tag) => `
+                        <span class="px-2 py-0.5 rounded-lg bg-chef-500 text-white text-[10px] font-bold">${escapeHtml(tag)}</span>
+                      `).join('')
+                    : `<span class="text-[11px] text-slate-400">선택된 항목이 없습니다. (선택 사항)</span>`
+                  }
+                </div>
+              </div>
+
+              <!-- 큰 계열 체크 & 세부 항목 펼치기 -->
+              <div class="space-y-2 max-h-[360px] overflow-y-auto pr-0.5">
+                ${dimObj.groups.map((grp, idx) => {
+                  const bigSelected = (curDimSelection.bigs || []).includes(grp.name);
+                  const subsInGrp = (curDimSelection.subs || []).filter((s) => grp.items.includes(s));
+                  const expanded = Boolean(state.cookUI.openGroups?.[`${dimObj.key}_${idx}`]);
+
+                  return `
+                    <div class="rounded-2xl border p-2.5 space-y-2 ${
+                      bigSelected || subsInGrp.length ? 'border-orange-300 bg-orange-50/30' : 'border-slate-200 bg-slate-50/60'
+                    }">
+                      <div class="flex items-center justify-between gap-2">
+                        <button
+                          type="button"
+                          data-toggle-big="${escapeHtml(grp.name)}"
+                          class="toggle-big-btn flex-1 text-left flex items-center gap-2 text-xs font-extrabold text-slate-900 cursor-pointer"
+                        >
+                          <span class="w-5 h-5 rounded-md flex items-center justify-center text-xs border ${
+                            bigSelected ? 'bg-chef-500 text-white border-chef-500' : 'bg-white text-slate-400 border-slate-300'
+                          }">${bigSelected ? '✓' : ''}</span>
+                          <span class="truncate">${escapeHtml(grp.name)}</span>
+                          ${subsInGrp.length ? `<span class="px-1.5 py-0.2 rounded bg-amber-200 text-amber-950 text-[10px] shrink-0">세부 ${subsInGrp.length}</span>` : ''}
+                        </button>
+                        <button
+                          type="button"
+                          data-toggle-grp-open="${dimObj.key}_${idx}"
+                          class="toggle-grp-open-btn px-2 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700 hover:bg-slate-100 shrink-0 cursor-pointer"
+                        >
+                          ${expanded ? '닫기 ▲' : `세부(${grp.items.length}) ▼`}
+                        </button>
+                      </div>
+
+                      ${expanded ? `
+                        <div class="pt-1.5 border-t border-slate-200/70 flex flex-wrap gap-1.5">
+                          ${grp.items.map((itemName) => {
+                            const subSel = (curDimSelection.subs || []).includes(itemName);
+                            return `
+                              <button
+                                type="button"
+                                data-toggle-sub="${escapeHtml(itemName)}"
+                                class="toggle-sub-btn px-2 py-1 rounded-lg text-[11px] font-semibold border transition cursor-pointer ${
+                                  subSel ? 'bg-chef-500 text-white border-chef-500 font-bold' : 'bg-white text-slate-700 border-slate-200 hover:border-orange-300'
+                                }"
+                              >
+                                ${subSel ? '✓ ' : ''}${escapeHtml(itemName)}
+                              </button>
+                            `;
+                          }).join('')}
+                        </div>
+                      ` : ''}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- 하단 [레시피분석] 공간 -->
+            <div class="bg-white rounded-3xl p-4 border border-violet-200 shadow-xs space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">🧪</span>
+                  <div>
+                    <h3 class="text-sm font-extrabold text-slate-900">레시피분석 · 차기작 변형</h3>
+                    <p class="text-[11px] text-slate-500">변형할 항목을 버튼으로 고른 뒤 재설정하고 문장으로 복사하세요.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-1.5">
+                ${COOK_DIMENSIONS.map((d) => {
+                  const picked = remixDims.includes(d.key);
+                  return `
+                    <button
+                      type="button"
+                      data-remix-dim="${d.key}"
+                      class="remix-dim-btn px-2.5 py-1 rounded-xl text-[11px] font-bold border transition cursor-pointer ${
+                        picked ? 'bg-violet-600 text-white border-violet-600' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                      }"
+                    >
+                      ${d.icon} ${d.label.replace(/^\d+\)\s*/, '')}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+
+              <button
+                id="btn-mutate-recipe"
+                type="button"
+                class="w-full py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold transition cursor-pointer"
+              >
+                🎲 선택 항목 랜덤 변형 / 재설정
+              </button>
+
+              <div class="bg-violet-50 border border-violet-200 rounded-2xl p-3 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-extrabold text-violet-950">차기작 아이디어 요약 문장</span>
+                  <button
+                    type="button"
+                    data-copy-recipe="${escapeHtml(remixSentence)}"
+                    class="copy-recipe-btn px-2.5 py-1 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-[11px] font-bold cursor-pointer"
+                  >
+                    복사하기
+                  </button>
+                </div>
+                <p class="text-xs text-slate-800 leading-relaxed font-medium">${escapeHtml(remixSentence)}</p>
+              </div>
+            </div>
+          ` : `
+            <div class="bg-white rounded-3xl p-7 text-center border border-slate-200 space-y-1.5">
+              <div class="text-3xl">🥘</div>
+              <p class="text-sm font-bold text-slate-800">요리하기 대기 중인 작품이 없습니다.</p>
+              <p class="text-xs text-slate-500">조리실에서 '요리하기 (좋은소스)'를 선택하거나 팬트리에서 '요리하기 다시 보내기'를 눌러보세요.</p>
+            </div>
+          `}
         </section>
       `;
     }
 
-    // [5] 미슐랭 (조리실 입력 완료 작품 대상 유료 도달 / 전환값 / 무료 최종화 / 메달 뱃지)
+    // [4] 미슐랭 (🏅) — 유료 도달 / 전환값 / 무료 최종화 / 메달 뱃지 / 수정하기(내 삭제) / [미슐랭 분류 완료]
     function renderMichelinView() {
-      const eligible = state.novels.filter((n) => hasCompletedPrep(n));
+      const list = state.novels.filter((n) => isPrepCompleted(n) && !n.michelinDone);
 
       return `
         <section class="space-y-3 animate-pop-in">
-          <div class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-xl">🏅</span>
-                <div>
-                  <h2 class="text-base font-extrabold text-slate-900">미슐랭 · 유료 전환 지표</h2>
-                  <p class="text-[11px] text-slate-500">전환 1~4티어 선택 시 작품명 옆에 메달 뱃지가 표시되며 언제든 수정됩니다.</p>
-                </div>
+          <div class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">🏅</span>
+              <div>
+                <h2 class="text-base font-extrabold text-slate-900">미슐랭 · 유료 전환 지표</h2>
+                <p class="text-[11px] text-slate-500">전환 1~4티어 선택 시 작품명 옆에 메달 뱃지가 표시됩니다.</p>
               </div>
-              <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-extrabold">${eligible.length}편</span>
             </div>
+            <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-950 text-xs font-extrabold">${list.length}편</span>
           </div>
 
-          ${eligible.length ? eligible.map((n) => {
-            const m = n.michelin || { tier: 'unanalyzed', conversionValue: '', freeEpisodeEnd: '' };
+          ${list.length ? list.map((n) => {
+            const m = n.michelin || { tier: 'unanalyzed', conversionValue: '', freeEndEpisode: '' };
+            const isEditingHere = state.michelinEditingId === n.id;
+
             return `
               <article class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3">
                 <div class="flex items-start justify-between gap-2">
-                  <div>
+                  <div class="min-w-0">
                     <div class="flex items-center gap-1.5 mb-0.5">
                       <span class="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 text-[10px] font-bold">${escapeHtml(n.genre)}</span>
-                      <span class="text-[11px] text-slate-500">${escapeHtml(n.author)}</span>
+                      <span class="text-[11px] text-slate-500 truncate">${escapeHtml(n.author)}</span>
                     </div>
-                    <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(n.title)}${getMichelinMedalBadge(n)}</h3>
+                    <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(n.title)}${getMedalBadgeHtml(n)}</h3>
                   </div>
-                  <button type="button" data-delete-id="${n.id}" class="delete-novel-btn px-2.5 py-1 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold cursor-pointer">
-                    삭제
+                  <button
+                    type="button"
+                    data-toggle-mich-edit="${n.id}"
+                    class="toggle-mich-edit-btn px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-bold shrink-0 cursor-pointer"
+                  >
+                    ${isEditingHere ? '수정 닫기' : '수정하기'}
                   </button>
                 </div>
 
                 <div>
-                  <label class="block text-xs font-extrabold text-slate-700 mb-1.5">유료 도달 등급</label>
+                  <label class="block text-xs font-extrabold text-slate-700 mb-1.5">유료 도달</label>
                   <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                    ${MICHELIN_TIERS.map((t) => {
-                      const active = m.tier === t.id;
+                    ${MICHELIN_OPTIONS.map((opt) => {
+                      const sel = m.tier === opt.id;
                       return `
                         <button
                           type="button"
-                          data-mich-tier-work="${n.id}"
-                          data-mich-tier-id="${t.id}"
+                          data-mich-tier-w="${n.id}"
+                          data-mich-tier-v="${opt.id}"
                           class="mich-tier-btn py-2 px-2 rounded-xl border text-[11px] font-bold transition cursor-pointer ${
-                            active
-                              ? 'bg-amber-500 text-white border-amber-500 shadow-2xs'
-                              : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                            sel ? 'bg-amber-500 text-white border-amber-500' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                           }"
                         >
-                          ${t.medal ? `${t.medal} ` : ''}${t.label}
+                          ${opt.medal ? `${opt.medal} ` : ''}${opt.label}
                         </button>
                       `;
                     }).join('')}
                   </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2.5">
+                <div class="grid grid-cols-2 gap-2">
                   <div>
                     <label class="block text-[11px] font-bold text-slate-700 mb-1">전환값 (숫자)</label>
                     <input
                       type="number"
                       step="any"
-                      data-mich-conv-work="${n.id}"
+                      data-mich-conv-w="${n.id}"
                       value="${escapeHtml(m.conversionValue)}"
-                      placeholder="예: 28.5"
-                      class="mich-conv-input w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold"
+                      placeholder="예: 29.5"
+                      class="mich-conv-inp w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold"
                     />
                   </div>
                   <div>
@@ -1822,79 +1672,126 @@
                     <input
                       type="number"
                       step="1"
-                      data-mich-free-work="${n.id}"
-                      value="${escapeHtml(m.freeEpisodeEnd)}"
+                      data-mich-free-w="${n.id}"
+                      value="${escapeHtml(m.freeEndEpisode)}"
                       placeholder="예: 25"
-                      class="mich-free-input w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold"
+                      class="mich-free-inp w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold"
                     />
                   </div>
                 </div>
+
+                ${isEditingHere ? `
+                  <div class="p-3 rounded-2xl bg-rose-50/70 border border-rose-200 flex items-center justify-between gap-2">
+                    <span class="text-[11px] font-bold text-rose-900">작품 영구 삭제</span>
+                    <button
+                      type="button"
+                      data-del-id="${n.id}"
+                      class="del-work-btn px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold cursor-pointer"
+                    >
+                      삭제
+                    </button>
+                  </div>
+                ` : ''}
+
+                <button
+                  type="button"
+                  data-mich-done-id="${n.id}"
+                  class="mich-done-btn w-full py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold transition cursor-pointer"
+                >
+                  미슐랭 분류 완료 (목록에서 숨기기)
+                </button>
               </article>
             `;
           }).join('') : `
-            <div class="bg-white rounded-3xl p-6 text-center border border-slate-200 text-xs text-slate-500">
-              조리실 입력이 완료된 작품이 없습니다.
+            <div class="bg-white rounded-3xl p-7 text-center border border-slate-200 space-y-1.5">
+              <div class="text-3xl">🏅</div>
+              <p class="text-sm font-bold text-slate-800">미슐랭 분류 대기 작품이 없습니다.</p>
+              <p class="text-xs text-slate-500">조리실 평가 완료 작품이 표시되며, 팬트리에서 언제든 다시 수정할 수 있습니다.</p>
             </div>
           `}
         </section>
       `;
     }
 
-    // [6] 팬트리 (별점별 / 레전드·슈퍼노멀·요리하기·냉장고 / 미슐랭 등급별 분류 & 수정·삭제·레시피재전송)
+    // [5] 팬트리 (🗄️) — 상단 미슐랭 티어 그래프 + 필터(최근순, 별점순, 레전드, 슈퍼노멀, 냉장고) + 수정하기(내 삭제) + 요리하기 다시 보내기
     function renderPantryView() {
-      const pantryPool = state.novels.filter((n) => hasCompletedPrep(n));
-      const pf = state.pantryFilter;
+      const pool = state.novels.filter((n) => isPrepCompleted(n));
 
-      const filterTabs = [
-        { id: 'all', label: `전체 (${pantryPool.length})` },
-        ...RATING_CHOICES.map((r) => ({
-          id: `rating:${r.id}`,
-          label: `${r.short} (${pantryPool.filter((n) => n.rating === r.id).length})`,
-        })),
-        ...PREP_BADGES.map((b) => ({
-          id: `badge:${b.id}`,
-          label: `${b.icon} ${b.label.split(' ')[0]} (${pantryPool.filter((n) => n.badges?.includes(b.id)).length})`,
-        })),
-        { id: 'tier:tier_4', label: `🏅4 전환 4티어 (${pantryPool.filter((n) => n.michelin?.tier === 'tier_4').length})` },
-        { id: 'tier:tier_3', label: `🥉3 전환 3티어 (${pantryPool.filter((n) => n.michelin?.tier === 'tier_3').length})` },
-        { id: 'tier:tier_2', label: `🥈2 전환 2티어 (${pantryPool.filter((n) => n.michelin?.tier === 'tier_2').length})` },
-        { id: 'tier:tier_1', label: `🥇1 전환 1티어 (${pantryPool.filter((n) => n.michelin?.tier === 'tier_1').length})` },
+      // 상단 미슐랭 등급별(전환 4티어 ~ 전환 1티어) 그래프 데이터
+      const tierGraphItems = [
+        { id: 'tier_4', label: '전환 4티어', medal: '🏅4', count: pool.filter((n) => n.michelin?.tier === 'tier_4').length },
+        { id: 'tier_3', label: '전환 3티어', medal: '🥉3', count: pool.filter((n) => n.michelin?.tier === 'tier_3').length },
+        { id: 'tier_2', label: '전환 2티어', medal: '🥈2', count: pool.filter((n) => n.michelin?.tier === 'tier_2').length },
+        { id: 'tier_1', label: '전환 1티어', medal: '🥇1', count: pool.filter((n) => n.michelin?.tier === 'tier_1').length },
+      ];
+      const maxTierCount = Math.max(1, ...tierGraphItems.map((t) => t.count));
+
+      const filterButtons = [
+        { id: 'recent', label: '최근순' },
+        { id: 'rating', label: '별점순' },
+        { id: 'legend', label: '레전드' },
+        { id: 'supernormal', label: '슈퍼노멀' },
+        { id: 'fridge', label: '냉장고' },
       ];
 
-      const filtered = pantryPool.filter((n) => {
-        if (pf === 'all') return true;
-        if (pf.startsWith('rating:')) return n.rating === pf.split(':')[1];
-        if (pf.startsWith('badge:')) return Array.isArray(n.badges) && n.badges.includes(pf.split(':')[1]);
-        if (pf.startsWith('tier:')) return n.michelin?.tier === pf.split(':')[1];
-        return true;
-      });
+      let filtered = [...pool];
+      if (state.pantryFilter === 'legend') {
+        filtered = filtered.filter((n) => (n.flags || []).includes('legend'));
+      } else if (state.pantryFilter === 'supernormal') {
+        filtered = filtered.filter((n) => (n.flags || []).includes('supernormal'));
+      } else if (state.pantryFilter === 'fridge') {
+        filtered = filtered.filter((n) => (n.flags || []).includes('fridge'));
+      } else if (state.pantryFilter === 'rating') {
+        const scoreMap = Object.fromEntries(RATINGS.map((r) => [r.id, r.score]));
+        filtered.sort((a, b) => (scoreMap[b.rating] || 0) - (scoreMap[a.rating] || 0));
+      } else {
+        filtered.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+      }
 
       return `
         <section class="space-y-3 animate-pop-in">
+          <!-- 상단 미슐랭 등급별 그래프 -->
           <div class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <span class="text-xl">🗄️</span>
                 <div>
-                  <h2 class="text-base font-extrabold text-slate-900">팬트리 · 분류 보관소</h2>
-                  <p class="text-[11px] text-slate-500">별점·구분·미슐랭 티어별로 한눈에 모아보고 수정하거나 재분석하세요.</p>
+                  <h2 class="text-base font-extrabold text-slate-900">팬트리 · 미슐랭 티어 그래프</h2>
+                  <p class="text-[11px] text-slate-500">전환 4티어 ~ 1티어 등급별 작품 수를 한눈에 확인하세요.</p>
                 </div>
               </div>
-              <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-extrabold">${filtered.length}편</span>
+              <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-extrabold">${pool.length}편</span>
             </div>
 
-            <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
-              ${filterTabs.map((ft) => {
-                const active = pf === ft.id;
+            <div class="grid grid-cols-4 gap-2 pt-1">
+              ${tierGraphItems.map((tg) => {
+                const heightPct = tg.count > 0 ? Math.max(22, Math.round((tg.count / maxTierCount) * 100)) : 8;
+                return `
+                  <div class="bg-slate-50 rounded-2xl p-2 border border-slate-200/70 flex flex-col items-center justify-between">
+                    <span class="text-[10px] font-extrabold text-amber-900">${tg.medal}</span>
+                    <div class="w-full h-16 flex items-end justify-center my-1.5">
+                      <div class="w-7 rounded-t-xl bg-gradient-to-t from-amber-500 to-yellow-300 transition-all duration-300" style="height:${heightPct}%"></div>
+                    </div>
+                    <div class="text-xs font-extrabold text-slate-900">${tg.count}편</div>
+                    <div class="text-[10px] text-slate-500 truncate w-full text-center">${tg.label}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <!-- 필터 버튼 5종 -->
+            <div class="flex gap-1.5 overflow-x-auto no-scrollbar pt-1">
+              ${filterButtons.map((fb) => {
+                const active = state.pantryFilter === fb.id;
                 return `
                   <button
                     type="button"
-                    data-pantry-filter="${ft.id}"
-                    class="pantry-filter-btn shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] font-bold border transition cursor-pointer ${
+                    data-pantry-f="${fb.id}"
+                    class="pantry-f-btn shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition cursor-pointer ${
                       active ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                     }"
                   >
-                    ${escapeHtml(ft.label)}
+                    ${escapeHtml(fb.label)}
                   </button>
                 `;
               }).join('')}
@@ -1902,137 +1799,118 @@
           </div>
 
           ${filtered.length ? filtered.map((n) => {
-            const ratingObj = RATING_CHOICES.find((r) => r.id === n.rating) || RATING_CHOICES[4];
-            const michObj = MICHELIN_TIERS.find((t) => t.id === n.michelin?.tier) || MICHELIN_TIERS[0];
+            const rObj = RATINGS.find((r) => r.id === n.rating) || RATINGS[4];
+            const mObj = MICHELIN_OPTIONS.find((m) => m.id === n.michelin?.tier) || MICHELIN_OPTIONS[0];
 
             return `
               <article class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-2.5">
-                <div class="flex items-start justify-between gap-2">
-                  <div class="min-w-0">
-                    <div class="flex flex-wrap items-center gap-1 mb-1">
-                      <span class="px-2 py-0.5 rounded-lg border text-[10px] font-extrabold ${ratingObj.pill}">${ratingObj.label}</span>
-                      <span class="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 text-[10px] font-bold">${escapeHtml(n.genre)}</span>
-                      <span class="text-[11px] text-slate-500">${escapeHtml(n.author)}</span>
-                    </div>
-                    <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(n.title)}${getMichelinMedalBadge(n)}</h3>
+                <div>
+                  <div class="flex flex-wrap items-center gap-1 mb-1">
+                    <span class="px-2 py-0.5 rounded-lg border text-[10px] font-extrabold ${rObj.pill}">${rObj.label}</span>
+                    <span class="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 text-[10px] font-bold">${escapeHtml(n.genre)}</span>
+                    <span class="text-[11px] text-slate-500">${escapeHtml(n.author)}</span>
                   </div>
+                  <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(n.title)}${getMedalBadgeHtml(n)}</h3>
                 </div>
 
-                <!-- 구분 뱃지 & 미슐랭 수치 -->
                 <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
-                  ${(n.badges || []).map((bid) => {
-                    const bObj = PREP_BADGES.find((x) => x.id === bid);
-                    return bObj ? `<span class="px-2 py-0.5 rounded-lg border font-bold ${bObj.chip}">${bObj.icon} ${bObj.label}</span>` : '';
+                  ${(n.flags || []).map((fid) => {
+                    const fObj = MULTI_FLAGS.find((x) => x.id === fid);
+                    return fObj ? `<span class="px-2 py-0.5 rounded-lg border font-bold ${fObj.chip}">${fObj.icon} ${fObj.short}</span>` : '';
                   }).join('')}
-                  <span class="px-2 py-0.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 font-bold">
-                    미슐랭: ${michObj.label} · 전환값 ${escapeHtml(n.michelin?.conversionValue || '-')} · 무료 ${escapeHtml(n.michelin?.freeEpisodeEnd || '-')}화
+                  <span class="px-2 py-0.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-950 font-bold">
+                    ${mObj.label} · 전환값 ${escapeHtml(n.michelin?.conversionValue || '-')} · 무료 ${escapeHtml(n.michelin?.freeEndEpisode || '-')}화
                   </span>
                 </div>
 
-                <!-- 태그 -->
                 ${(n.tags && n.tags.length) ? `
                   <div class="flex flex-wrap gap-1">
                     ${n.tags.map((t) => `<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-semibold">#${escapeHtml(t)}</span>`).join('')}
                   </div>
                 ` : ''}
 
-                <!-- 팬트리 액션 3종: 수정하기 / 레시피분석으로 다시 보내기 / 삭제 -->
-                <div class="pt-2 border-t border-slate-100 grid grid-cols-3 gap-1.5">
+                <div class="pt-2 border-t border-slate-100 grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    data-open-edit-id="${n.id}"
-                    class="open-edit-modal-btn py-2 px-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold cursor-pointer"
+                    data-open-modal-id="${n.id}"
+                    class="open-modal-btn py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer"
                   >
                     수정하기
                   </button>
                   <button
                     type="button"
-                    data-resend-recipe-id="${n.id}"
-                    class="resend-recipe-btn py-2 px-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-[11px] font-bold cursor-pointer"
+                    data-send-cook-id="${n.id}"
+                    class="send-cook-btn py-2 px-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold cursor-pointer"
                   >
-                    레시피분석 재전송
-                  </button>
-                  <button
-                    type="button"
-                    data-delete-id="${n.id}"
-                    class="delete-novel-btn py-2 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold cursor-pointer"
-                  >
-                    삭제
+                    요리하기 다시 보내기
                   </button>
                 </div>
               </article>
             `;
           }).join('') : `
             <div class="bg-white rounded-3xl p-6 text-center border border-slate-200 text-xs text-slate-500">
-              선택한 팬트리 카테고리에 해당하는 작품이 없습니다.
+              선택한 필터에 해당하는 작품이 없습니다.
             </div>
           `}
         </section>
       `;
     }
 
-    // [7] 설거지 (일별 자동 등록 카운트 달력 + 월별 통계 + 데이터 백업/복구)
+    // [6] 설거지 (🧼) — 일별 자동 등록 수 달력 + 월별 통계 + 데이터 백업/복구
     function renderWashView() {
       const { year, month, selectedDate } = state.calendar;
-      const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
-      const monthNovels = state.novels.filter((n) => (n.createdAt || '').startsWith(monthPrefix));
+      const ymPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+      const monthlyWorks = state.novels.filter((n) => String(n.createdAt || '').startsWith(ymPrefix));
 
-      const dailyMap = {};
-      monthNovels.forEach((n) => {
-        dailyMap[n.createdAt] = (dailyMap[n.createdAt] || 0) + 1;
+      const countByDay = {};
+      monthlyWorks.forEach((n) => {
+        countByDay[n.createdAt] = (countByDay[n.createdAt] || 0) + 1;
       });
 
-      // 월별 통계 계산
-      const genreFreq = {};
-      const ratingFreq = {};
-      monthNovels.forEach((n) => {
-        if (n.genre) genreFreq[n.genre] = (genreFreq[n.genre] || 0) + 1;
-        if (n.rating) ratingFreq[n.rating] = (ratingFreq[n.rating] || 0) + 1;
+      const genreTallies = {};
+      monthlyWorks.forEach((n) => {
+        if (n.genre) genreTallies[n.genre] = (genreTallies[n.genre] || 0) + 1;
       });
-      const topGenre = Object.entries(genreFreq).sort((a, b) => b[1] - a[1])[0];
-      const topRatingEntry = Object.entries(ratingFreq).sort((a, b) => b[1] - a[1])[0];
-      const topRatingLabel = topRatingEntry
-        ? (RATING_CHOICES.find((r) => r.id === topRatingEntry[0])?.short || topRatingEntry[0])
-        : '없음';
+      const topGenreEntry = Object.entries(genreTallies).sort((a, b) => b[1] - a[1])[0];
 
       const firstDow = new Date(year, month, 1).getDay();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const todayStr = formatDate(new Date());
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      const todayYmd = formatYMD(new Date());
 
-      const cells = [];
+      const dayCells = [];
       for (let i = 0; i < firstDow; i++) {
-        cells.push(`<div class="h-14 rounded-2xl bg-slate-50/50"></div>`);
+        dayCells.push(`<div class="h-14 rounded-2xl bg-slate-50/50"></div>`);
       }
 
-      for (let d = 1; d <= daysInMonth; d++) {
-        const key = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        const cnt = dailyMap[key] || 0;
-        const isSel = key === selectedDate;
-        const isToday = key === todayStr;
+      for (let day = 1; day <= totalDays; day++) {
+        const ymd = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const cnt = countByDay[ymd] || 0;
+        const isSelected = ymd === selectedDate;
+        const isToday = ymd === todayYmd;
 
-        cells.push(`
+        dayCells.push(`
           <button
             type="button"
-            data-wash-date="${key}"
-            class="wash-date-btn h-14 rounded-2xl border p-1 flex flex-col items-center justify-between transition cursor-pointer ${
-              isSel
-                ? 'bg-sky-600 text-white border-sky-600 shadow-xs'
+            data-cal-date="${ymd}"
+            class="cal-date-btn h-14 rounded-2xl border p-1 flex flex-col items-center justify-between transition cursor-pointer ${
+              isSelected
+                ? 'bg-sky-600 text-white border-sky-600 shadow-2xs'
                 : cnt > 0
                   ? 'bg-sky-50 border-sky-200 text-slate-900 hover:bg-sky-100/70'
                   : 'bg-white border-slate-100 text-slate-600 hover:bg-slate-50'
             }"
           >
-            <span class="text-[11px] font-bold ${isToday && !isSel ? 'text-sky-600 underline' : ''}">${d}</span>
+            <span class="text-[11px] font-bold ${isToday && !isSelected ? 'text-sky-600 underline' : ''}">${day}</span>
             ${cnt > 0
-              ? `<span class="px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${isSel ? 'bg-amber-300 text-slate-950' : 'bg-sky-600 text-white'}">${cnt}편</span>`
-              : `<span class="text-[10px] ${isSel ? 'text-sky-100' : 'text-slate-300'}">0</span>`
+              ? `<span class="px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${isSelected ? 'bg-amber-300 text-slate-950' : 'bg-sky-600 text-white'}">${cnt}편</span>`
+              : `<span class="text-[10px] ${isSelected ? 'text-sky-100' : 'text-slate-300'}">0</span>`
             }
           </button>
         `);
       }
 
-      const dayNovels = state.novels.filter((n) => n.createdAt === selectedDate);
-      const backupJsonString = JSON.stringify({ novels: state.novels, tagPool: state.tagPool }, null, 2);
+      const dayWorks = state.novels.filter((n) => n.createdAt === selectedDate);
+      const exportPayload = JSON.stringify({ novels: state.novels, tagPool: state.tagPool }, null, 2);
 
       return `
         <section class="space-y-3 animate-pop-in">
@@ -2043,31 +1921,31 @@
                 <span class="text-xl">🧼</span>
                 <h2 class="text-base font-extrabold text-slate-900">설거지 · ${year}년 ${month + 1}월 통계</h2>
               </div>
-              <span class="px-2.5 py-1 rounded-full bg-sky-100 text-sky-800 text-xs font-extrabold">월 ${monthNovels.length}편 등록</span>
+              <span class="px-2.5 py-1 rounded-full bg-sky-100 text-sky-800 text-xs font-extrabold">월 ${monthlyWorks.length}편</span>
             </div>
 
             <div class="grid grid-cols-3 gap-2">
               <div class="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/70">
-                <div class="text-[10px] text-slate-500 font-semibold">월간 등록</div>
-                <div class="text-base font-extrabold text-slate-900 mt-0.5">${monthNovels.length}편</div>
+                <div class="text-[10px] text-slate-500 font-semibold">월간 등록 수</div>
+                <div class="text-base font-extrabold text-slate-900 mt-0.5">${monthlyWorks.length}편</div>
               </div>
               <div class="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/70">
                 <div class="text-[10px] text-slate-500 font-semibold">최다 장르</div>
-                <div class="text-xs font-extrabold text-chef-700 mt-1 truncate">${topGenre ? `${escapeHtml(topGenre[0])} (${topGenre[1]})` : '-'}</div>
+                <div class="text-xs font-extrabold text-chef-700 mt-1 truncate">${topGenreEntry ? `${escapeHtml(topGenreEntry[0])} (${topGenreEntry[1]})` : '-'}</div>
               </div>
               <div class="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/70">
-                <div class="text-[10px] text-slate-500 font-semibold">주요 별점</div>
-                <div class="text-xs font-extrabold text-emerald-700 mt-1 truncate">${escapeHtml(topRatingLabel)}</div>
+                <div class="text-[10px] text-slate-500 font-semibold">누적 전체 작품</div>
+                <div class="text-base font-extrabold text-emerald-700 mt-0.5">${state.novels.length}편</div>
               </div>
             </div>
           </div>
 
-          <!-- 달력 -->
+          <!-- 일별 자동 등록 카운트 달력 -->
           <div class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3">
             <div class="flex items-center justify-between">
-              <button id="btn-wash-prev" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold cursor-pointer">◀ 이전</button>
-              <span class="text-sm font-extrabold text-slate-900">${year}년 ${month + 1}월 일별 등록</span>
-              <button id="btn-wash-next" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold cursor-pointer">다음 ▶</button>
+              <button id="btn-cal-prev" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold cursor-pointer">◀ 이전</button>
+              <span class="text-sm font-extrabold text-slate-900">${year}년 ${month + 1}월 달력</span>
+              <button id="btn-cal-next" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold cursor-pointer">다음 ▶</button>
             </div>
 
             <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-bold text-slate-400">
@@ -2075,53 +1953,46 @@
             </div>
 
             <div class="grid grid-cols-7 gap-1">
-              ${cells.join('')}
+              ${dayCells.join('')}
             </div>
 
             <div class="pt-2 border-t border-slate-100 space-y-1.5">
-              <div class="text-xs font-extrabold text-slate-700">${selectedDate} 등록 작품 (${dayNovels.length}편)</div>
-              ${dayNovels.length ? dayNovels.map((dn) => `
+              <div class="text-xs font-extrabold text-slate-700">${selectedDate} 등록 작품 (${dayWorks.length}편)</div>
+              ${dayWorks.length ? dayWorks.map((dw) => `
                 <div class="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between text-xs">
-                  <span class="font-bold text-slate-900 truncate">${escapeHtml(dn.title)}${getMichelinMedalBadge(dn)}</span>
-                  <span class="text-[11px] text-slate-500 shrink-0 ml-2">${escapeHtml(dn.genre || '임시등록')}</span>
+                  <span class="font-bold text-slate-900 truncate">${escapeHtml(dw.title)}${getMedalBadgeHtml(dw)}</span>
+                  <span class="text-[11px] text-slate-500 shrink-0 ml-2">${escapeHtml(dw.genre || '임시등록')}</span>
                 </div>
-              `).join('') : `<p class="text-xs text-slate-400">해당 날짜 등록 내역이 없습니다.</p>`}
+              `).join('') : `<p class="text-xs text-slate-400">선택한 날짜에 등록된 작품이 없습니다.</p>`}
             </div>
           </div>
 
           <!-- 데이터 백업 및 복구 -->
           <div class="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-3">
-            <div class="flex items-center justify-between">
-              <h3 class="text-sm font-extrabold text-slate-900">💾 데이터 백업 및 복구</h3>
-              <span class="text-[10px] text-slate-400">JSON 파일·텍스트 지원</span>
-            </div>
-
+            <h3 class="text-sm font-extrabold text-slate-900">💾 데이터 백업 및 복구</h3>
             <div class="grid grid-cols-2 gap-2">
-              <button id="btn-download-backup" type="button" class="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer">
-                백업 파일 다운로드
+              <button id="btn-export-json" type="button" class="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer">
+                백업 파일 저장
               </button>
-              <button id="btn-copy-backup" type="button" class="py-2.5 px-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold cursor-pointer">
+              <button id="btn-copy-json" type="button" class="py-2.5 px-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold cursor-pointer">
                 백업 JSON 복사
               </button>
             </div>
 
-            <div>
-              <label for="restore-json-textarea" class="block text-[11px] font-bold text-slate-700 mb-1">백업 JSON 붙여넣기 / 파일 업로드 복구</label>
-              <textarea
-                id="restore-json-textarea"
-                rows="3"
-                placeholder='{"novels": [...], "tagPool": [...]}'
-                class="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] font-mono"
-              >${escapeHtml(backupJsonString)}</textarea>
-              <div class="mt-2 flex items-center gap-2">
-                <label class="flex-1 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold text-center cursor-pointer">
-                  JSON 파일 선택
-                  <input id="input-restore-file" type="file" accept="application/json,.json" class="hidden" />
-                </label>
-                <button id="btn-run-restore" type="button" class="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer">
-                  데이터 복구 실행
-                </button>
-              </div>
+            <textarea
+              id="restore-json-box"
+              rows="3"
+              class="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] font-mono"
+            >${escapeHtml(exportPayload)}</textarea>
+
+            <div class="flex items-center gap-2">
+              <label class="flex-1 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold text-center cursor-pointer">
+                백업 파일 불러오기
+                <input id="file-restore-json" type="file" accept="application/json,.json" class="hidden" />
+              </label>
+              <button id="btn-apply-restore" type="button" class="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer">
+                복구 적용하기
+              </button>
             </div>
           </div>
         </section>
@@ -2129,54 +2000,44 @@
     }
 
     // =========================================================================
-    // 8. 전체 항목 수정 모달 (팬트리 '수정하기')
+    // 8. 팬트리 '수정하기' 모달 (전체 항목 수정 + 내부 '삭제' 버튼)
     // =========================================================================
-    function openFullEditModal(novelId) {
-      const novel = state.novels.find((n) => n.id === novelId);
+    function openEditModal(workId) {
+      const novel = state.novels.find((n) => n.id === workId);
       if (!novel) return;
-      state.editingModalNovelId = novelId;
+      state.modalEditId = workId;
 
       const modal = document.getElementById('edit-modal');
-      const titleEl = document.getElementById('edit-modal-title');
-      const bodyEl = document.getElementById('edit-modal-body');
+      document.getElementById('edit-modal-title').textContent = `「${novel.title}」 수정하기`;
 
-      titleEl.textContent = `「${novel.title}」 전체 항목 수정`;
+      const m = novel.michelin || { tier: 'unanalyzed', conversionValue: '', freeEndEpisode: '' };
+      const body = document.getElementById('edit-modal-body');
 
-      const m = novel.michelin || { tier: 'unanalyzed', conversionValue: '', freeEpisodeEnd: '' };
-      const pickedSubSet = new Set(
-        COOKING_DIMENSIONS.flatMap((d) => novel.cooking?.[d.key]?.subs || [])
-      );
-      const sampleSubChoices = [
-        '회귀물', '빙의물', '상태창물', '먼치킨', '던전물', '요리물',
-        '신무협', '무림경영물', '한국대체역사', '경제개발물',
-        '회귀자', '냉철한 주인공', '모략가', '셰프', '전술분석', '요리능력'
-      ];
-
-      bodyEl.innerHTML = `
+      body.innerHTML = `
         <div class="space-y-3">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">작품 제목</label>
-            <input id="modal-edit-title" type="text" value="${escapeHtml(novel.title)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold" />
+            <input id="m-title" type="text" value="${escapeHtml(novel.title)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold" />
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">장르</label>
-              <select id="modal-edit-genre" class="w-full px-2.5 py-2 rounded-xl border border-slate-300 text-xs font-bold">
+              <select id="m-genre" class="w-full px-2.5 py-2 rounded-xl border border-slate-300 text-xs font-bold">
                 ${LABEL_GENRES.map((g) => `<option value="${escapeHtml(g)}" ${novel.genre === g ? 'selected' : ''}>${escapeHtml(g)}</option>`).join('')}
               </select>
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">작가명</label>
-              <input id="modal-edit-author" type="text" value="${escapeHtml(novel.author)}" class="w-full px-2.5 py-2 rounded-xl border border-slate-300 text-xs" />
+              <input id="m-author" type="text" value="${escapeHtml(novel.author)}" class="w-full px-2.5 py-2 rounded-xl border border-slate-300 text-xs" />
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">별점 (5종 중 1개)</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">별점</label>
             <div class="grid grid-cols-2 gap-1.5">
-              ${RATING_CHOICES.map((r) => `
-                <button type="button" data-modal-rating="${r.id}" class="modal-rating-btn py-2 px-2.5 rounded-xl border text-left text-xs font-bold cursor-pointer ${
+              ${RATINGS.map((r) => `
+                <button type="button" data-m-r="${r.id}" class="m-r-btn py-2 px-2.5 rounded-xl border text-left text-xs font-bold cursor-pointer ${
                   novel.rating === r.id ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-200'
                 }">${r.label}</button>
               `).join('')}
@@ -2184,14 +2045,14 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">추가 구분 (중복 선택)</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">추가 분류 (중복 선택)</label>
             <div class="grid grid-cols-2 gap-1.5">
-              ${PREP_BADGES.map((b) => {
-                const act = novel.badges?.includes(b.id);
+              ${MULTI_FLAGS.map((fl) => {
+                const act = (novel.flags || []).includes(fl.id);
                 return `
-                  <button type="button" data-modal-badge="${b.id}" class="modal-badge-btn py-2 px-2.5 rounded-xl border text-xs font-bold cursor-pointer ${
-                    act ? b.active : 'bg-white text-slate-700 border-slate-200'
-                  }">${b.icon} ${b.label}</button>
+                  <button type="button" data-m-f="${fl.id}" class="m-f-btn py-2 px-2.5 rounded-xl border text-xs font-bold cursor-pointer ${
+                    act ? fl.active : 'bg-white text-slate-700 border-slate-200'
+                  }">${fl.icon} ${fl.label}</button>
                 `;
               }).join('')}
             </div>
@@ -2199,745 +2060,694 @@
 
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">태그 (최대 5개, 쉼표 구분)</label>
-            <input id="modal-edit-tags" type="text" value="${escapeHtml((novel.tags || []).join(', '))}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs" />
+            <input id="m-tags" type="text" value="${escapeHtml((novel.tags || []).join(', '))}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs" />
           </div>
 
           <div class="p-3 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-2">
-            <div class="text-xs font-extrabold text-amber-900">미슐랭 유료 전환 지표</div>
-            <select id="modal-edit-mich-tier" class="w-full px-2.5 py-2 rounded-xl bg-white border border-amber-300 text-xs font-bold">
-              ${MICHELIN_TIERS.map((t) => `<option value="${t.id}" ${m.tier === t.id ? 'selected' : ''}>${t.medal ? t.medal + ' ' : ''}${t.label}</option>`).join('')}
+            <div class="text-xs font-extrabold text-amber-950">미슐랭 지표</div>
+            <select id="m-tier" class="w-full px-2.5 py-2 rounded-xl bg-white border border-amber-300 text-xs font-bold">
+              ${MICHELIN_OPTIONS.map((opt) => `<option value="${opt.id}" ${m.tier === opt.id ? 'selected' : ''}>${opt.medal ? opt.medal + ' ' : ''}${opt.label}</option>`).join('')}
             </select>
             <div class="grid grid-cols-2 gap-2">
-              <input id="modal-edit-mich-conv" type="number" step="any" value="${escapeHtml(m.conversionValue)}" placeholder="전환값" class="px-2.5 py-2 rounded-xl bg-white border border-amber-300 text-xs" />
-              <input id="modal-edit-mich-free" type="number" step="1" value="${escapeHtml(m.freeEpisodeEnd)}" placeholder="무료 최종화" class="px-2.5 py-2 rounded-xl bg-white border border-amber-300 text-xs" />
+              <input id="m-conv" type="number" step="any" value="${escapeHtml(m.conversionValue)}" placeholder="전환값" class="px-2.5 py-2 rounded-xl bg-white border border-amber-300 text-xs" />
+              <input id="m-free" type="number" step="1" value="${escapeHtml(m.freeEndEpisode)}" placeholder="무료 최종화" class="px-2.5 py-2 rounded-xl bg-white border border-amber-300 text-xs" />
             </div>
           </div>
 
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">주요 요리 세부 키워드 토글</label>
-            <div class="flex flex-wrap gap-1.5">
-              ${sampleSubChoices.map((kw) => {
-                const has = pickedSubSet.has(kw);
-                return `
-                  <button type="button" data-modal-kw="${escapeHtml(kw)}" class="modal-kw-btn px-2 py-1 rounded-lg border text-[11px] font-bold cursor-pointer ${
-                    has ? 'bg-chef-500 text-white border-chef-500' : 'bg-slate-50 text-slate-700 border-slate-200'
-                  }">${has ? '✓ ' : ''}${escapeHtml(kw)}</button>
-                `;
-              }).join('')}
-            </div>
-          </div>
+          <button id="btn-save-modal" type="button" class="w-full py-3 rounded-2xl bg-chef-500 hover:bg-chef-600 text-white text-xs font-extrabold cursor-pointer">
+            수정 저장하기
+          </button>
 
-          <button id="btn-save-full-modal" type="button" class="w-full py-3 rounded-2xl bg-chef-500 hover:bg-chef-600 text-white text-xs font-extrabold cursor-pointer">
-            전체 수정 내용 저장
+          <button id="btn-delete-inside-modal" type="button" class="w-full py-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-extrabold cursor-pointer">
+            삭제
           </button>
         </div>
       `;
 
-      // 모달 내부 임시 선택 상태
-      let draftRating = novel.rating;
-      let draftBadges = [...(novel.badges || [])];
-      let draftKeywords = [...pickedSubSet];
+      let draftR = novel.rating;
+      let draftF = [...(novel.flags || [])];
 
-      bodyEl.querySelectorAll('.modal-rating-btn').forEach((btn) => {
+      body.querySelectorAll('.m-r-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          draftRating = btn.getAttribute('data-modal-rating');
-          bodyEl.querySelectorAll('.modal-rating-btn').forEach((b) => {
-            const on = b.getAttribute('data-modal-rating') === draftRating;
-            b.className = `modal-rating-btn py-2 px-2.5 rounded-xl border text-left text-xs font-bold cursor-pointer ${
+          draftR = btn.getAttribute('data-m-r');
+          body.querySelectorAll('.m-r-btn').forEach((b) => {
+            const on = b.getAttribute('data-m-r') === draftR;
+            b.className = `m-r-btn py-2 px-2.5 rounded-xl border text-left text-xs font-bold cursor-pointer ${
               on ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-200'
             }`;
           });
         });
       });
 
-      bodyEl.querySelectorAll('.modal-badge-btn').forEach((btn) => {
+      body.querySelectorAll('.m-f-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const bid = btn.getAttribute('data-modal-badge');
-          draftBadges = draftBadges.includes(bid) ? draftBadges.filter((x) => x !== bid) : [...draftBadges, bid];
-          const bObj = PREP_BADGES.find((x) => x.id === bid);
-          const on = draftBadges.includes(bid);
-          btn.className = `modal-badge-btn py-2 px-2.5 rounded-xl border text-xs font-bold cursor-pointer ${
-            on ? bObj.active : 'bg-white text-slate-700 border-slate-200'
+          const fid = btn.getAttribute('data-m-f');
+          draftF = draftF.includes(fid) ? draftF.filter((x) => x !== fid) : [...draftF, fid];
+          const fObj = MULTI_FLAGS.find((x) => x.id === fid);
+          const on = draftF.includes(fid);
+          btn.className = `m-f-btn py-2 px-2.5 rounded-xl border text-xs font-bold cursor-pointer ${
+            on ? fObj.active : 'bg-white text-slate-700 border-slate-200'
           }`;
         });
       });
 
-      bodyEl.querySelectorAll('.modal-kw-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const kw = btn.getAttribute('data-modal-kw');
-          draftKeywords = draftKeywords.includes(kw) ? draftKeywords.filter((x) => x !== kw) : [...draftKeywords, kw];
-          const on = draftKeywords.includes(kw);
-          btn.className = `modal-kw-btn px-2 py-1 rounded-lg border text-[11px] font-bold cursor-pointer ${
-            on ? 'bg-chef-500 text-white border-chef-500' : 'bg-slate-50 text-slate-700 border-slate-200'
-          }`;
-          btn.textContent = `${on ? '✓ ' : ''}${kw}`;
-        });
-      });
-
-      document.getElementById('btn-save-full-modal')?.addEventListener('click', () => {
-        const nextTitle = document.getElementById('modal-edit-title').value.trim();
+      document.getElementById('btn-save-modal')?.addEventListener('click', () => {
+        const nextTitle = (document.getElementById('m-title')?.value || '').trim();
         if (!nextTitle) {
           showToast('작품 제목을 입력해주세요.', 'error');
           return;
         }
-        const nextGenre = document.getElementById('modal-edit-genre').value;
-        const nextAuthor = document.getElementById('modal-edit-author').value.trim() || '작가 미상';
-        const parsedTags = document
-          .getElementById('modal-edit-tags')
-          .value.split(',')
-          .map((s) => s.replace(/^#+/, '').trim())
+        const nextGenre = document.getElementById('m-genre')?.value || '기타';
+        const nextAuthor = (document.getElementById('m-author')?.value || '').trim() || '작가 미상';
+        const nextTags = (document.getElementById('m-tags')?.value || '')
+          .split(',')
+          .map((t) => t.replace(/^#+/, '').trim())
           .filter(Boolean)
           .slice(0, 5);
 
-        parsedTags.forEach((pt) => {
-          if (!state.tagPool.includes(pt)) state.tagPool.unshift(pt);
+        nextTags.forEach((t) => {
+          if (!state.tagPool.includes(t)) state.tagPool.unshift(t);
         });
 
-        const nextTier = document.getElementById('modal-edit-mich-tier').value;
-        const nextConv = document.getElementById('modal-edit-mich-conv').value;
-        const nextFree = document.getElementById('modal-edit-mich-free').value;
+        const nextTier = document.getElementById('m-tier')?.value || 'unanalyzed';
+        const nextConv = document.getElementById('m-conv')?.value || '';
+        const nextFree = document.getElementById('m-free')?.value || '';
 
-        state.novels = state.novels.map((item) => {
-          if (item.id !== novelId) return item;
-          const updatedCooking = { ...(item.cooking || createEmptyCookingProfile()) };
-          updatedCooking.genre = {
-            bigs: updatedCooking.genre?.bigs || [],
-            subs: draftKeywords.slice(0, 8),
-          };
-          return {
-            ...item,
-            title: nextTitle,
-            genre: nextGenre,
-            author: nextAuthor,
-            rating: draftRating,
-            badges: draftBadges,
-            tags: parsedTags,
-            cooking: updatedCooking,
-            michelin: {
-              tier: nextTier,
-              conversionValue: nextConv,
-              freeEpisodeEnd: nextFree,
-            },
-          };
-        });
+        state.novels = state.novels.map((item) =>
+          item.id === workId
+            ? {
+                ...item,
+                title: nextTitle,
+                genre: nextGenre,
+                author: nextAuthor,
+                rating: draftR,
+                flags: draftF,
+                tags: nextTags,
+                inCookQueue: item.inCookQueue || draftF.includes('cook'),
+                michelin: { tier: nextTier, conversionValue: nextConv, freeEndEpisode: nextFree },
+              }
+            : item
+        );
 
-        saveToStorage();
-        closeFullEditModal();
-        renderApp();
-        showToast('수정된 내용이 저장되었습니다.', 'success');
+        saveData();
+        closeEditModal();
+        renderAll();
+        showToast('작품 정보가 수정되었습니다.', 'success');
+      });
+
+      document.getElementById('btn-delete-inside-modal')?.addEventListener('click', () => {
+        state.novels = state.novels.filter((item) => item.id !== workId);
+        saveData();
+        closeEditModal();
+        renderAll();
+        showToast('작품이 삭제되었습니다.', 'info');
       });
 
       modal.classList.remove('hidden');
     }
 
-    function closeFullEditModal() {
+    function closeEditModal() {
       document.getElementById('edit-modal').classList.add('hidden');
-      state.editingModalNovelId = null;
+      state.modalEditId = null;
     }
 
     // =========================================================================
-    // 9. 이벤트 바인딩 및 메인 루프
+    // 9. 이벤트 바인딩 & 렌더링 루프
     // =========================================================================
-    function bindViewEvents() {
-      // 공용 복사(문피아 검색) & 삭제 버튼
-      document.querySelectorAll('.copy-search-btn').forEach((btn) => {
+    function bindAllEvents() {
+      // 제목 복사 & 작품 삭제
+      document.querySelectorAll('.copy-title-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          copyToClipboard(btn.getAttribute('data-copy-title') || '', '작품 제목');
+          copyTextToClipboard(btn.getAttribute('data-copy-title') || '', '작품 제목');
         });
       });
 
-      document.querySelectorAll('.delete-novel-btn').forEach((btn) => {
+      document.querySelectorAll('.del-work-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const id = btn.getAttribute('data-delete-id');
+          const id = btn.getAttribute('data-del-id');
           state.novels = state.novels.filter((n) => n.id !== id);
           if (state.regForm.editingId === id) {
-            state.regForm.editingId = null;
-            state.regForm.title = '';
-            state.regForm.genre = '';
-            state.regForm.author = '';
+            state.regForm = { sources: ['today'], title: '', genre: '', author: '', editingId: null };
           }
-          saveToStorage();
-          renderApp();
+          saveData();
+          renderAll();
           showToast('작품이 삭제되었습니다.', 'info');
         });
       });
 
-      // [1] 제품 등록 이벤트
-      document.querySelectorAll('.reg-source-btn').forEach((btn) => {
+      // [1] 제품 등록
+      document.querySelectorAll('.reg-src-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const src = btn.getAttribute('data-reg-source');
+          const src = btn.getAttribute('data-reg-src');
           const cur = state.regForm.sources;
           if (cur.includes(src)) {
             if (cur.length > 1) {
               state.regForm.sources = cur.filter((x) => x !== src);
             } else {
-              showToast('최소 1개 이상의 메뉴 구분을 선택해야 합니다.', 'warning');
+              showToast('최소 1개 이상 선택해야 합니다.', 'warning');
             }
           } else {
             state.regForm.sources = [...cur, src];
           }
-          renderApp();
+          renderAll();
         });
       });
 
-      document.getElementById('btn-cancel-reg-edit')?.addEventListener('click', () => {
+      document.getElementById('btn-cancel-reg')?.addEventListener('click', () => {
         state.regForm = { sources: ['today'], title: '', genre: '', author: '', editingId: null };
-        renderApp();
+        renderAll();
       });
 
-      document.getElementById('btn-save-registration')?.addEventListener('click', () => {
-        const title = (document.getElementById('reg-title-input')?.value || '').trim();
-        const genre = (document.getElementById('reg-genre-select')?.value || '').trim();
-        const author = (document.getElementById('reg-author-input')?.value || '').trim();
+      document.getElementById('btn-submit-reg')?.addEventListener('click', () => {
+        const title = (document.getElementById('reg-title')?.value || '').trim();
+        const genre = (document.getElementById('reg-genre')?.value || '').trim();
+        const author = (document.getElementById('reg-author')?.value || '').trim();
 
         if (!title) {
           showToast('작품 제목을 입력해주세요.', 'error');
           return;
         }
 
-        const normTarget = normalizeTitle(title);
-        const duplicate = state.novels.find(
-          (n) => normalizeTitle(n.title) === normTarget && n.id !== state.regForm.editingId
+        const dup = state.novels.find(
+          (n) => normalizeKey(n.title) === normalizeKey(title) && n.id !== state.regForm.editingId
         );
-        if (duplicate) {
-          showDuplicateCharacterAlert(title);
+        if (dup) {
+          showDuplicateCharacterModal(title);
           return;
         }
 
-        const labelingDone = Boolean(genre && author);
-        const nextStage = labelingDone ? 'prep' : 'register_temp';
+        const isLabeled = Boolean(genre && author);
+        const targetStage = isLabeled ? 'prep' : 'register_temp';
 
         if (state.regForm.editingId) {
-          state.novels = state.novels.map((n) => {
-            if (n.id !== state.regForm.editingId) return n;
-            return {
-              ...n,
-              sources: [...state.regForm.sources],
-              title,
-              genre,
-              author,
-              stage: nextStage,
-            };
-          });
+          state.novels = state.novels.map((n) =>
+            n.id === state.regForm.editingId
+              ? { ...n, sources: [...state.regForm.sources], title, genre, author, stage: targetStage }
+              : n
+          );
           state.regForm = { sources: ['today'], title: '', genre: '', author: '', editingId: null };
-          saveToStorage();
-          if (labelingDone) {
+          saveData();
+          if (isLabeled) {
             state.activeCategory = 'prep';
-            showToast('라벨링이 완료되어 조리실로 이동했습니다!', 'success');
+            showToast('라벨링 완료 → 조리실로 이동했습니다!', 'success');
           } else {
-            showToast('임시등록 항목이 수정되었습니다.', 'info');
+            showToast('[임시등록] 내용이 수정되었습니다.', 'info');
           }
-          renderApp();
+          renderAll();
           return;
         }
 
-        const created = {
-          id: 'n-' + Date.now(),
+        const newItem = {
+          id: 'w-' + Date.now(),
           sources: [...state.regForm.sources],
           title,
           genre,
           author,
-          stage: nextStage,
+          stage: targetStage,
+          inCookQueue: false,
+          cookDone: false,
+          michelinDone: false,
           rating: 'hold',
-          badges: [],
+          flags: [],
           tags: [],
-          cooking: createEmptyCookingProfile(),
-          recipeCompleted: false,
-          remixedSummary: '',
-          michelin: {
-            tier: 'unanalyzed',
-            conversionValue: '',
-            freeEpisodeEnd: '',
-          },
-          createdAt: formatDate(new Date()),
+          cooking: createDefaultCooking(),
+          recipeText: '',
+          michelin: { tier: 'unanalyzed', conversionValue: '', freeEndEpisode: '' },
+          createdAt: formatYMD(new Date()),
         };
 
-        state.novels = [created, ...state.novels];
+        state.novels = [newItem, ...state.novels];
         state.regForm = { sources: ['today'], title: '', genre: '', author: '', editingId: null };
-        saveToStorage();
+        saveData();
 
-        if (labelingDone) {
+        if (isLabeled) {
           state.activeCategory = 'prep';
-          showToast(`「${title}」 라벨링 완료 → 조리실로 이동했습니다.`, 'success');
+          showToast(`「${title}」 등록 완료 → 조리실로 이동했습니다.`, 'success');
         } else {
-          showToast(`「${title}」이 [임시등록] 목록에 저장되었습니다.`, 'warning');
+          showToast(`「${title}」이 [임시등록]으로 저장되었습니다.`, 'warning');
         }
-        renderApp();
+        renderAll();
       });
 
-      document.querySelectorAll('.complete-label-btn').forEach((btn) => {
+      document.querySelectorAll('.finish-temp-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const id = btn.getAttribute('data-complete-label-id');
-          const gVal = document.querySelector(`.quick-genre-select[data-quick-genre-id="${id}"]`)?.value || '';
-          const aVal = (document.querySelector(`.quick-author-input[data-quick-author-id="${id}"]`)?.value || '').trim();
-
+          const id = btn.getAttribute('data-finish-temp');
+          const gVal = document.querySelector(`.temp-g-sel[data-temp-g="${id}"]`)?.value || '';
+          const aVal = (document.querySelector(`.temp-a-inp[data-temp-a="${id}"]`)?.value || '').trim();
           if (!gVal || !aVal) {
             showToast('장르와 작가명을 모두 입력해야 조리실로 이동합니다.', 'warning');
             return;
           }
-
           state.novels = state.novels.map((n) =>
             n.id === id ? { ...n, genre: gVal, author: aVal, stage: 'prep' } : n
           );
-          saveToStorage();
+          saveData();
           state.activeCategory = 'prep';
-          renderApp();
+          renderAll();
           showToast('라벨링 완료! 조리실로 이동했습니다.', 'success');
         });
       });
 
       document.querySelectorAll('.edit-temp-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const id = btn.getAttribute('data-edit-temp-id');
-          const target = state.novels.find((n) => n.id === id);
-          if (!target) return;
+          const id = btn.getAttribute('data-edit-temp');
+          const found = state.novels.find((n) => n.id === id);
+          if (!found) return;
           state.regForm = {
-            sources: [...(target.sources || ['today'])],
-            title: target.title,
-            genre: target.genre || '',
-            author: target.author || '',
-            editingId: target.id,
+            sources: [...(found.sources || ['today'])],
+            title: found.title,
+            genre: found.genre || '',
+            author: found.author || '',
+            editingId: found.id,
           };
-          renderApp();
+          renderAll();
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       });
 
-      // [2] 조리실 이벤트
-      document.querySelectorAll('.prep-rating-btn').forEach((btn) => {
+      // [2] 조리실
+      document.querySelectorAll('.prep-r-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-prep-rating-work');
-          const ratingId = btn.getAttribute('data-prep-rating-id');
-          state.novels = state.novels.map((n) => (n.id === workId ? { ...n, rating: ratingId } : n));
-          saveToStorage();
-          renderApp();
+          const wId = btn.getAttribute('data-prep-r-work');
+          const rId = btn.getAttribute('data-prep-r-id');
+          state.novels = state.novels.map((n) => (n.id === wId ? { ...n, rating: rId } : n));
+          saveData();
+          renderAll();
         });
       });
 
-      document.querySelectorAll('.prep-badge-btn').forEach((btn) => {
+      document.querySelectorAll('.prep-f-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-prep-badge-work');
-          const badgeId = btn.getAttribute('data-prep-badge-id');
+          const wId = btn.getAttribute('data-prep-f-work');
+          const fId = btn.getAttribute('data-prep-f-id');
           state.novels = state.novels.map((n) => {
-            if (n.id !== workId) return n;
-            const cur = n.badges || [];
-            const next = cur.includes(badgeId) ? cur.filter((x) => x !== badgeId) : [...cur, badgeId];
-            return { ...n, badges: next };
+            if (n.id !== wId) return n;
+            const cur = n.flags || [];
+            const next = cur.includes(fId) ? cur.filter((x) => x !== fId) : [...cur, fId];
+            return { ...n, flags: next };
           });
-          saveToStorage();
-          renderApp();
+          saveData();
+          renderAll();
         });
       });
 
-      document.querySelectorAll('.prep-tag-input').forEach((inp) => {
+      document.querySelectorAll('.tag-inp').forEach((inp) => {
         inp.addEventListener('input', (e) => {
-          const id = e.target.getAttribute('data-prep-tag-input-id');
-          state.prepTagInputs[id] = e.target.value;
+          const wId = e.target.getAttribute('data-tag-inp-work');
+          state.prepTagDrafts[wId] = e.target.value;
         });
       });
 
-      document.querySelectorAll('.prep-add-tag-btn').forEach((btn) => {
+      document.querySelectorAll('.add-tag-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-prep-add-tag-id');
-          const raw = (state.prepTagInputs[workId] || '').replace(/^#+/, '').trim();
-          if (!raw) {
-            showToast('추가할 태그를 입력해주세요.', 'warning');
+          const wId = btn.getAttribute('data-add-tag-work');
+          const tag = (state.prepTagDrafts[wId] || '').replace(/^#+/, '').trim();
+          if (!tag) {
+            showToast('태그를 입력해주세요.', 'warning');
             return;
           }
-          const novel = state.novels.find((n) => n.id === workId);
+          const novel = state.novels.find((n) => n.id === wId);
           if (!novel) return;
-          const curTags = novel.tags || [];
-          if (!curTags.includes(raw) && curTags.length >= 5) {
-            showToast('작품별 태그는 최대 5개까지 입력할 수 있습니다.', 'warning');
+          const cur = novel.tags || [];
+          if (!cur.includes(tag) && cur.length >= 5) {
+            showToast('태그는 최대 5개까지 추가할 수 있습니다.', 'warning');
             return;
           }
-          if (!state.tagPool.includes(raw)) {
-            state.tagPool.unshift(raw);
-          }
-          const nextTags = curTags.includes(raw) ? curTags : [...curTags, raw];
-          state.novels = state.novels.map((n) => (n.id === workId ? { ...n, tags: nextTags } : n));
-          state.prepTagInputs[workId] = '';
-          saveToStorage();
-          renderApp();
-          showToast(`#${raw} 태그 저장 및 적용 완료`, 'success');
+          if (!state.tagPool.includes(tag)) state.tagPool.unshift(tag);
+          const next = cur.includes(tag) ? cur : [...cur, tag];
+          state.novels = state.novels.map((n) => (n.id === wId ? { ...n, tags: next } : n));
+          state.prepTagDrafts[wId] = '';
+          saveData();
+          renderAll();
+          showToast(`#${tag} 태그 저장 및 적용`, 'success');
         });
       });
 
-      document.querySelectorAll('.prep-pool-btn').forEach((btn) => {
+      document.querySelectorAll('.pool-tag-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-prep-pool-work');
-          const tagText = btn.getAttribute('data-prep-pool-tag');
+          const wId = btn.getAttribute('data-pool-tag-work');
+          const val = btn.getAttribute('data-pool-tag-val');
           state.novels = state.novels.map((n) => {
-            if (n.id !== workId) return n;
+            if (n.id !== wId) return n;
             const cur = n.tags || [];
-            if (cur.includes(tagText)) {
-              return { ...n, tags: cur.filter((t) => t !== tagText) };
-            }
+            if (cur.includes(val)) return { ...n, tags: cur.filter((t) => t !== val) };
             if (cur.length >= 5) {
-              showToast('작품별 태그는 최대 5개까지 선택할 수 있습니다.', 'warning');
+              showToast('태그는 최대 5개까지 선택할 수 있습니다.', 'warning');
               return n;
             }
-            return { ...n, tags: [...cur, tagText] };
+            return { ...n, tags: [...cur, val] };
           });
-          saveToStorage();
-          renderApp();
+          saveData();
+          renderAll();
         });
       });
 
-      document.querySelectorAll('.prep-del-tag-btn').forEach((btn) => {
+      document.querySelectorAll('.rm-tag-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-prep-del-tag-work');
-          const tagText = btn.getAttribute('data-prep-del-tag');
+          const wId = btn.getAttribute('data-rm-tag-work');
+          const val = btn.getAttribute('data-rm-tag');
           state.novels = state.novels.map((n) =>
-            n.id === workId ? { ...n, tags: (n.tags || []).filter((t) => t !== tagText) } : n
+            n.id === wId ? { ...n, tags: (n.tags || []).filter((t) => t !== val) } : n
           );
-          saveToStorage();
-          renderApp();
+          saveData();
+          renderAll();
         });
       });
 
-      document.querySelectorAll('.route-prep-btn').forEach((btn) => {
+      document.querySelectorAll('.move-pantry-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-route-prep-id');
-          const novel = state.novels.find((n) => n.id === workId);
+          const wId = btn.getAttribute('data-move-pantry-work');
+          const novel = state.novels.find((n) => n.id === wId);
           if (!novel) return;
-          const goCook = isCookSourceSelected(novel);
-          const nextStage = goCook ? 'cook' : 'pantry';
-
-          state.novels = state.novels.map((n) => (n.id === workId ? { ...n, stage: nextStage } : n));
-          saveToStorage();
+          const goCook = hasCookFlag(novel);
+          state.novels = state.novels.map((n) =>
+            n.id === wId
+              ? { ...n, stage: 'pantry', inCookQueue: goCook, cookDone: false }
+              : n
+          );
+          if (goCook) state.selectedCookId = wId;
+          saveData();
           state.activeCategory = goCook ? 'cook' : 'pantry';
-          renderApp();
+          renderAll();
           showToast(
-            goCook
-              ? '요리하기 항목 선택됨 → 요리하기 및 팬트리에 반영되었습니다!'
-              : '팬트리로 이동되었습니다!',
+            goCook ? '요리하기 + 팬트리로 이동되었습니다!' : '팬트리로 이동되었습니다!',
             'success'
           );
         });
       });
 
-      // [3] 요리하기 이벤트
-      document.querySelectorAll('.cook-dim-btn').forEach((btn) => {
+      // [3] 요리하기 & 레시피분석
+      document.querySelectorAll('.pick-cook-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-cook-dim-work');
-          const dimKey = btn.getAttribute('data-cook-dim-key');
-          const prev = state.cookExpanded[workId] || { openDim: 'genre', openGroups: {} };
-          state.cookExpanded[workId] = { ...prev, openDim: dimKey };
-          renderApp();
+          state.selectedCookId = btn.getAttribute('data-pick-cook-id');
+          renderAll();
         });
       });
 
-      document.querySelectorAll('.cook-expand-btn').forEach((btn) => {
+      document.querySelectorAll('.cook-done-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-cook-expand-work');
-          const gKey = btn.getAttribute('data-cook-expand-key');
-          const prev = state.cookExpanded[workId] || { openDim: 'genre', openGroups: {} };
-          const nextGroups = { ...(prev.openGroups || {}), [gKey]: !prev.openGroups?.[gKey] };
-          state.cookExpanded[workId] = { ...prev, openGroups: nextGroups };
-          renderApp();
+          const id = btn.getAttribute('data-cook-done-id');
+          state.novels = state.novels.map((n) => (n.id === id ? { ...n, cookDone: true } : n));
+          if (state.selectedCookId === id) state.selectedCookId = '';
+          saveData();
+          renderAll();
+          showToast('요리완료 처리되어 요리하기 목록에서 숨겨졌습니다.', 'success');
         });
       });
 
-      document.querySelectorAll('.cook-big-btn').forEach((btn) => {
+      document.querySelectorAll('.cook-dim-tab').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-cook-big-work');
-          const dimKey = btn.getAttribute('data-cook-big-dim');
-          const bigName = btn.getAttribute('data-cook-big-name');
+          state.cookUI.activeDim = btn.getAttribute('data-cook-dim');
+          renderAll();
+        });
+      });
+
+      document.querySelectorAll('.toggle-grp-open-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const key = btn.getAttribute('data-toggle-grp-open');
+          state.cookUI.openGroups[key] = !state.cookUI.openGroups[key];
+          renderAll();
+        });
+      });
+
+      document.querySelectorAll('.toggle-big-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const wId = state.selectedCookId;
+          const dimKey = state.cookUI.activeDim;
+          const bigName = btn.getAttribute('data-toggle-big');
           state.novels = state.novels.map((n) => {
-            if (n.id !== workId) return n;
-            const cooking = { ...(n.cooking || createEmptyCookingProfile()) };
-            const curBlock = cooking[dimKey] || { bigs: [], subs: [] };
-            const nextBigs = curBlock.bigs.includes(bigName)
-              ? curBlock.bigs.filter((x) => x !== bigName)
-              : [...curBlock.bigs, bigName];
-            cooking[dimKey] = { ...curBlock, bigs: nextBigs };
-            return { ...n, cooking };
+            if (n.id !== wId) return n;
+            const cooking = { ...(n.cooking || createDefaultCooking()) };
+            const b = cooking[dimKey] || { bigs: [], subs: [] };
+            const nextBigs = b.bigs.includes(bigName) ? b.bigs.filter((x) => x !== bigName) : [...b.bigs, bigName];
+            cooking[dimKey] = { ...b, bigs: nextBigs };
+            return { ...n, cooking, recipeText: '' };
           });
-          saveToStorage();
-          renderApp();
+          saveData();
+          renderAll();
         });
       });
 
-      document.querySelectorAll('.cook-sub-btn').forEach((btn) => {
+      document.querySelectorAll('.toggle-sub-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-cook-sub-work');
-          const dimKey = btn.getAttribute('data-cook-sub-dim');
-          const subName = btn.getAttribute('data-cook-sub-name');
+          const wId = state.selectedCookId;
+          const dimKey = state.cookUI.activeDim;
+          const subName = btn.getAttribute('data-toggle-sub');
           state.novels = state.novels.map((n) => {
-            if (n.id !== workId) return n;
-            const cooking = { ...(n.cooking || createEmptyCookingProfile()) };
-            const curBlock = cooking[dimKey] || { bigs: [], subs: [] };
-            const nextSubs = curBlock.subs.includes(subName)
-              ? curBlock.subs.filter((x) => x !== subName)
-              : [...curBlock.subs, subName];
-            cooking[dimKey] = { ...curBlock, subs: nextSubs };
-            return { ...n, cooking };
+            if (n.id !== wId) return n;
+            const cooking = { ...(n.cooking || createDefaultCooking()) };
+            const b = cooking[dimKey] || { bigs: [], subs: [] };
+            const nextSubs = b.subs.includes(subName) ? b.subs.filter((x) => x !== subName) : [...b.subs, subName];
+            cooking[dimKey] = { ...b, subs: nextSubs };
+            return { ...n, cooking, recipeText: '' };
           });
-          saveToStorage();
-          renderApp();
+          saveData();
+          renderAll();
         });
       });
 
-      document.querySelectorAll('.move-recipe-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-move-recipe-id');
-          state.novels = state.novels.map((n) =>
-            n.id === workId ? { ...n, stage: 'recipe', recipeCompleted: false } : n
-          );
-          saveToStorage();
-          state.activeCategory = 'recipe';
-          renderApp();
-          showToast('레시피분석 단계로 이동했습니다!', 'success');
-        });
-      });
-
-      // [4] 레시피분석 이벤트
       document.querySelectorAll('.remix-dim-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-remix-dim-work');
-          const dimKey = btn.getAttribute('data-remix-dim-key');
-          const cur = state.recipeRemixState[workId] || { selectedDims: ['genre', 'setting'], seed: 1 };
-          let nextDims = cur.selectedDims.includes(dimKey)
-            ? cur.selectedDims.filter((k) => k !== dimKey)
-            : [...cur.selectedDims, dimKey];
-          if (!nextDims.length) nextDims = [dimKey];
-          state.recipeRemixState[workId] = { ...cur, selectedDims: nextDims };
-          renderApp();
+          const dKey = btn.getAttribute('data-remix-dim');
+          let cur = state.cookUI.selectedRemixDims || ['genre', 'setting'];
+          cur = cur.includes(dKey) ? cur.filter((x) => x !== dKey) : [...cur, dKey];
+          if (!cur.length) cur = [dKey];
+          state.cookUI.selectedRemixDims = cur;
+          renderAll();
         });
       });
 
-      document.querySelectorAll('.run-remix-btn').forEach((btn) => {
+      document.getElementById('btn-mutate-recipe')?.addEventListener('click', () => {
+        const wId = state.selectedCookId;
+        const novel = state.novels.find((n) => n.id === wId);
+        if (!novel) return;
+        state.cookUI.remixSeed = (state.cookUI.remixSeed || 1) + 1;
+        const sentence = buildMutatedConceptSentence(novel, state.cookUI.selectedRemixDims, state.cookUI.remixSeed);
+        state.novels = state.novels.map((n) => (n.id === wId ? { ...n, recipeText: sentence } : n));
+        saveData();
+        renderAll();
+        showToast('선택 항목이 랜덤 변형되어 재설정되었습니다!', 'success');
+      });
+
+      document.querySelectorAll('.copy-recipe-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-run-remix-id');
-          const novel = state.novels.find((n) => n.id === workId);
-          if (!novel) return;
-          const cur = state.recipeRemixState[workId] || { selectedDims: ['genre', 'setting'], seed: 1 };
-          const nextSeed = (cur.seed || 1) + 1;
-          state.recipeRemixState[workId] = { ...cur, seed: nextSeed };
-          const sentence = generateRemixSentence(novel, cur.selectedDims, nextSeed);
-
-          state.novels = state.novels.map((n) =>
-            n.id === workId ? { ...n, remixedSummary: sentence } : n
-          );
-          saveToStorage();
-          renderApp();
-          showToast('랜덤 변형 아이디어 문장이 재설정되었습니다!', 'success');
+          copyTextToClipboard(btn.getAttribute('data-copy-recipe') || '', '레시피 아이디어 문장');
         });
       });
 
-      document.querySelectorAll('.copy-sentence-btn').forEach((btn) => {
+      // [4] 미슐랭
+      document.querySelectorAll('.toggle-mich-edit-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          copyToClipboard(btn.getAttribute('data-copy-sentence') || '', '변형 아이디어 문장');
+          const id = btn.getAttribute('data-toggle-mich-edit');
+          state.michelinEditingId = state.michelinEditingId === id ? null : id;
+          renderAll();
         });
       });
 
-      document.querySelectorAll('.complete-recipe-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-complete-recipe-id');
-          state.novels = state.novels.map((n) =>
-            n.id === workId ? { ...n, recipeCompleted: true } : n
-          );
-          saveToStorage();
-          renderApp();
-          showToast('레시피분석 완료 처리되었습니다. (메타데이터 및 팬트리 유지)', 'success');
-        });
-      });
-
-      // [5] 미슐랭 이벤트
       document.querySelectorAll('.mich-tier-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-mich-tier-work');
-          const tierId = btn.getAttribute('data-mich-tier-id');
+          const wId = btn.getAttribute('data-mich-tier-w');
+          const tVal = btn.getAttribute('data-mich-tier-v');
           state.novels = state.novels.map((n) =>
-            n.id === workId ? { ...n, michelin: { ...(n.michelin || {}), tier: tierId } } : n
+            n.id === wId ? { ...n, michelin: { ...(n.michelin || {}), tier: tVal } } : n
           );
-          saveToStorage();
-          renderApp();
+          saveData();
+          renderAll();
         });
       });
 
-      document.querySelectorAll('.mich-conv-input').forEach((inp) => {
+      document.querySelectorAll('.mich-conv-inp').forEach((inp) => {
         inp.addEventListener('change', (e) => {
-          const workId = e.target.getAttribute('data-mich-conv-work');
+          const wId = e.target.getAttribute('data-mich-conv-w');
           const val = e.target.value;
           state.novels = state.novels.map((n) =>
-            n.id === workId ? { ...n, michelin: { ...(n.michelin || {}), conversionValue: val } } : n
+            n.id === wId ? { ...n, michelin: { ...(n.michelin || {}), conversionValue: val } } : n
           );
-          saveToStorage();
+          saveData();
         });
       });
 
-      document.querySelectorAll('.mich-free-input').forEach((inp) => {
+      document.querySelectorAll('.mich-free-inp').forEach((inp) => {
         inp.addEventListener('change', (e) => {
-          const workId = e.target.getAttribute('data-mich-free-work');
+          const wId = e.target.getAttribute('data-mich-free-w');
           const val = e.target.value;
           state.novels = state.novels.map((n) =>
-            n.id === workId ? { ...n, michelin: { ...(n.michelin || {}), freeEpisodeEnd: val } } : n
+            n.id === wId ? { ...n, michelin: { ...(n.michelin || {}), freeEndEpisode: val } } : n
           );
-          saveToStorage();
+          saveData();
         });
       });
 
-      // [6] 팬트리 이벤트
-      document.querySelectorAll('.pantry-filter-btn').forEach((btn) => {
+      document.querySelectorAll('.mich-done-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          state.pantryFilter = btn.getAttribute('data-pantry-filter');
-          renderApp();
+          const id = btn.getAttribute('data-mich-done-id');
+          state.novels = state.novels.map((n) => (n.id === id ? { ...n, michelinDone: true } : n));
+          saveData();
+          renderAll();
+          showToast('미슐랭 분류 완료 처리되었습니다.', 'success');
         });
       });
 
-      document.querySelectorAll('.open-edit-modal-btn').forEach((btn) => {
+      // [5] 팬트리
+      document.querySelectorAll('.pantry-f-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          openFullEditModal(btn.getAttribute('data-open-edit-id'));
+          state.pantryFilter = btn.getAttribute('data-pantry-f');
+          saveData();
+          renderAll();
         });
       });
 
-      document.querySelectorAll('.resend-recipe-btn').forEach((btn) => {
+      document.querySelectorAll('.open-modal-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const workId = btn.getAttribute('data-resend-recipe-id');
-          state.novels = state.novels.map((n) =>
-            n.id === workId ? { ...n, stage: 'recipe', recipeCompleted: false } : n
-          );
-          saveToStorage();
-          state.activeCategory = 'recipe';
-          renderApp();
-          showToast('레시피분석으로 다시 보냈습니다!', 'success');
+          openEditModal(btn.getAttribute('data-open-modal-id'));
         });
       });
 
-      // [7] 설거지 달력 & 백업/복구 이벤트
-      document.getElementById('btn-wash-prev')?.addEventListener('click', () => {
+      document.querySelectorAll('.send-cook-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-send-cook-id');
+          state.novels = state.novels.map((n) => {
+            if (n.id !== id) return n;
+            const nextFlags = (n.flags || []).includes('cook') ? n.flags : [...(n.flags || []), 'cook'];
+            return { ...n, flags: nextFlags, inCookQueue: true, cookDone: false };
+          });
+          state.selectedCookId = id;
+          saveData();
+          state.activeCategory = 'cook';
+          renderAll();
+          showToast('요리하기로 다시 보냈습니다!', 'success');
+        });
+      });
+
+      // [6] 설거지 달력 & 백업/복구
+      document.getElementById('btn-cal-prev')?.addEventListener('click', () => {
         if (state.calendar.month === 0) {
           state.calendar.year -= 1;
           state.calendar.month = 11;
         } else {
           state.calendar.month -= 1;
         }
-        renderApp();
+        renderAll();
       });
 
-      document.getElementById('btn-wash-next')?.addEventListener('click', () => {
+      document.getElementById('btn-cal-next')?.addEventListener('click', () => {
         if (state.calendar.month === 11) {
           state.calendar.year += 1;
           state.calendar.month = 0;
         } else {
           state.calendar.month += 1;
         }
-        renderApp();
+        renderAll();
       });
 
-      document.querySelectorAll('.wash-date-btn').forEach((btn) => {
+      document.querySelectorAll('.cal-date-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          state.calendar.selectedDate = btn.getAttribute('data-wash-date');
-          renderApp();
+          state.calendar.selectedDate = btn.getAttribute('data-cal-date');
+          renderAll();
         });
       });
 
-      document.getElementById('btn-download-backup')?.addEventListener('click', () => {
+      document.getElementById('btn-export-json')?.addEventListener('click', () => {
         const jsonStr = JSON.stringify({ novels: state.novels, tagPool: state.tagPool }, null, 2);
         const blob = new Blob([jsonStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `chef-note-backup-${formatDate(new Date())}.json`;
+        a.download = `chef-note-${formatYMD(new Date())}.json`;
         document.body.appendChild(a);
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
-        showToast('백업 JSON 파일이 다운로드되었습니다.', 'success');
+        showToast('백업 파일이 저장되었습니다.', 'success');
       });
 
-      document.getElementById('btn-copy-backup')?.addEventListener('click', () => {
-        const raw = document.getElementById('restore-json-textarea')?.value || '';
-        copyToClipboard(raw, '백업 JSON');
+      document.getElementById('btn-copy-json')?.addEventListener('click', () => {
+        const raw = document.getElementById('restore-json-box')?.value || '';
+        copyTextToClipboard(raw, '백업 JSON');
       });
 
-      document.getElementById('input-restore-file')?.addEventListener('change', (e) => {
+      document.getElementById('file-restore-json')?.addEventListener('change', (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
-          const area = document.getElementById('restore-json-textarea');
-          if (area) area.value = String(ev.target?.result || '');
-          showToast('JSON 파일을 불러왔습니다. [데이터 복구 실행]을 눌러 적용하세요.', 'info');
+          const box = document.getElementById('restore-json-box');
+          if (box) box.value = String(ev.target?.result || '');
+          showToast('백업 파일을 불러왔습니다. [복구 적용하기]를 누르세요.', 'info');
         };
         reader.readAsText(file);
       });
 
-      document.getElementById('btn-run-restore')?.addEventListener('click', () => {
-        const rawText = document.getElementById('restore-json-textarea')?.value || '';
+      document.getElementById('btn-apply-restore')?.addEventListener('click', () => {
+        const raw = document.getElementById('restore-json-box')?.value || '';
         try {
-          const parsed = JSON.parse(rawText);
+          const parsed = JSON.parse(raw);
           if (!Array.isArray(parsed.novels)) {
-            showToast('올바른 백업 데이터 형식이 아닙니다.', 'error');
+            showToast('올바른 쉐프 노트 백업 형식이 아닙니다.', 'error');
             return;
           }
           state.novels = parsed.novels;
           if (Array.isArray(parsed.tagPool) && parsed.tagPool.length) {
             state.tagPool = parsed.tagPool;
           }
-          saveToStorage();
-          renderApp();
+          saveData();
+          renderAll();
           showToast(`총 ${state.novels.length}편의 데이터가 복구되었습니다!`, 'success');
         } catch (err) {
-          showToast('JSON 구문 오류가 있어 복구에 실패했습니다.', 'error');
+          showToast('JSON 형식을 확인해주세요.', 'error');
         }
       });
     }
 
-    function renderApp() {
-      renderNavigation();
-      const mainEl = document.getElementById('main-view');
+    function renderAll() {
+      renderNavBars();
+      const container = document.getElementById('main-content');
 
       switch (state.activeCategory) {
         case 'register':
-          mainEl.innerHTML = renderRegisterView();
+          container.innerHTML = renderRegisterView();
           break;
         case 'prep':
-          mainEl.innerHTML = renderPrepView();
+          container.innerHTML = renderPrepView();
           break;
         case 'cook':
-          mainEl.innerHTML = renderCookView();
-          break;
-        case 'recipe':
-          mainEl.innerHTML = renderRecipeAnalysisView();
+          container.innerHTML = renderCookView();
           break;
         case 'michelin':
-          mainEl.innerHTML = renderMichelinView();
+          container.innerHTML = renderMichelinView();
           break;
         case 'pantry':
-          mainEl.innerHTML = renderPantryView();
+          container.innerHTML = renderPantryView();
           break;
         case 'wash':
-          mainEl.innerHTML = renderWashView();
+          container.innerHTML = renderWashView();
           break;
         default:
-          mainEl.innerHTML = renderRegisterView();
+          container.innerHTML = renderRegisterView();
       }
 
-      bindViewEvents();
+      bindAllEvents();
     }
 
-    // 전역 모달 & 샘플 초기화 바인딩
-    document.getElementById('btn-close-edit-modal')?.addEventListener('click', closeFullEditModal);
+    // 전역 모달 닫기 & 샘플 초기화
+    document.getElementById('btn-close-edit-modal')?.addEventListener('click', closeEditModal);
     document.getElementById('edit-modal')?.addEventListener('click', (e) => {
-      if (e.target.id === 'edit-modal') closeFullEditModal();
+      if (e.target.id === 'edit-modal') closeEditModal();
     });
 
-    document.getElementById('btn-load-sample')?.addEventListener('click', () => {
-      state.novels = buildSampleNovels();
-      state.tagPool = [...DEFAULT_TAG_POOL];
+    document.getElementById('btn-reset-sample')?.addEventListener('click', () => {
+      state.novels = buildInitialNovels();
+      state.tagPool = [...DEFAULT_TAGS];
       state.regForm = { sources: ['today'], title: '', genre: '', author: '', editingId: null };
-      state.pantryFilter = 'all';
-      saveToStorage();
-      renderApp();
-      showToast('셰프 노트 샘플 데이터가 초기화되었습니다.', 'info');
+      state.pantryFilter = 'recent';
+      state.selectedCookId = '';
+      saveData();
+      renderAll();
+      showToast('초기 샘플 데이터가 로드되었습니다.', 'info');
     });
 
-    // 초기화 실행
-    loadFromStorage();
-    renderApp();
+    loadData();
+    renderAll();
   </script>
 </body>
 </html>
