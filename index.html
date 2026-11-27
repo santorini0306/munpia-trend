@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>문피아 트렌드 & 아이디어 아카이브</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Noto Sans KR & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#151e32',
+                            900: '#0f172a',
+                            950: '#090d16',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 모바일 앱 프레임 및 스크롤바 커스텀 */
+        body {
+            background-color: #05080f;
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .vault-glow {
+            box-shadow: 0 0 18px rgba(245, 158, 11, 0.22);
+            border-color: rgba(245, 158, 11, 0.75) !important;
+        }
+        .vault-tab-glow {
+            box-shadow: 0 -2px 15px rgba(245, 158, 11, 0.35);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.22s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center bg-slate-950">
+
+    <!-- 모바일 컨테이너 (최대 480px 중앙 정렬) -->
+    <div class="w-full max-w-[480px] min-h-screen bg-slate-900 border-x border-slate-800/80 flex flex-col relative shadow-2xl">
+        
+        <!-- 상단 헤더 -->
+        <header class="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <i data-lucide="book-open-check" class="w-4 h-4 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold tracking-tight text-white leading-none">문피아 트렌드 노트</h1>
+                    <p id="header-subtitle" class="text-[11px] text-slate-400 mt-1">차기작 아이디어 & 독자 반응 분석</p>
+                </div>
+            </div>
+            <div id="header-stats-badge" class="text-xs font-medium bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-full border border-slate-700">
+                미평가 <span id="unrated-count-badge" class="text-blue-400 font-bold">0</span>편
+            </div>
+        </header>
+
+        <!-- 메인 콘텐츠 영역 -->
+        <main id="main-content" class="flex-1 pb-24 px-4 pt-4 overflow-y-auto">
+            <!-- 동적 뷰 렌더링 영역 -->
+        </main>
+
+        <!-- 태그 편집 모달 -->
+        <div id="tag-modal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-black/75 backdrop-blur-sm p-0 sm:p-4">
+            <div class="w-full max-w-[480px] bg-slate-850 border-t sm:border border-slate-700 rounded-t-3xl sm:rounded-2xl p-5 shadow-2xl animate-fade-in">
+                <div class="flex justify-between items-center mb-3">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-1.5">
+                            <i data-lucide="tags" class="w-4 h-4 text-blue-400"></i> 키워드 태그 설정
+                        </h3>
+                        <p id="modal-novel-title" class="text-xs text-slate-400 truncate max-w-[300px] mt-0.5"></p>
+                    </div>
+                    <button onclick="closeTagModal()" class="p-2 rounded-full bg-slate-800 text-slate-400 hover:text-white">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- 현재 적용된 태그 (최대 5개) -->
+                <div class="mb-4">
+                    <div class="flex justify-between text-xs text-slate-400 mb-1.5">
+                        <span>적용된 태그</span>
+                        <span id="modal-tag-count" class="font-semibold text-blue-400">0 / 5</span>
+                    </div>
+                    <div id="modal-active-tags" class="min-h-[42px] p-2 rounded-xl bg-slate-900 border border-slate-700/80 flex flex-wrap gap-1.5 items-center">
+                        <!-- 선택된 태그 칩 렌더링 -->
+                    </div>
+                </div>
+
+                <!-- 새 태그 입력 -->
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="new-tag-input" placeholder="새 태그 입력 (예: 회귀, 아카데미, 착각계)" 
+                        class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                        onkeydown="if(event.key === 'Enter') addCustomTag()">
+                    <button onclick="addCustomTag()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white text-sm font-semibold rounded-xl transition">
+                        추가
+                    </button>
+                </div>
+
+                <!-- 저장된 태그 풀 (재활용) -->
+                <div>
+                    <p class="text-xs font-medium text-slate-400 mb-2 flex items-center gap-1">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> 저장된 태그 풀 (터치하여 바로 적용)
+                    </p>
+                    <div id="modal-tag-pool" class="max-h-36 overflow-y-auto flex flex-wrap gap-1.5 p-1">
+                        <!-- 기존 사용 태그 렌더링 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 확인 커스텀 모달 (alert/confirm 대체) -->
+        <div id="confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+            <div class="w-full max-w-[360px] bg-slate-850 border border-slate-700 rounded-2xl p-5 shadow-2xl animate-fade-in">
+                <h3 id="confirm-title" class="text-base font-bold text-white mb-2">확인</h3>
+                <p id="confirm-message" class="text-sm text-slate-300 leading-relaxed mb-5"></p>
+                <div class="flex gap-2.5">
+                    <button onclick="closeConfirmModal()" class="flex-1 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-sm font-semibold hover:bg-slate-700">취소</button>
+                    <button id="confirm-ok-btn" class="flex-1 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-500">확인</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 토스트 알림 -->
+        <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 translate-y-2">
+            <div class="bg-slate-800/95 border border-slate-600 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 backdrop-blur-md">
+                <span id="toast-icon" class="text-emerald-400">●</span>
+                <span id="toast-msg">저장되었습니다</span>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 바 -->
+        <nav class="fixed bottom-0 w-full max-w-[480px] z-30 bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 px-2 py-1.5 grid grid-cols-4 gap-1">
+            <button onclick="switchTab('today')" id="nav-today" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i data-lucide="flame" class="w-5 h-5 mb-0.5"></i>
+                <span class="text-[11px] font-semibold">오늘의 10선</span>
+            </button>
+            
+            <!-- 보관함 (좋은소스) 강조 탭 -->
+            <button onclick="switchTab('vault')" id="nav-vault" class="nav-btn relative flex flex-col items-center justify-center py-1.5 rounded-xl transition border border-amber-500/40 bg-gradient-to-b from-amber-500/20 to-amber-600/10 text-amber-300">
+                <span id="vault-badge-count" class="absolute -top-1.5 right-2 bg-amber-500 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded-full shadow">0</span>
+                <i data-lucide="gem" class="w-5 h-5 mb-0.5 text-amber-400"></i>
+                <span class="text-[11px] font-extrabold text-amber-300">보관함</span>
+            </button>
+
+            <button onclick="switchTab('archive')" id="nav-archive" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i data-lucide="bar-chart-3" class="w-5 h-5 mb-0.5"></i>
+                <span class="text-[11px] font-semibold">분석·아카이브</span>
+            </button>
+
+            <button onclick="switchTab('data')" id="nav-data" class="nav-btn flex flex-col items-center justify-center py-1.5 rounded-xl transition">
+                <i data-lucide="database" class="w-5 h-5 mb-0.5"></i>
+                <span class="text-[11px] font-semibold">데이터 관리</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. 초기 내장 샘플 데이터 (문피아 트렌드 반영 28편)
+        // ==========================================
+        const INITIAL_NOVELS = [
+            {
+                id: "mp_101",
+                category: "투데이 베스트",
+                title: "회귀한 천재 배우의 압도적 연기론",
+                genre: "현대판타지",
+                author: "은빛커튼",
+                episodes: 142,
+                recentViews: 48200,
+                synopsis: "단역만 전전하던 15년 차 무명 배우 강진우. 사고로 생을 마감한 순간, 첫 오디션장으로 회귀했다. 전생의 처절한 경험과 캐릭터 빙의급 해석력으로 충무로와 할리우드를 집어삼킨다.",
+                rating: null,
+                flags: [],
+                tags: ["회귀", "연예계", "배우물", "천재"],
+                updatedAt: null
+            },
+            {
+                id: "mp_102",
+                category: "투데이 베스트",
+                title: "변경백가의 망나니가 성좌들의 후원을 독식함",
+                genre: "판타지",
+                author: "청룡검객",
+                episodes: 89,
+                recentViews: 39400,
+                synopsis: "가문의 수치라 불리던 변경백가 셋째 아들. 멸망을 앞둔 세계의 성좌들이 그에게만 시스템을 개방했다. 성좌들의 미션을 깨고 쏟아지는 신물과 권능으로 대륙의 판도를 뒤집는다.",
+                rating: null,
+                flags: [],
+                tags: ["성좌물", "망나니", "시스템", "영지발전"],
+                updatedAt: null
+            },
+            {
+                id: "mp_103",
+                category: "신규 베스트",
+                title: "아카데미의 시한부 천재 마법사가 되었다",
+                genre: "판타지",
+                author: "마탑의고양이",
+                episodes: 24,
+                recentViews: 21500,
+                synopsis: "즐겨 하던 하드코어 아카데미 게임 속, 1년 뒤 마력 폭주로 죽는 단역 귀족에 빙의했다. 살기 위해 원작의 숨겨진 히든 피스를 모조리 털기 시작했는데, 히로인들의 집착이 심상치 않다.",
+                rating: null,
+                flags: [],
+                tags: ["빙의", "아카데미", "시한부", "게임판타지"],
+                updatedAt: null
+            },
+            {
+                id: "mp_104",
+                category: "투데이 베스트",
+                title: "재벌집 막내아들이 회귀 후 반도체를 싹쓸이함",
+                genre: "현대판타지",
+                author: "황금나침반",
+                episodes: 210,
+                recentViews: 61200,
+                synopsis: "1987년 대한민국, 작은 전자부품 하청업체 셋째 아들로 눈을 떴다. 미래의 메모리 반도체와 AI 혁명의 흐름을 모두 꿰뚫고 있는 내가 글로벌 테크 패권을 거머쥔다.",
+                rating: null,
+                flags: [],
+                tags: ["재벌물", "회귀", "기업경영", "전문직"],
+                updatedAt: null
+            },
+            {
+                id: "mp_105",
+                category: "신규 베스트",
+                title: "천마가 은퇴하고 국밥집을 차렸다",
+                genre: "무협",
+                author: "설산노인",
+                episodes: 18,
+                recentViews: 17800,
+                synopsis: "무림을 통일한 천마 백무진. 피비린내 나는 강호에 질려 정체를 숨기고 낙양 외곽에 작은 국밥집을 열었다. 그런데 찾아오는 손님마다 무림맹주와 사파 거두들이라 조용할 날이 없다.",
+                rating: null,
+                flags: [],
+                tags: ["은둔고수", "요리", "무협", "착각계"],
+                updatedAt: null
+            },
+            {
+                id: "mp_106",
+                category: "투데이 베스트",
+                title: "1945 미합중국 검은 머리 방위산업체",
+                genre: "대체역사",
+                author: "강철의제국",
+                episodes: 176,
+                recentViews: 44900,
+                synopsis: "2차 세계대전 직전 미국으로 건너간 천재 기계공학도. 제트엔진과 레이더, 미사일 기술을 앞당겨 미 군수산업의 거물로 성장하고 세계사의 물줄기를 바꾼다.",
+                rating: null,
+                flags: [],
+                tags: ["대체역사", "밀리터리", "먼치킨", "경영"],
+                updatedAt: null
+            },
+            {
+                id: "mp_107",
+                category: "신규 베스트",
+                title: "F급 헌터가 던전 생태계를 사육함",
+                genre: "현대판타지",
+                author: "던전관리인",
+                episodes: 31,
+                recentViews: 26300,
+                synopsis: "전투력 제로의 F급 조련사 각성자. 남들은 몬스터를 때려잡아 마석을 캘 때, 나는 보스 몬스터에게 밥을 주고 길들여 S급 던전 농장을 건설했다.",
+                rating: null,
+                flags: [],
+                tags: ["헌터물", "테이밍", "생산직", "던전"],
+                updatedAt: null
+            },
+            {
+                id: "mp_108",
+                category: "투데이 베스트",
+                title: "검술명가 막내아들은 회귀를 숨긴다",
+                genre: "판타지",
+                author: "적월도",
+                episodes: 134,
+                recentViews: 52100,
+                synopsis: "가문의 배신으로 형제들의 손에 죽었던 검술명가 막내. 10년 전으로 돌아온 그는 천재성을 철저히 숨긴 채 배후의 흑막들을 하나씩 역으로 사냥해 나간다.",
+                rating: null,
+                flags: [],
+                tags: ["회귀", "검술명가", "복수극", "먼치킨"],
+                updatedAt: null
+            },
+            {
+                id: "mp_109",
+                category: "신규 베스트",
+                title: "야구천재가 마운드에서 타자를 지배함",
+                genre: "스포츠",
+                author: "스트라이크존",
+                episodes: 27,
+                recentViews: 19400,
+                synopsis: "어깨 부상으로 은퇴했던 비운의 투수. 눈을 뜨니 고교 야구 에이스 시절로 돌아왔고, 타자의 스윙 궤적과 심리가 붉은 선으로 보이기 시작했다.",
+                rating: null,
+                flags: [],
+                tags: ["야구", "스포츠", "회귀", "천재"],
+                updatedAt: null
+            },
+            {
+                id: "mp_110",
+                category: "투데이 베스트",
+                title: "빙의했더니 악역 대공의 전속 주치의",
+                genre: "판타지",
+                author: "백의의현자",
+                episodes: 95,
+                recentViews: 33800,
+                synopsis: "현대 외과 전문의가 피폐 소설 속 폭군 대공의 주치의로 빙의했다. 대공이 미쳐 날뛰는 원인이 불치의 뇌혈관 질환이라는 걸 알아챈 순간, 목숨을 건 수술이 시작된다.",
+                rating: null,
+                flags: [],
+                tags: ["의학물", "빙의", "전문직", "치유"],
+                updatedAt: null
+            },
+            {
+                id: "mp_111",
+                category: "신규 베스트",
+                title: "사이버펑크 메가코프의 말단 해결사",
+                genre: "SF",
+                author: "네온레인",
+                episodes: 22,
+                recentViews: 15900,
+                synopsis: "거대 기업이 지배하는 2099년 네오 서울. 폐기 처분 직전의 구형 의체를 달고 있던 말단 해결사가 불법 군용 AI 칩을 머리에 꽂으면서 도시의 전설이 된다.",
+                rating: null,
+                flags: [],
+                tags: ["사이버펑크", "SF", "시스템", "느와르"],
+                updatedAt: null
+            },
+            {
+                id: "mp_112",
+                category: "투데이 베스트",
+                title: "화산파 막내제자가 너무 똑똑함",
+                genre: "무협",
+                author: "매화검수",
+                episodes: 162,
+                recentViews: 47600,
+                synopsis: "현대 물리학 박사 출신이 화산파 말단 제자로 환생했다. 내공의 운기조식과 검법의 궤적을 역학으로 재해석하자 실전된 화산의 절학이 완벽하게 복원된다.",
+                rating: null,
+                flags: [],
+                tags: ["환생", "무협", "화산파", "천재"],
+                updatedAt: null
+            },
+            {
+                id: "mp_113",
+                category: "신규 베스트",
+                title: "망한 아이돌 그룹의 천재 프로듀서가 되었다",
+                genre: "현대판타지",
+                author: "비트메이커",
+                episodes: 35,
+                recentViews: 28700,
+                synopsis: "해체 직전의 빚더미 중소기획사 연습생들. 전생의 빌보드 1위 작곡가 기억을 되찾은 막내 멤버가 직접 곡을 쓰고 프로듀싱하며 가요계 역주행 신화를 쓴다.",
+                rating: null,
+                flags: [],
+                tags: ["아이돌", "작곡", "연예계", "성장물"],
+                updatedAt: null
+            },
+            {
+                id: "mp_114",
+                category: "투데이 베스트",
+                title: "종말 세계의 편의점 사장님",
+                genre: "현대판타지",
+                author: "새벽별빛",
+                episodes: 118,
+                recentViews: 41200,
+                synopsis: "좀비와 변이체가 들끓는 아포칼립스 한복판, 절대 파괴되지 않는 안전구역 편의점이 열렸다. 물건을 팔수록 영지가 확장되고 최강의 생존자들이 경비원으로 모여든다.",
+                rating: null,
+                flags: [],
+                tags: ["아포칼립스", "경영", "영지발전", "먼치킨"],
+                updatedAt: null
+            },
+            {
+                id: "mp_115",
+                category: "신규 베스트",
+                title: "조선의 왕세자가 증기기관을 발명함",
+                genre: "대체역사",
+                author: "한양공방",
+                episodes: 29,
+                recentViews: 22400,
+                synopsis: "병자호란 직전 인조의 장남 소현세자로 빙의했다. 청나라의 침략을 막기 위해 전국의 장인들을 모아 화포와 증기기관, 철갑선을 건조하며 동아시아 산업혁명을 일으킨다.",
+                rating: null,
+                flags: [],
+                tags: ["대체역사", "조선", "내정", "기술혁명"],
+                updatedAt: null
+            },
+            {
+                id: "mp_116",
+                category: "투데이 베스트",
+                title: "전생검신이 현대 던전을 접수함",
+                genre: "현대판타지",
+                author: "파천검제",
+                episodes: 198,
+                recentViews: 55300,
+                synopsis: "무림의 정점에 섰던 검신이 21세기 서울의 무능력자로 환생했다. 마나도 스킬창도 없지만 순수 검술과 내공만으로 S급 게이트를 단칼에 양단한다.",
+                rating: null,
+                flags: [],
+                tags: ["헌터물", "무협현대", "먼치킨", "환생"],
+                updatedAt: null
+            },
+            {
+                id: "mp_117",
+                category: "신규 베스트",
+                title: "소설 속 흑막의 집사로 살아남기",
+                genre: "판타지",
+                author: "은쟁반",
+                episodes: 19,
+                recentViews: 16400,
+                synopsis: "주인공에게 참수당하는 최종 보스 공작가의 수석 집사에 빙의했다. 살아남기 위해 공작의 흑화를 막고 영지 재정을 흑자로 돌렸더니, 공작과 원작 주인공이 나를 두고 신경전을 벌인다.",
+                rating: null,
+                flags: [],
+                tags: ["빙의", "집사", "착각계", "내정"],
+                updatedAt: null
+            },
+            {
+                id: "mp_118",
+                category: "투데이 베스트",
+                title: "천재 검사, 부패 권력을 심판하다",
+                genre: "현대판타지",
+                author: "정의의저울",
+                episodes: 154,
+                recentViews: 46800,
+                synopsis: "거대 로펌과 권력층의 비리를 파헤치다 좌천된 열혈 검사. 유력자의 은닉 비자금 장부와 범죄의 흔적이 시야에 붉게 빛나는 능력을 얻은 뒤 거악을 뿌리 뽑는다.",
+                rating: null,
+                flags: [],
+                tags: ["법조물", "전문직", "사이다", "복수극"],
+                updatedAt: null
+            },
+            {
+                id: "mp_119",
+                category: "신규 베스트",
+                title: "북부 대공가의 버려진 막내는 드래곤을 키움",
+                genre: "판타지",
+                author: "빙결의숨결",
+                episodes: 26,
+                recentViews: 24100,
+                synopsis: "마나 불능자라 낙인찍혀 마수들의 숲으로 추방된 막내 공자. 얼음 동굴 속에서 부화 직전의 고대 백룡 알을 발견하고 계약하면서 제국 최강의 용기사가 된다.",
+                rating: null,
+                flags: [],
+                tags: ["드래곤", "추방물", "성장물", "먼치킨"],
+                updatedAt: null
+            },
+            {
+                id: "mp_120",
+                category: "투데이 베스트",
+                title: "귀환한 SSS급 탱커는 평범하게 농사짓고 싶다",
+                genre: "현대판타지",
+                author: "황금호미",
+                episodes: 112,
+                recentViews: 38900,
+                synopsis: "이세계 마왕을 10년 만에 쓰러뜨리고 지구로 귀환한 최강의 방패. 이제 싸움은 지긋지긋해 시골 할머니 댁에서 텃밭을 가꾸는데, 내가 키운 배추를 먹으면 헌터들이 각성을 한다.",
+                rating: null,
+                flags: [],
+                tags: ["귀환물", "힐링", "농사", "헌터물"],
+                updatedAt: null
+            },
+            {
+                id: "mp_121",
+                category: "신규 베스트",
+                title: "EPL 최하위 구단의 천재 감독이 되었다",
+                genre: "스포츠",
+                author: "전술노트",
+                episodes: 33,
+                recentViews: 25600,
+                synopsis: "풋볼 매니저 게임 고인물 출신 한국인 코치. 강등이 확실시되던 잉글랜드 구단의 임시 감독을 맡아, 선수들의 잠재력과 부상 위험도를 숫자로 읽는 눈으로 트레블에 도전한다.",
+                rating: null,
+                flags: [],
+                tags: ["축구", "감독물", "스포츠", "시스템"],
+                updatedAt: null
+            },
+            {
+                id: "mp_122",
+                category: "투데이 베스트",
+                title: "마교 교주의 셋째 아들은 정파 무림의 스파이",
+                genre: "무협",
+                author: "흑백쌍검",
+                episodes: 145,
+                recentViews: 43100,
+                synopsis: "정파 맹주의 명을 받고 마교에 잠입한 이중첩자. 그런데 마교 교주가 나를 진심으로 아끼며 후계자 수업을 시키는 바람에, 정파와 마교 양쪽에서 차기 지존으로 추대받기 시작했다.",
+                rating: null,
+                flags: [],
+                tags: ["무협", "착각계", "스파이", "마교"],
+                updatedAt: null
+            },
+            {
+                id: "mp_123",
+                category: "신규 베스트",
+                title: "폐급 헌터 길드의 천재 참모",
+                genre: "현대판타지",
+                author: "체스마스터",
+                episodes: 21,
+                recentViews: 18200,
+                synopsis: "전투 스킬은 전혀 없지만 던전의 구조와 몬스터의 행동 패턴을 완벽히 시뮬레이션하는 두뇌파 헌터. 해체 직전의 꼴찌 길드를 맡아 대기업 길드들의 공략 기록을 모조리 갈아치운다.",
+                rating: null,
+                flags: [],
+                tags: ["헌터물", "두뇌전", "참모", "성장물"],
+                updatedAt: null
+            },
+            {
+                id: "mp_124",
+                category: "투데이 베스트",
+                title: "회귀한 천재 요리사의 미슐랭 3스타",
+                genre: "현대판타지",
+                author: "불꽃프라이팬",
+                episodes: 168,
+                recentViews: 49500,
+                synopsis: "미각을 잃고 비참하게 생을 마감했던 셰프가 20세 견습생 시절로 회귀했다. 절대 미각과 전생의 레시피를 결합해 파리 파인다이닝의 정점을 찍는다.",
+                rating: null,
+                flags: [],
+                tags: ["요리", "회귀", "전문직", "힐링"],
+                updatedAt: null
+            },
+            {
+                id: "mp_125",
+                category: "신규 베스트",
+                title: "로마 제국 황제의 천재 건축가",
+                genre: "대체역사",
+                author: "대리석기둥",
+                episodes: 25,
+                recentViews: 20100,
+                synopsis: "현대 토목건축 엔지니어가 로마 제국 전성기 젊은 귀족으로 빙의했다. 콘크리트 배합 기술과 상하수도, 수로교, 증기 펌프를 건설하며 팍스 로마나를 영원한 제국으로 만든다.",
+                rating: null,
+                flags: [],
+                tags: ["대체역사", "로마", "건축", "내정"],
+                updatedAt: null
+            }
+        ];
+
+        // ==========================================
+        // 2. 상태 관리 (LocalStorage)
+        // ==========================================
+        const STORAGE_KEY = 'munpia_trend_app_v1';
+
+        let appState = {
+            novels: [],
+            tagPool: [],
+            todayDate: '',
+            todayIds: [],
+            currentTab: 'today', // 'today' | 'vault' | 'archive' | 'data'
+            expandedSynopsis: {},
+            archiveFilters: {
+                rating: 'ALL',
+                flag: 'ALL',
+                tag: 'ALL',
+                search: ''
+            },
+            vaultTagFilter: 'ALL'
+        };
+
+        let activeModalNovelId = null;
+        let confirmCallback = null;
+
+        function getTodayString() {
+            const now = new Date();
+            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        }
+
+        function loadState() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    appState.novels = parsed.novels || [];
+                    appState.tagPool = parsed.tagPool || [];
+                    appState.todayDate = parsed.todayDate || '';
+                    appState.todayIds = parsed.todayIds || [];
+                } catch (e) {
+                    console.error('데이터 파싱 오류, 초기화 진행', e);
+                    initDefaultState();
+                }
+            } else {
+                initDefaultState();
+            }
+
+            // 날짜가 바뀌었거나 오늘의 추천 목록이 비어있으면 자동 생성
+            const today = getTodayString();
+            if (appState.todayDate !== today || !appState.todayIds || appState.todayIds.length === 0) {
+                refreshTodayTen(true);
+            }
+            syncTagPool();
+        }
+
+        function initDefaultState() {
+            appState.novels = JSON.parse(JSON.stringify(INITIAL_NOVELS));
+            appState.tagPool = [];
+            syncTagPool();
+            refreshTodayTen(true);
+        }
+
+        function saveState() {
+            const payload = {
+                novels: appState.novels,
+                tagPool: appState.tagPool,
+                todayDate: appState.todayDate,
+                todayIds: appState.todayIds
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+            updateGlobalBadges();
+        }
+
+        function syncTagPool() {
+            const set = new Set(appState.tagPool);
+            appState.novels.forEach(n => {
+                if (Array.isArray(n.tags)) {
+                    n.tags.forEach(t => set.add(t.trim()));
+                }
+            });
+            appState.tagPool = Array.from(set).filter(Boolean);
+        }
+
+        // 오늘의 10선 무작위 추출 (아직 별점을 주지 않은 작품 대상)
+        function refreshTodayTen(silent = false) {
+            const unrated = appState.novels.filter(n => !n.rating);
+            // Fisher-Yates 셔플
+            const shuffled = [...unrated];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            appState.todayIds = shuffled.slice(0, 10).map(n => n.id);
+            appState.todayDate = getTodayString();
+            saveState();
+            if (!silent) {
+                showToast(`미평가 작품 중 ${appState.todayIds.length}편을 새로 뽑았습니다!`);
+                render();
+            }
+        }
+
+        // ==========================================
+        // 3. 사용자 액션 핸들러 (별점, 분류, 태그)
+        // ==========================================
+        const RATING_OPTIONS = [
+            { value: 1, stars: '★', label: '1~5화 하차', short: '★ 1~5화' },
+            { value: 2, stars: '★★', label: '6~10화 하차', short: '★★ 6~10화' },
+            { value: 3, stars: '★★★', label: '11~15화 하차', short: '★★★ 11~15화' },
+            { value: 4, stars: '★★★★', label: '16화 이상 정독', short: '★★★★ 정독' }
+        ];
+
+        const FLAG_OPTIONS = [
+            { key: 'legend', label: '레전드 (작가뽕)', icon: 'crown', color: 'purple' },
+            { key: 'supernormal', label: '슈퍼노멀 (일반연재)', icon: 'zap', color: 'emerald' },
+            { key: 'vault', label: '보관함 (좋은소스)', icon: 'gem', color: 'amber' }
+        ];
+
+        function setNovelRating(id, ratingVal) {
+            const novel = appState.novels.find(n => n.id === id);
+            if (!novel) return;
+            // 같은 별점 재클릭 시 취소 가능
+            if (novel.rating === ratingVal) {
+                novel.rating = null;
+                novel.updatedAt = null;
+                showToast('별점이 해제되었습니다.');
+            } else {
+                novel.rating = ratingVal;
+                novel.updatedAt = new Date().toISOString();
+                const opt = RATING_OPTIONS.find(r => r.value === ratingVal);
+                showToast(`평가 저장: ${opt.stars} ${opt.label}`);
+            }
+            saveState();
+            render();
+        }
+
+        function toggleNovelFlag(id, flagKey) {
+            const novel = appState.novels.find(n => n.id === id);
+            if (!novel) return;
+            if (!Array.isArray(novel.flags)) novel.flags = [];
+            const idx = novel.flags.indexOf(flagKey);
+            if (idx > -1) {
+                novel.flags.splice(idx, 1);
+                showToast('분류 표시가 해제되었습니다.');
+            } else {
+                novel.flags.push(flagKey);
+                const opt = FLAG_OPTIONS.find(f => f.key === flagKey);
+                showToast(`${opt.label}에 추가되었습니다!`);
+            }
+            saveState();
+            render();
+        }
+
+        function toggleSynopsis(id) {
+            appState.expandedSynopsis[id] = !appState.expandedSynopsis[id];
+            render();
+        }
+
+        // 태그 모달 관련
+        function openTagModal(id) {
+            activeModalNovelId = id;
+            const novel = appState.novels.find(n => n.id === id);
+            if (!novel) return;
+            document.getElementById('modal-novel-title').textContent = novel.title;
+            document.getElementById('new-tag-input').value = '';
+            renderTagModalContent();
+            const modal = document.getElementById('tag-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeTagModal() {
+            activeModalNovelId = null;
+            const modal = document.getElementById('tag-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            render();
+        }
+
+        function renderTagModalContent() {
+            const novel = appState.novels.find(n => n.id === activeModalNovelId);
+            if (!novel) return;
+            const tags = novel.tags || [];
+            document.getElementById('modal-tag-count').textContent = `${tags.length} / 5`;
+
+            const activeContainer = document.getElementById('modal-active-tags');
+            if (tags.length === 0) {
+                activeContainer.innerHTML = `<span class="text-xs text-slate-500 px-1">등록된 태그가 없습니다. 아래에서 추가하세요.</span>`;
+            } else {
+                activeContainer.innerHTML = tags.map(t => `
+                    <span class="inline-flex items-center gap-1 bg-blue-600/25 border border-blue-500/50 text-blue-200 text-xs font-medium px-2.5 py-1 rounded-lg">
+                        #${escapeHtml(t)}
+                        <button onclick="removeTagFromNovel('${escapeHtml(t)}')" class="text-blue-300 hover:text-white ml-0.5">
+                            <i data-lucide="x" class="w-3 h-3"></i>
+                        </button>
+                    </span>
+                `).join('');
+            }
+
+            const poolContainer = document.getElementById('modal-tag-pool');
+            if (appState.tagPool.length === 0) {
+                poolContainer.innerHTML = `<span class="text-xs text-slate-500">아직 저장된 태그 풀이 없습니다.</span>`;
+            } else {
+                poolContainer.innerHTML = appState.tagPool.map(t => {
+                    const isSelected = tags.includes(t);
+                    return `
+                        <button onclick="toggleTagFromPool('${escapeHtml(t)}')" 
+                            class="text-xs px-2.5 py-1 rounded-lg border transition ${
+                                isSelected 
+                                ? 'bg-blue-600 border-blue-500 text-white font-semibold' 
+                                : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500'
+                            }">
+                            #${escapeHtml(t)}
+                        </button>
+                    `;
+                }).join('');
+            }
+            lucide.createIcons();
+        }
+
+        function addCustomTag() {
+            const input = document.getElementById('new-tag-input');
+            const rawVal = input.value.trim().replace(/^#/, '');
+            if (!rawVal) return;
+
+            const novel = appState.novels.find(n => n.id === activeModalNovelId);
+            if (!novel) return;
+            if (!novel.tags) novel.tags = [];
+
+            if (novel.tags.includes(rawVal)) {
+                showToast('이미 적용된 태그입니다.');
+                input.value = '';
+                return;
+            }
+            if (novel.tags.length >= 5) {
+                showToast('작품당 태그는 최대 5개까지 등록 가능합니다.');
+                return;
+            }
+
+            novel.tags.push(rawVal);
+            if (!appState.tagPool.includes(rawVal)) {
+                appState.tagPool.push(rawVal);
+            }
+            input.value = '';
+            saveState();
+            renderTagModalContent();
+            showToast(`#${rawVal} 태그 추가됨`);
+        }
+
+        function toggleTagFromPool(tag) {
+            const novel = appState.novels.find(n => n.id === activeModalNovelId);
+            if (!novel) return;
+            if (!novel.tags) novel.tags = [];
+
+            const idx = novel.tags.indexOf(tag);
+            if (idx > -1) {
+                novel.tags.splice(idx, 1);
+            } else {
+                if (novel.tags.length >= 5) {
+                    showToast('작품당 태그는 최대 5개까지 가능합니다.');
+                    return;
+                }
+                novel.tags.push(tag);
+            }
+            saveState();
+            renderTagModalContent();
+        }
+
+        function removeTagFromNovel(tag) {
+            const novel = appState.novels.find(n => n.id === activeModalNovelId);
+            if (!novel || !novel.tags) return;
+            novel.tags = novel.tags.filter(t => t !== tag);
+            saveState();
+            renderTagModalContent();
+        }
+
+        // ==========================================
+        // 4. UI 렌더링 컴포넌트
+        // ==========================================
+        function switchTab(tab) {
+            appState.currentTab = tab;
+            render();
+            document.getElementById('main-content').scrollTop = 0;
+        }
+
+        function updateGlobalBadges() {
+            const unratedCount = appState.novels.filter(n => !n.rating).length;
+            const vaultCount = appState.novels.filter(n => (n.flags || []).includes('vault')).length;
+
+            document.getElementById('unrated-count-badge').textContent = unratedCount;
+            document.getElementById('vault-badge-count').textContent = vaultCount;
+
+            // 하단 탭 활성화 스타일
+            ['today', 'vault', 'archive', 'data'].forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                if (!btn) return;
+                if (t === 'vault') {
+                    if (appState.currentTab === 'vault') {
+                        btn.classList.add('vault-tab-glow', 'from-amber-500/35', 'to-amber-600/20', 'border-amber-400');
+                    } else {
+                        btn.classList.remove('vault-tab-glow', 'from-amber-500/35', 'to-amber-600/20', 'border-amber-400');
+                    }
+                } else {
+                    if (appState.currentTab === t) {
+                        btn.classList.add('bg-slate-800', 'text-blue-400');
+                        btn.classList.remove('text-slate-400');
+                    } else {
+                        btn.classList.remove('bg-slate-800', 'text-blue-400');
+                        btn.classList.add('text-slate-400');
+                    }
+                }
+            });
+        }
+
+        function renderNovelCard(novel, isTodayView = false) {
+            const isVault = (novel.flags || []).includes('vault');
+            const isLegend = (novel.flags || []).includes('legend');
+            const isSupernormal = (novel.flags || []).includes('supernormal');
+            const isExpanded = !!appState.expandedSynopsis[novel.id];
+            const isRated = novel.rating !== null && novel.rating !== undefined;
+
+            const catBadgeClass = novel.category === '투데이 베스트'
+                ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+                : 'bg-sky-500/15 text-sky-300 border-sky-500/30';
+
+            return `
+            <article class="rounded-2xl p-4 mb-4 transition-all duration-200 border ${
+                isVault 
+                ? 'bg-gradient-to-b from-amber-950/35 via-slate-850 to-slate-850 vault-glow' 
+                : isRated && isTodayView
+                    ? 'bg-slate-850/60 border-slate-800 opacity-85'
+                    : 'bg-slate-850 border-slate-800'
+            }">
+                <!-- 상단 뱃지 및 상태 -->
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded-md border ${catBadgeClass}">
+                            ${escapeHtml(novel.category)}
+                        </span>
+                        <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700">
+                            ${escapeHtml(novel.genre)}
+                        </span>
+                        ${isVault ? `
+                            <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-md bg-amber-500 text-slate-950 flex items-center gap-1 shadow-sm">
+                                <i data-lucide="gem" class="w-3 h-3"></i> 보관함
+                            </span>
+                        ` : ''}
+                    </div>
+                    ${isRated && isTodayView ? `
+                        <span class="text-[11px] font-bold text-emerald-400 flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                            <i data-lucide="check-circle-2" class="w-3 h-3"></i> 평가완료
+                        </span>
+                    ` : ''}
+                </div>
+
+                <!-- 제목 및 작가 -->
+                <h2 class="text-[16px] font-bold text-white leading-snug mb-1">
+                    ${escapeHtml(novel.title)}
+                </h2>
+                <div class="flex items-center justify-between text-xs text-slate-400 mb-3">
+                    <span class="font-medium text-slate-300 flex items-center gap-1">
+                        <i data-lucide="pen-tool" class="w-3 h-3 text-slate-500"></i> ${escapeHtml(novel.author)}
+                    </span>
+                    <div class="flex items-center gap-2.5">
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="layers" class="w-3 h-3 text-blue-400"></i> 총 <strong class="text-slate-200">${Number(novel.episodes).toLocaleString()}</strong>화
+                        </span>
+                        <span class="text-slate-600">|</span>
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="eye" class="w-3 h-3 text-emerald-400"></i> 최근 <strong class="text-slate-200">${Number(novel.recentViews).toLocaleString()}</strong>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 작품소개 (접기/펼치기) -->
+                <div onclick="toggleSynopsis('${novel.id}')" class="bg-slate-900/80 rounded-xl p-3 mb-3.5 border border-slate-800/90 cursor-pointer active:bg-slate-900">
+                    <p class="text-xs text-slate-300 leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}">
+                        ${escapeHtml(novel.synopsis)}
+                    </p>
+                    <div class="text-[10px] text-slate-500 mt-1 text-right font-medium">
+                        ${isExpanded ? '접기 ▲' : '소개 더보기 ▼'}
+                    </div>
+                </div>
+
+                <!-- 별점 선택 (4가지 라디오 스타일 버튼) -->
+                <div class="mb-3">
+                    <div class="text-[11px] font-semibold text-slate-400 mb-1.5 flex items-center justify-between">
+                        <span>완독도 별점 평가</span>
+                        ${novel.rating ? `<span class="text-blue-400">선택됨</span>` : `<span class="text-slate-500">터치하여 평가</span>`}
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        ${RATING_OPTIONS.map(opt => {
+                            const active = novel.rating === opt.value;
+                            return `
+                                <button onclick="setNovelRating('${novel.id}', ${opt.value})" 
+                                    class="py-2 px-2.5 rounded-xl border text-left transition active:scale-[0.98] flex flex-col justify-center ${
+                                        active 
+                                        ? 'bg-blue-600/25 border-blue-500 text-white shadow-inner' 
+                                        : 'bg-slate-900/70 border-slate-800 text-slate-400 hover:border-slate-700'
+                                    }">
+                                    <span class="text-xs font-extrabold ${active ? 'text-amber-400' : 'text-slate-500'}">${opt.stars}</span>
+                                    <span class="text-[11px] font-medium mt-0.5 ${active ? 'text-blue-100' : 'text-slate-300'}">${opt.label}</span>
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <!-- 추가 분류 토글 (3가지 중복 선택) -->
+                <div class="mb-3">
+                    <div class="text-[11px] font-semibold text-slate-400 mb-1.5">특이사항 및 보관 (중복 선택)</div>
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <button onclick="toggleNovelFlag('${novel.id}', 'legend')" 
+                            class="py-2 px-1.5 rounded-xl border text-[11px] font-bold transition flex flex-col items-center justify-center gap-1 ${
+                                isLegend 
+                                ? 'bg-purple-600/25 border-purple-500 text-purple-200' 
+                                : 'bg-slate-900/60 border-slate-800 text-slate-400'
+                            }">
+                            <i data-lucide="crown" class="w-3.5 h-3.5 ${isLegend ? 'text-purple-400' : 'text-slate-500'}"></i>
+                            <span>레전드(작가뽕)</span>
+                        </button>
+
+                        <button onclick="toggleNovelFlag('${novel.id}', 'supernormal')" 
+                            class="py-2 px-1.5 rounded-xl border text-[11px] font-bold transition flex flex-col items-center justify-center gap-1 ${
+                                isSupernormal 
+                                ? 'bg-emerald-600/25 border-emerald-500 text-emerald-200' 
+                                : 'bg-slate-900/60 border-slate-800 text-slate-400'
+                            }">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 ${isSupernormal ? 'text-emerald-400' : 'text-slate-500'}"></i>
+                            <span>슈퍼노멀(일반)</span>
+                        </button>
+
+                        <button onclick="toggleNovelFlag('${novel.id}', 'vault')" 
+                            class="py-2 px-1.5 rounded-xl border text-[11px] font-extrabold transition flex flex-col items-center justify-center gap-1 ${
+                                isVault 
+                                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md shadow-amber-500/20' 
+                                : 'bg-slate-900/60 border-amber-500/30 text-amber-300/80 hover:border-amber-500/60'
+                            }">
+                            <i data-lucide="gem" class="w-3.5 h-3.5 ${isVault ? 'text-slate-950' : 'text-amber-400'}"></i>
+                            <span>보관함(좋은소스)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 키워드 태그 영역 -->
+                <div class="pt-2.5 border-t border-slate-800/80 flex items-center justify-between gap-2">
+                    <div class="flex flex-wrap gap-1.5 flex-1">
+                        ${(novel.tags && novel.tags.length > 0) 
+                            ? novel.tags.map(t => `<span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-md border border-slate-700/80">#${escapeHtml(t)}</span>`).join('')
+                            : `<span class="text-[11px] text-slate-500">태그 없음</span>`
+                        }
+                    </div>
+                    <button onclick="openTagModal('${novel.id}')" class="shrink-0 text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-blue-300 px-2.5 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1 transition">
+                        <i data-lucide="plus" class="w-3 h-3"></i> 태그 (${(novel.tags || []).length}/5)
+                    </button>
+                </div>
+            </article>
+            `;
+        }
+
+        // ==========================================
+        // 5. 각 탭 뷰 렌더링 함수
+        // ==========================================
+        function renderTodayView() {
+            const todayNovels = appState.todayIds
+                .map(id => appState.novels.find(n => n.id === id))
+                .filter(Boolean);
+
+            const unratedTotal = appState.novels.filter(n => !n.rating).length;
+            const completedToday = todayNovels.filter(n => n.rating !== null).length;
+
+            return `
+            <div class="animate-fade-in">
+                <!-- 오늘의 추천 요약 배너 -->
+                <div class="bg-gradient-to-r from-blue-950/80 to-indigo-950/80 border border-blue-800/50 rounded-2xl p-4 mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <span class="text-[11px] font-bold text-blue-300 uppercase tracking-wider">${appState.todayDate} 추천</span>
+                            <h2 class="text-base font-extrabold text-white">오늘의 랜덤 10선</h2>
+                        </div>
+                        <button onclick="refreshTodayTen(false)" class="bg-blue-600 hover:bg-blue-500 active:scale-95 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-lg shadow-blue-600/20 flex items-center gap-1.5 transition">
+                            <i data-lucide="shuffle" class="w-3.5 h-3.5"></i> 새로 뽑기
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-slate-300 mt-3 pt-2.5 border-t border-blue-800/40">
+                        <span>진행률: <strong class="text-white">${completedToday}</strong> / ${todayNovels.length}편 평가됨</span>
+                        <span>전체 미평가 풀: <strong class="text-blue-300">${unratedTotal}</strong>편</span>
+                    </div>
+                </div>
+
+                ${todayNovels.length === 0 ? `
+                    <div class="text-center py-12 bg-slate-850 rounded-2xl border border-slate-800 p-6">
+                        <i data-lucide="party-popper" class="w-10 h-10 text-amber-400 mx-auto mb-3"></i>
+                        <h3 class="text-base font-bold text-white mb-1">모든 작품을 평가했습니다!</h3>
+                        <p class="text-xs text-slate-400 mb-4">데이터 관리 탭에서 새로운 문피아 작품 JSON을 추가하거나, 기존 작품의 별점을 초기화할 수 있습니다.</p>
+                        <button onclick="switchTab('data')" class="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl">데이터 관리로 이동</button>
+                    </div>
+                ` : todayNovels.map(n => renderNovelCard(n, true)).join('')}
+            </div>
+            `;
+        }
+
+        function renderVaultView() {
+            const vaultNovels = appState.novels.filter(n => (n.flags || []).includes('vault'));
+            
+            // 보관함 작품들이 가진 태그 추출
+            const vaultTagsSet = new Set();
+            vaultNovels.forEach(n => (n.tags || []).forEach(t => vaultTagsSet.add(t)));
+            const vaultTags = Array.from(vaultTagsSet);
+
+            const filtered = appState.vaultTagFilter === 'ALL'
+                ? vaultNovels
+                : vaultNovels.filter(n => (n.tags || []).includes(appState.vaultTagFilter));
+
+            return `
+            <div class="animate-fade-in">
+                <!-- 보관함 전용 골드 하이라이트 헤더 -->
+                <div class="bg-gradient-to-br from-amber-500/20 via-amber-600/10 to-slate-850 border border-amber-500/50 rounded-2xl p-4 mb-4 vault-glow">
+                    <div class="flex items-center gap-2.5 mb-1.5">
+                        <div class="w-9 h-9 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center shadow-md">
+                            <i data-lucide="gem" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-black text-amber-300">보관함 (좋은소스 아카이브)</h2>
+                            <p class="text-xs text-amber-100/80">차기작 기획에 활용할 핵심 레퍼런스 <strong class="text-amber-300">${vaultNovels.length}편</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- 보관함 내 태그 필터 -->
+                    ${vaultTags.length > 0 ? `
+                        <div class="mt-3 pt-3 border-t border-amber-500/20">
+                            <div class="text-[11px] text-amber-200/70 mb-1.5 font-medium">보관함 키워드 필터</div>
+                            <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                                <button onclick="setVaultTagFilter('ALL')" 
+                                    class="shrink-0 text-xs px-3 py-1 rounded-full font-bold transition ${
+                                        appState.vaultTagFilter === 'ALL' 
+                                        ? 'bg-amber-500 text-slate-950' 
+                                        : 'bg-slate-900/80 text-amber-200 border border-amber-500/30'
+                                    }">전체 (${vaultNovels.length})</button>
+                                ${vaultTags.map(t => `
+                                    <button onclick="setVaultTagFilter('${escapeHtml(t)}')" 
+                                        class="shrink-0 text-xs px-3 py-1 rounded-full font-semibold transition ${
+                                            appState.vaultTagFilter === t 
+                                            ? 'bg-amber-500 text-slate-950' 
+                                            : 'bg-slate-900/80 text-amber-200 border border-amber-500/30'
+                                        }">#${escapeHtml(t)}</button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+
+                ${filtered.length === 0 ? `
+                    <div class="text-center py-12 bg-slate-850 rounded-2xl border border-slate-800 p-6">
+                        <i data-lucide="sparkles" class="w-10 h-10 text-amber-400/60 mx-auto mb-3"></i>
+                        <h3 class="text-sm font-bold text-white mb-1">보관함에 담긴 작품이 없습니다</h3>
+                        <p class="text-xs text-slate-400">작품 카드 하단의 <strong class="text-amber-300">[보관함(좋은소스)]</strong> 버튼을 눌러 영감을 준 작품을 모아보세요.</p>
+                    </div>
+                ` : filtered.map(n => renderNovelCard(n, false)).join('')}
+            </div>
+            `;
+        }
+
+        function setVaultTagFilter(tag) {
+            appState.vaultTagFilter = tag;
+            render();
+        }
+
+        function renderArchiveView() {
+            const ratedNovels = appState.novels.filter(n => n.rating !== null);
+            
+            // 트렌드 통계 계산: 인기 태그 TOP 5
+            const tagCounts = {};
+            ratedNovels.forEach(n => {
+                (n.tags || []).forEach(t => {
+                    tagCounts[t] = (tagCounts[t] || 0) + 1;
+                });
+            });
+            const topTags = Object.entries(tagCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+
+            // 장르별 평균 별점 & 정독률(4점 비율)
+            const genreStats = {};
+            ratedNovels.forEach(n => {
+                if (!genreStats[n.genre]) genreStats[n.genre] = { count: 0, sum: 0, high: 0 };
+                genreStats[n.genre].count++;
+                genreStats[n.genre].sum += n.rating;
+                if (n.rating === 4) genreStats[n.genre].high++;
+            });
+
+            // 필터 적용
+            let filtered = [...appState.novels];
+            const f = appState.archiveFilters;
+
+            if (f.rating !== 'ALL') {
+                if (f.rating === 'UNRATED') {
+                    filtered = filtered.filter(n => !n.rating);
+                } else {
+                    filtered = filtered.filter(n => n.rating === Number(f.rating));
+                }
+            }
+            if (f.flag !== 'ALL') {
+                filtered = filtered.filter(n => (n.flags || []).includes(f.flag));
+            }
+            if (f.tag !== 'ALL') {
+                filtered = filtered.filter(n => (n.tags || []).includes(f.tag));
+            }
+            if (f.search.trim() !== '') {
+                const q = f.search.trim().toLowerCase();
+                filtered = filtered.filter(n => 
+                    n.title.toLowerCase().includes(q) || 
+                    n.author.toLowerCase().includes(q) ||
+                    (n.tags || []).some(t => t.toLowerCase().includes(q))
+                );
+            }
+
+            return `
+            <div class="animate-fade-in">
+                <!-- 트렌드 분석 요약 카드 -->
+                <div class="bg-slate-850 border border-slate-800 rounded-2xl p-4 mb-4">
+                    <h2 class="text-sm font-extrabold text-white flex items-center gap-1.5 mb-3">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-blue-400"></i> 내 독서 트렌드 인사이트
+                    </h2>
+
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <div class="bg-slate-900 rounded-xl p-2.5 text-center border border-slate-800">
+                            <div class="text-[11px] text-slate-400">평가 완료</div>
+                            <div class="text-base font-black text-white mt-0.5">${ratedNovels.length}<span class="text-xs font-normal text-slate-500">/${appState.novels.length}</span></div>
+                        </div>
+                        <div class="bg-slate-900 rounded-xl p-2.5 text-center border border-slate-800">
+                            <div class="text-[11px] text-slate-400">16화+ 정독</div>
+                            <div class="text-base font-black text-blue-400 mt-0.5">${appState.novels.filter(n => n.rating === 4).length}편</div>
+                        </div>
+                        <div class="bg-slate-900 rounded-xl p-2.5 text-center border border-amber-500/30">
+                            <div class="text-[11px] text-amber-300/80">보관함 소스</div>
+                            <div class="text-base font-black text-amber-400 mt-0.5">${appState.novels.filter(n => (n.flags || []).includes('vault')).length}편</div>
+                        </div>
+                    </div>
+
+                    <!-- 인기 태그 TOP 5 -->
+                    <div class="mb-3">
+                        <div class="text-[11px] font-semibold text-slate-400 mb-1.5">평가 작품 인기 키워드 TOP 5</div>
+                        ${topTags.length > 0 ? `
+                            <div class="flex flex-wrap gap-1.5">
+                                ${topTags.map(([tag, cnt], idx) => `
+                                    <button onclick="setArchiveFilter('tag', '${escapeHtml(tag)}')" class="text-xs bg-slate-900 border border-slate-700 px-2.5 py-1 rounded-lg text-slate-200 flex items-center gap-1">
+                                        <span class="text-blue-400 font-bold">${idx + 1}.</span> #${escapeHtml(tag)} <span class="text-[10px] text-slate-500">(${cnt})</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        ` : `<p class="text-xs text-slate-500">작품에 별점을 매기면 선호 태그 통계가 표시됩니다.</p>`}
+                    </div>
+
+                    <!-- 장르별 정독 통계 -->
+                    ${Object.keys(genreStats).length > 0 ? `
+                        <div>
+                            <div class="text-[11px] font-semibold text-slate-400 mb-1.5">장르별 평균 별점</div>
+                            <div class="space-y-1.5">
+                                ${Object.entries(genreStats).map(([g, st]) => {
+                                    const avg = (st.sum / st.count).toFixed(1);
+                                    const pct = Math.round((st.sum / (st.count * 4)) * 100);
+                                    return `
+                                    <div class="flex items-center gap-2 text-xs">
+                                        <span class="w-20 truncate text-slate-300 font-medium">${escapeHtml(g)}</span>
+                                        <div class="flex-1 h-2 bg-slate-900 rounded-full overflow-hidden">
+                                            <div class="h-full bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full" style="width: ${pct}%"></div>
+                                        </div>
+                                        <span class="w-14 text-right font-bold text-amber-400">★ ${avg} <span class="text-[10px] text-slate-500">(${st.count})</span></span>
+                                    </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- 필터 컨트롤 영역 -->
+                <div class="bg-slate-850 border border-slate-800 rounded-2xl p-3.5 mb-4 space-y-2.5">
+                    <!-- 검색창 -->
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" value="${escapeHtml(f.search)}" oninput="setArchiveFilter('search', this.value)" 
+                            placeholder="제목, 작가명, 태그 검색..." 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                    </div>
+
+                    <!-- 별점 필터 -->
+                    <div class="flex gap-1 overflow-x-auto no-scrollbar">
+                        <button onclick="setArchiveFilter('rating', 'ALL')" class="shrink-0 text-[11px] px-2.5 py-1.5 rounded-lg font-semibold ${f.rating === 'ALL' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400'}">전체 별점</button>
+                        <button onclick="setArchiveFilter('rating', '4')" class="shrink-0 text-[11px] px-2.5 py-1.5 rounded-lg font-semibold ${f.rating === '4' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400'}">★★★★ 정독</button>
+                        <button onclick="setArchiveFilter('rating', '3')" class="shrink-0 text-[11px] px-2.5 py-1.5 rounded-lg font-semibold ${f.rating === '3' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400'}">★★★ 11~15화</button>
+                        <button onclick="setArchiveFilter('rating', '2')" class="shrink-0 text-[11px] px-2.5 py-1.5 rounded-lg font-semibold ${f.rating === '2' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400'}">★★ 6~10화</button>
+                        <button onclick="setArchiveFilter('rating', '1')" class="shrink-0 text-[11px] px-2.5 py-1.5 rounded-lg font-semibold ${f.rating === '1' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400'}">★ 1~5화</button>
+                        <button onclick="setArchiveFilter('rating', 'UNRATED')" class="shrink-0 text-[11px] px-2.5 py-1.5 rounded-lg font-semibold ${f.rating === 'UNRATED' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400'}">미평가</button>
+                    </div>
+
+                    <!-- 분류 & 태그 드롭다운 필터 -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <select onchange="setArchiveFilter('flag', this.value)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-slate-200 focus:outline-none">
+                            <option value="ALL" ${f.flag === 'ALL' ? 'selected' : ''}>분류: 전체 보기</option>
+                            <option value="vault" ${f.flag === 'vault' ? 'selected' : ''}>💎 보관함 (좋은소스)</option>
+                            <option value="legend" ${f.flag === 'legend' ? 'selected' : ''}>👑 레전드 (작가뽕)</option>
+                            <option value="supernormal" ${f.flag === 'supernormal' ? 'selected' : ''}>⚡ 슈퍼노멀 (일반연재)</option>
+                        </select>
+
+                        <select onchange="setArchiveFilter('tag', this.value)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-slate-200 focus:outline-none">
+                            <option value="ALL" ${f.tag === 'ALL' ? 'selected' : ''}>태그: 전체 보기</option>
+                            ${appState.tagPool.map(t => `<option value="${escapeHtml(t)}" ${f.tag === t ? 'selected' : ''}>#${escapeHtml(t)}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="text-xs text-slate-400 mb-3 px-1 flex justify-between items-center">
+                    <span>검색 결과 <strong class="text-white">${filtered.length}</strong>편</span>
+                    ${(f.rating !== 'ALL' || f.flag !== 'ALL' || f.tag !== 'ALL' || f.search !== '') ? `
+                        <button onclick="resetArchiveFilters()" class="text-blue-400 font-semibold">필터 초기화</button>
+                    ` : ''}
+                </div>
+
+                ${filtered.length === 0 ? `
+                    <div class="text-center py-10 bg-slate-850 rounded-2xl border border-slate-800 text-xs text-slate-400">
+                        조건에 일치하는 작품이 없습니다.
+                    </div>
+                ` : filtered.map(n => renderNovelCard(n, false)).join('')}
+            </div>
+            `;
+        }
+
+        function setArchiveFilter(key, val) {
+            appState.archiveFilters[key] = val;
+            render();
+        }
+
+        function resetArchiveFilters() {
+            appState.archiveFilters = { rating: 'ALL', flag: 'ALL', tag: 'ALL', search: '' };
+            render();
+        }
+
+        function renderDataView() {
+            return `
+            <div class="animate-fade-in space-y-4">
+                <!-- 신규 작품 직접 등록 카드 -->
+                <div class="bg-slate-850 border border-slate-800 rounded-2xl p-4">
+                    <h2 class="text-sm font-extrabold text-white flex items-center gap-1.5 mb-3">
+                        <i data-lucide="plus-circle" class="w-4 h-4 text-blue-400"></i> 신규 문피아 작품 수동 추가
+                    </h2>
+                    <div class="space-y-2.5">
+                        <div class="grid grid-cols-2 gap-2">
+                            <select id="add-category" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                                <option value="투데이 베스트">투데이 베스트</option>
+                                <option value="신규 베스트">신규 베스트</option>
+                            </select>
+                            <input type="text" id="add-genre" placeholder="장르 (예: 현대판타지)" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                        </div>
+                        <input type="text" id="add-title" placeholder="작품 제목" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="text" id="add-author" placeholder="작가명" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                            <input type="number" id="add-episodes" placeholder="총 회차" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                            <input type="number" id="add-views" placeholder="최근 조회수" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                        </div>
+                        <textarea id="add-synopsis" rows="2" placeholder="작품소개 (시놉시스)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"></textarea>
+                        <button onclick="addManualNovel()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition">
+                            아카이브에 작품 추가
+                        </button>
+                    </div>
+                </div>
+
+                <!-- JSON 백업 및 복원/병합 -->
+                <div class="bg-slate-850 border border-slate-800 rounded-2xl p-4">
+                    <h2 class="text-sm font-extrabold text-white flex items-center gap-1.5 mb-1">
+                        <i data-lucide="hard-drive-download" class="w-4 h-4 text-emerald-400"></i> JSON 데이터 백업 및 불러오기
+                    </h2>
+                    <p class="text-xs text-slate-400 mb-3 leading-relaxed">
+                        서버 없이 브라우저(LocalStorage)에 저장되므로, 기기 변경이나 브라우저 캐시 삭제 전 JSON으로 백업해 두세요. 외부에서 수집한 작품 목록 JSON도 병합(Import)할 수 있습니다.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-2.5 mb-3">
+                        <button onclick="exportJsonFile()" class="py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition">
+                            <i data-lucide="download" class="w-4 h-4"></i> JSON 파일 백업
+                        </button>
+                        <button onclick="copyJsonToClipboard()" class="py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition">
+                            <i data-lucide="copy" class="w-4 h-4"></i> 클립보드 복사
+                        </button>
+                    </div>
+
+                    <div class="border-t border-slate-800 pt-3">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">JSON 파일 불러오기 (기존 데이터와 병합/덮어쓰기)</label>
+                        <input type="file" id="json-file-input" accept=".json" onchange="handleJsonFileUpload(event)" 
+                            class="block w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-blue-300 hover:file:bg-slate-700 cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- 초기화 영역 -->
+                <div class="bg-slate-850 border border-rose-900/40 rounded-2xl p-4">
+                    <h2 class="text-sm font-bold text-rose-400 flex items-center gap-1.5 mb-1">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> 데이터 초기화
+                    </h2>
+                    <p class="text-xs text-slate-400 mb-3">모든 별점, 보관함, 태그 기록을 지우고 기본 샘플 데이터 25편 상태로 되돌립니다.</p>
+                    <button onclick="confirmResetData()" class="w-full py-2.5 bg-rose-950/60 hover:bg-rose-900/60 border border-rose-800/60 text-rose-300 text-xs font-bold rounded-xl transition">
+                        초기 샘플 데이터로 리셋
+                    </button>
+                </div>
+            </div>
+            `;
+        }
+
+        // ==========================================
+        // 6. 데이터 관리 액션 (추가, 백업, 복원, 리셋)
+        // ==========================================
+        function addManualNovel() {
+            const title = document.getElementById('add-title').value.trim();
+            const genre = document.getElementById('add-genre').value.trim() || '판타지';
+            const author = document.getElementById('add-author').value.trim() || '미상';
+            const episodes = parseInt(document.getElementById('add-episodes').value, 10) || 1;
+            const recentViews = parseInt(document.getElementById('add-views').value, 10) || 0;
+            const synopsis = document.getElementById('add-synopsis').value.trim() || '작품 소개가 등록되지 않았습니다.';
+            const category = document.getElementById('add-category').value;
+
+            if (!title) {
+                showToast('작품 제목을 입력해 주세요.');
+                return;
+            }
+
+            const newNovel = {
+                id: 'mp_' + Date.now(),
+                category,
+                title,
+                genre,
+                author,
+                episodes,
+                recentViews,
+                synopsis,
+                rating: null,
+                flags: [],
+                tags: [],
+                updatedAt: null
+            };
+
+            appState.novels.unshift(newNovel);
+            saveState();
+            showToast(`'${title}' 작품이 추가되었습니다!`);
+            render();
+        }
+
+        function exportJsonFile() {
+            const dataStr = JSON.stringify({
+                exportedAt: new Date().toISOString(),
+                novels: appState.novels,
+                tagPool: appState.tagPool
+            }, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `munpia_trend_backup_${getTodayString()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('JSON 백업 파일이 다운로드되었습니다.');
+        }
+
+        function copyJsonToClipboard() {
+            const dataStr = JSON.stringify({
+                novels: appState.novels,
+                tagPool: appState.tagPool
+            }, null, 2);
+            const textarea = document.createElement('textarea');
+            textarea.value = dataStr;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('전체 데이터가 클립보드에 복사되었습니다.');
+        }
+
+        function handleJsonFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    const list = Array.isArray(imported) ? imported : imported.novels;
+                    if (!Array.isArray(list)) {
+                        showToast('올바른 작품 JSON 형식이 아닙니다.');
+                        return;
+                    }
+
+                    let addedCount = 0;
+                    let updatedCount = 0;
+
+                    list.forEach(item => {
+                        if (!item.title) return;
+                        const existingIdx = appState.novels.findIndex(n => n.id === item.id || (n.title === item.title && n.author === item.author));
+                        if (existingIdx > -1) {
+                            // 기존 작품의 회차/조회수 최신화 (사용자 평가는 보존)
+                            appState.novels[existingIdx].episodes = item.episodes || appState.novels[existingIdx].episodes;
+                            appState.novels[existingIdx].recentViews = item.recentViews || appState.novels[existingIdx].recentViews;
+                            updatedCount++;
+                        } else {
+                            appState.novels.push({
+                                id: item.id || 'mp_' + Math.random().toString(36).substr(2, 9),
+                                category: item.category || '투데이 베스트',
+                                title: item.title,
+                                genre: item.genre || '판타지',
+                                author: item.author || '작가미상',
+                                episodes: Number(item.episodes) || 1,
+                                recentViews: Number(item.recentViews) || 0,
+                                synopsis: item.synopsis || '',
+                                rating: item.rating ?? null,
+                                flags: Array.isArray(item.flags) ? item.flags : [],
+                                tags: Array.isArray(item.tags) ? item.tags : [],
+                                updatedAt: item.updatedAt || null
+                            });
+                            addedCount++;
+                        }
+                    });
+
+                    if (Array.isArray(imported.tagPool)) {
+                        imported.tagPool.forEach(t => {
+                            if (!appState.tagPool.includes(t)) appState.tagPool.push(t);
+                        });
+                    }
+
+                    syncTagPool();
+                    saveState();
+                    showToast(`병합 완료: 신규 ${addedCount}편 추가, ${updatedCount}편 갱신`);
+                    render();
+                } catch (err) {
+                    showToast('JSON 파일을 읽는 중 오류가 발생했습니다.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function confirmResetData() {
+            openConfirmModal(
+                '데이터 전체 초기화',
+                '지금까지 기록한 모든 별점, 보관함, 커스텀 태그가 삭제되고 초기 샘플 데이터로 복구됩니다. 계속할까요?',
+                () => {
+                    localStorage.removeItem(STORAGE_KEY);
+                    initDefaultState();
+                    saveState();
+                    showToast('초기 상태로 리셋되었습니다.');
+                    render();
+                }
+            );
+        }
+
+        // ==========================================
+        // 7. 유틸리티 (커스텀 모달, 토스트, 이스케이프)
+        // ==========================================
+        function openConfirmModal(title, message, onConfirm) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            confirmCallback = onConfirm;
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeConfirmModal() {
+            confirmCallback = null;
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        document.getElementById('confirm-ok-btn').addEventListener('click', () => {
+            if (confirmCallback) confirmCallback();
+            closeConfirmModal();
+        });
+
+        let toastTimer = null;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            toast.classList.remove('opacity-0', 'translate-y-2');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 2200);
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // ==========================================
+        // 8. 메인 렌더 루프 및 초기화
+        // ==========================================
+        function render() {
+            const main = document.getElementById('main-content');
+            if (appState.currentTab === 'today') {
+                main.innerHTML = renderTodayView();
+            } else if (appState.currentTab === 'vault') {
+                main.innerHTML = renderVaultView();
+            } else if (appState.currentTab === 'archive') {
+                main.innerHTML = renderArchiveView();
+            } else if (appState.currentTab === 'data') {
+                main.innerHTML = renderDataView();
+            }
+            updateGlobalBadges();
+            lucide.createIcons();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            render();
+        });
+    </script>
+</body>
+</html>
