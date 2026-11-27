@@ -2291,38 +2291,54 @@ ${escapeHtml(summarySentence)}
 
     function escapeAttr(str) {
       if (str === null || str === undefined) return "";
-      return String(str).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+      return String(str)
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/"/g, "&quot;")
+        .replace(/\n/g, " ")
+        .replace(/\r/g, "");
     }
 
     function renderAll() {
-      renderNav();
-      const main = document.getElementById("main-content");
-      switch (state.activeTab) {
-        case "register":
-          main.innerHTML = renderRegisterTab();
-          break;
-        case "kitchen":
-          main.innerHTML = renderKitchenTab();
-          break;
-        case "cooking":
-          main.innerHTML = renderCookingTab();
-          break;
-        case "michelin":
-          main.innerHTML = renderMichelinTab();
-          break;
-        case "pantry":
-          main.innerHTML = renderPantryTab();
-          break;
-        case "wash":
-          main.innerHTML = renderWashTab();
-          break;
+      try {
+        renderNav();
+        const main = document.getElementById("main-content");
+        if (!main) return;
+        switch (state.activeTab) {
+          case "register":
+            main.innerHTML = renderRegisterTab();
+            break;
+          case "kitchen":
+            main.innerHTML = renderKitchenTab();
+            break;
+          case "cooking":
+            main.innerHTML = renderCookingTab();
+            break;
+          case "michelin":
+            main.innerHTML = renderMichelinTab();
+            break;
+          case "pantry":
+            main.innerHTML = renderPantryTab();
+            break;
+          case "wash":
+            main.innerHTML = renderWashTab();
+            break;
+          default:
+            main.innerHTML = renderRegisterTab();
+        }
+      } catch (err) {
+        console.error("렌더링 중 오류 발생:", err);
       }
     }
 
     // 초기화 실행
-    window.addEventListener("DOMContentLoaded", () => {
-      loadState();
-      renderAll();
+    window.addEventListener("DOMContentLoaded", function () {
+      try {
+        loadState();
+        renderAll();
+      } catch (err) {
+        console.error("초기화 오류:", err);
+      }
     });
   </script>
 </body>
